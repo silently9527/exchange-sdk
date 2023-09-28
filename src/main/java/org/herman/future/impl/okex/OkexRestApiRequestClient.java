@@ -531,4 +531,68 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
         });
         return request;
     }
+
+    @Override
+    public RestApiRequest<List<SymbolPrice>> getSymbolPriceTicker(String symbol) {
+        RestApiRequest<List<SymbolPrice>> request = new RestApiRequest<>();
+        request.jsonParser = (jsonWrapper -> {
+            List<SymbolPrice> result = new LinkedList<>();
+            JsonWrapperArray dataArray = jsonWrapper.getJsonArray("data");
+            dataArray.forEach((item) -> {
+                SymbolPrice element = new SymbolPrice();
+                element.setSymbol(item.getString("instId"));
+                element.setPrice(item.getBigDecimal("last"));
+                result.add(element);
+            });
+            return result;
+        });
+
+        if (StringUtils.isEmpty(symbol)) {
+            UrlParamsBuilder builder = UrlParamsBuilder.build()
+                    .putToUrl("instType", "SWAP");
+            request.request = createRequestByGet("/api/v5/market/tickers", builder);
+            return request;
+        }
+
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("instId", symbol);
+        request.request = createRequestByGet("/api/v5/market/ticker", builder);
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<List<SymbolOrderBook>> getSymbolOrderBookTicker(String symbol) {
+        RestApiRequest<List<SymbolOrderBook>> request = new RestApiRequest<>();
+        request.jsonParser = (jsonWrapper -> {
+            List<SymbolOrderBook> result = new LinkedList<>();
+            JsonWrapperArray dataArray = jsonWrapper.getJsonArray("data");
+            dataArray.forEach((item) -> {
+                SymbolOrderBook element = new SymbolOrderBook();
+                element.setSymbol(item.getString("instId"));
+                element.setBidPrice(item.getBigDecimal("bidPx"));
+                element.setBidQty(item.getBigDecimal("bidSz"));
+                element.setAskPrice(item.getBigDecimal("askPx"));
+                element.setAskQty(item.getBigDecimal("askSz"));
+                result.add(element);
+            });
+            return result;
+        });
+
+        if (StringUtils.isEmpty(symbol)) {
+            UrlParamsBuilder builder = UrlParamsBuilder.build()
+                    .putToUrl("instType", "SWAP");
+            request.request = createRequestByGet("/api/v5/market/tickers", builder);
+            return request;
+        }
+
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("instId", symbol);
+        request.request = createRequestByGet("/api/v5/market/ticker", builder);
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit) {
+        throw new UnsupportedOperationException();
+    }
 }

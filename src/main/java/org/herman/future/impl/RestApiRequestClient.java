@@ -42,4 +42,10 @@ public interface RestApiRequestClient {
     RestApiRequest<List<PositionRisk>> getPositionRisk(String symbol);
 
     RestApiRequest<List<Trade>> getRecentTrades(String symbol, Integer limit);
+
+    RestApiRequest<List<SymbolPrice>> getSymbolPriceTicker(String symbol);
+
+    RestApiRequest<List<SymbolOrderBook>> getSymbolOrderBookTicker(String symbol);
+
+    RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit);
 }

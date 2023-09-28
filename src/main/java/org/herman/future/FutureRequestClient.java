@@ -20,7 +20,7 @@ public interface FutureRequestClient {
 
 //    List<Trade> getOldTrades(String symbol, Integer limit, Long fromId);
 
-//    List<AggregateTrade> getAggregateTrades(String symbol, Long fromId, Long startTime, Long endTime, Integer limit);
+    List<AggregateTrade> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit);
 
     List<Candlestick> getCandlestick(String symbol, CandlestickInterval interval, Long startTime, Long endTime, Integer limit);
 
@@ -30,17 +30,19 @@ public interface FutureRequestClient {
 
     FundingRate getFundingRate(String symbol);
 
-    //
-//    List<PriceChangeTicker> get24hrTickerPriceChange(String symbol);
-//
-//    List<SymbolPrice> getSymbolPriceTicker(String symbol);
-//
-//    List<SymbolOrderBook> getSymbolOrderBookTicker(String symbol);
-//
+
+    //    List<PriceChangeTicker> get24hrTickerPriceChange(String symbol);
+    //最新价格
+    List<SymbolPrice> getSymbolPriceTicker(String symbol);
+
+    //当前最优挂单
+    List<SymbolOrderBook> getSymbolOrderBookTicker(String symbol);
+
+
 //    List<LiquidationOrder> getLiquidationOrders(String symbol, Long startTime, Long endTime, Integer limit);
-//
+
 //    List<Object> postBatchOrders(String batchOrders);
-//
+
     String postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
                      TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
                      String newClientOrderId, BigDecimal stopPrice, WorkingType workingType);
@@ -49,8 +51,8 @@ public interface FutureRequestClient {
 
     ResponseResult cancelAllOpenOrder(String symbol);
 
-    //    ResponseResult changePositionSide(boolean dual);
-//
+//    ResponseResult changePositionSide(boolean dual);
+
 //    ResponseResult changeMarginType(String symbolName, String marginType);
 //
 //    JSONObject addIsolatedPositionMargin(String symbolName, int type, String amount, PositionSide positionSide);

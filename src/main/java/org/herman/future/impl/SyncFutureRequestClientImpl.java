@@ -35,6 +35,11 @@ public class SyncFutureRequestClientImpl implements FutureRequestClient {
     }
 
     @Override
+    public List<AggregateTrade> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getAggregateTrades(symbol, fromId, startTime, endTime, limit));
+    }
+
+    @Override
     public List<Candlestick> getCandlestick(String symbol, CandlestickInterval interval, Long startTime, Long endTime, Integer limit) {
         return RestApiInvoker.callSync(requestImpl.getCandlestick(symbol, interval, startTime, endTime, limit));
     }
@@ -52,6 +57,16 @@ public class SyncFutureRequestClientImpl implements FutureRequestClient {
     @Override
     public FundingRate getFundingRate(String symbol) {
         return RestApiInvoker.callSync(requestImpl.getFundingRate(symbol));
+    }
+
+    @Override
+    public List<SymbolPrice> getSymbolPriceTicker(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getSymbolPriceTicker(symbol));
+    }
+
+    @Override
+    public List<SymbolOrderBook> getSymbolOrderBookTicker(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getSymbolOrderBookTicker(symbol));
     }
 
     @Override

@@ -80,9 +80,20 @@ public class OkexRestApiRequestClientTest {
 //        List<PositionRisk> positionRisk = client.getPositionRisk("BTC-USD-SWAP");
 //        System.out.println(positionRisk);
 
-        List<Trade> recentTrades = client.getRecentTrades("BTC-USD-SWAP", 2);
-        System.out.println(recentTrades);
+//        List<Trade> recentTrades = client.getRecentTrades("BTC-USD-SWAP", 2);
+//        System.out.println(recentTrades);
 
+
+//        List<SymbolPrice> prices = client.getSymbolPriceTicker("ETH-USDT-SWAP");
+//        System.out.println(prices);
+//        prices = client.getSymbolPriceTicker("");
+//        System.out.println(prices);
+
+
+        List<SymbolOrderBook> orderBookTicker = client.getSymbolOrderBookTicker("ETH-USDT-SWAP");
+        System.out.println(orderBookTicker);
+        orderBookTicker = client.getSymbolOrderBookTicker("");
+        System.out.println(orderBookTicker);
     }
 
 }

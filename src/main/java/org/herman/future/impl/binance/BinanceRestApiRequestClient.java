@@ -594,6 +594,94 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         return request;
     }
 
+    @Override
+    public RestApiRequest<List<SymbolPrice>> getSymbolPriceTicker(String symbol) {
+        RestApiRequest<List<SymbolPrice>> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("symbol", symbol);
+        request.request = createRequestByGet("/fapi/v1/ticker/price", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<SymbolPrice> result = new LinkedList<>();
+            JsonWrapperArray dataArray = new JsonWrapperArray(new JSONArray());
+            if (jsonWrapper.containKey("data")) {
+                dataArray = jsonWrapper.getJsonArray("data");
+            } else {
+                dataArray.add(jsonWrapper.convert2JsonObject());
+            }
+            dataArray.forEach((item) -> {
+                SymbolPrice element = new SymbolPrice();
+                element.setSymbol(item.getString("symbol"));
+                element.setPrice(item.getBigDecimal("price"));
+                result.add(element);
+            });
+
+            return result;
+        });
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<List<SymbolOrderBook>> getSymbolOrderBookTicker(String symbol) {
+        RestApiRequest<List<SymbolOrderBook>> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("symbol", symbol);
+        request.request = createRequestByGet("/fapi/v1/ticker/bookTicker", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<SymbolOrderBook> result = new LinkedList<>();
+            JsonWrapperArray dataArray = new JsonWrapperArray(new JSONArray());
+            if (jsonWrapper.containKey("data")) {
+                dataArray = jsonWrapper.getJsonArray("data");
+            } else {
+                dataArray.add(jsonWrapper.convert2JsonObject());
+            }
+            dataArray.forEach((item) -> {
+                SymbolOrderBook element = new SymbolOrderBook();
+                element.setSymbol(item.getString("symbol"));
+                element.setBidPrice(item.getBigDecimal("bidPrice"));
+                element.setBidQty(item.getBigDecimal("bidQty"));
+                element.setAskPrice(item.getBigDecimal("askPrice"));
+                element.setAskQty(item.getBigDecimal("askQty"));
+                result.add(element);
+            });
+
+            return result;
+        });
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit) {
+        RestApiRequest<List<AggregateTrade>> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("symbol", symbol)
+                .putToUrl("fromId", fromId)
+                .putToUrl("startTime", startTime)
+                .putToUrl("endTime", endTime)
+                .putToUrl("limit", limit);
+        request.request = createRequestByGet("/fapi/v1/aggTrades", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<AggregateTrade> result = new LinkedList<>();
+            JsonWrapperArray dataArray = jsonWrapper.getJsonArray("data");
+            dataArray.forEach((item) -> {
+                AggregateTrade element = new AggregateTrade();
+                element.setId(item.getLong("a"));
+                element.setPrice(item.getBigDecimal("p"));
+                element.setQty(item.getBigDecimal("q"));
+                element.setFirstId(item.getLong("f"));
+                element.setLastId(item.getLong("l"));
+                element.setTime(item.getLong("T"));
+                element.setIsBuyerMaker(item.getBoolean("m"));
+                result.add(element);
+            });
+
+            return result;
+        });
+        return request;
+    }
+
 
     @Override
     protected String getClientSdkVersion() {

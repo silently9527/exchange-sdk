@@ -63,9 +63,21 @@ public class BinanceRestApiRequestClientTest {
 //        List<PositionRisk> positionRisk = client.getPositionRisk("BTCUSDT");
 //        System.out.println(positionRisk);
 
-        List<Trade> trades = client.getRecentTrades("BTCUSDT", 2);
-        System.out.println(trades);
+//        List<Trade> trades = client.getRecentTrades("BTCUSDT", 2);
+//        System.out.println(trades);
 
+//        List<SymbolPrice> prices = client.getSymbolPriceTicker("ETHUSDT");
+//        System.out.println(prices);
+//        prices = client.getSymbolPriceTicker("");
+//        System.out.println(prices);
+
+//        List<SymbolOrderBook> orderBookTicker = client.getSymbolOrderBookTicker("ETHUSDT");
+//        System.out.println(orderBookTicker);
+//        orderBookTicker = client.getSymbolOrderBookTicker("");
+//        System.out.println(orderBookTicker);
+
+        List<AggregateTrade> aggregateTrades = client.getAggregateTrades("ETHUSDT", "", start, end, 10);
+        System.out.println(aggregateTrades);
     }
 
 
