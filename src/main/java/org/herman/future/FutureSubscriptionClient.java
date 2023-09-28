@@ -26,7 +26,7 @@ public interface FutureSubscriptionClient {
 
     void subscribeAllMiniTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
 
-    //    void subscribeSymbolTickerEvent(String symbol,
+//    void subscribeSymbolTickerEvent(String symbol,
 //            FutureSubscriptionListener<SymbolTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 //
 //    void subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
@@ -35,7 +35,7 @@ public interface FutureSubscriptionClient {
 
     void subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 
-//    void subscribeSymbolLiquidationOrderEvent(String symbol,
+    //    void subscribeSymbolLiquidationOrderEvent(String symbol,
 //            FutureSubscriptionListener<LiquidationOrderEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 //
 //    void subscribeAllLiquidationOrderEvent(FutureSubscriptionListener<LiquidationOrderEvent> callback, FutureSubscriptionErrorHandler errorHandler);
