@@ -2,6 +2,7 @@ package org.herman.future.model.event;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.herman.Constants;
+import org.herman.future.model.enums.OrderSide;
 
 import java.math.BigDecimal;
 
@@ -25,7 +26,7 @@ public class AggregateTradeEvent {
 
     private Long time;
 
-    private Boolean isBuyerMaker;
+    private OrderSide side;
 
     public String getEventType() {
         return eventType;
@@ -99,12 +100,12 @@ public class AggregateTradeEvent {
         this.time = time;
     }
 
-    public Boolean getIsBuyerMaker() {
-        return isBuyerMaker;
+    public OrderSide getSide() {
+        return side;
     }
 
-    public void setIsBuyerMaker(Boolean isBuyerMaker) {
-        this.isBuyerMaker = isBuyerMaker;
+    public void setSide(OrderSide side) {
+        this.side = side;
     }
 
     @Override
@@ -112,6 +113,6 @@ public class AggregateTradeEvent {
         return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("eventType", eventType)
                 .append("eventTime", eventTime).append("symbol", symbol).append("id", id).append("price", price)
                 .append("qty", qty).append("firstId", firstId).append("lastId", lastId).append("time", time)
-                .append("isBuyerMaker", isBuyerMaker).toString();
+                .append("side", side).toString();
     }
 }

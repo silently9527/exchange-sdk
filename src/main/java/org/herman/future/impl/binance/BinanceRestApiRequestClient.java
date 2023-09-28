@@ -673,7 +673,7 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
                 element.setFirstId(item.getLong("f"));
                 element.setLastId(item.getLong("l"));
                 element.setTime(item.getLong("T"));
-                element.setIsBuyerMaker(item.getBoolean("m"));
+                element.setSide(item.getBoolean("m") ? OrderSide.SELL : OrderSide.BUY);
                 result.add(element);
             });
 

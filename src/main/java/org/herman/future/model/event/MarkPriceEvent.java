@@ -15,10 +15,6 @@ public class MarkPriceEvent {
 
     private BigDecimal markPrice;
 
-    private BigDecimal fundingRate;
-
-    private Long nextFundingTime;
-
     public String getEventType() {
         return eventType;
     }
@@ -51,26 +47,9 @@ public class MarkPriceEvent {
         this.markPrice = markPrice;
     }
 
-    public BigDecimal getFundingRate() {
-        return fundingRate;
-    }
-
-    public void setFundingRate(BigDecimal fundingRate) {
-        this.fundingRate = fundingRate;
-    }
-
-    public Long getNextFundingTime() {
-        return nextFundingTime;
-    }
-
-    public void setNextFundingTime(Long nextFundingTime) {
-        this.nextFundingTime = nextFundingTime;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("eventType", eventType)
-                .append("eventTime", eventTime).append("symbol", symbol).append("markPrice", markPrice)
-                .append("fundingRate", fundingRate).append("nextFundingTime", nextFundingTime).toString();
+                .append("eventTime", eventTime).append("symbol", symbol).append("markPrice", markPrice).toString();
     }
 }

@@ -13,17 +13,35 @@ public class SymbolMiniTickerEvent {
 
     private String symbol;
 
-    private BigDecimal open;
+    private BigDecimal price;
 
-    private BigDecimal close;
+    private BigDecimal volume; //24h 成交量
 
-    private BigDecimal high;
+    private BigDecimal quoteAssetVolume; //24h 成交额
 
-    private BigDecimal low;
+    public BigDecimal getPrice() {
+        return price;
+    }
 
-    private BigDecimal totalTradedBaseAssetVolume;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
-    private BigDecimal totalTradedQuoteAssetVolume;
+    public BigDecimal getVolume() {
+        return volume;
+    }
+
+    public void setVolume(BigDecimal volume) {
+        this.volume = volume;
+    }
+
+    public BigDecimal getQuoteAssetVolume() {
+        return quoteAssetVolume;
+    }
+
+    public void setQuoteAssetVolume(BigDecimal quoteAssetVolume) {
+        this.quoteAssetVolume = quoteAssetVolume;
+    }
 
     public String getEventType() {
         return eventType;
@@ -49,60 +67,15 @@ public class SymbolMiniTickerEvent {
         this.symbol = symbol;
     }
 
-    public BigDecimal getOpen() {
-        return open;
-    }
-
-    public void setOpen(BigDecimal open) {
-        this.open = open;
-    }
-
-    public BigDecimal getClose() {
-        return close;
-    }
-
-    public void setClose(BigDecimal close) {
-        this.close = close;
-    }
-
-    public BigDecimal getHigh() {
-        return high;
-    }
-
-    public void setHigh(BigDecimal high) {
-        this.high = high;
-    }
-
-    public BigDecimal getLow() {
-        return low;
-    }
-
-    public void setLow(BigDecimal low) {
-        this.low = low;
-    }
-
-    public BigDecimal getTotalTradedBaseAssetVolume() {
-        return totalTradedBaseAssetVolume;
-    }
-
-    public void setTotalTradedBaseAssetVolume(BigDecimal totalTradedBaseAssetVolume) {
-        this.totalTradedBaseAssetVolume = totalTradedBaseAssetVolume;
-    }
-
-    public BigDecimal getTotalTradedQuoteAssetVolume() {
-        return totalTradedQuoteAssetVolume;
-    }
-
-    public void setTotalTradedQuoteAssetVolume(BigDecimal totalTradedQuoteAssetVolume) {
-        this.totalTradedQuoteAssetVolume = totalTradedQuoteAssetVolume;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("eventType", eventType)
-                .append("eventTime", eventTime).append("symbol", symbol).append("open", open).append("close", close)
-                .append("high", high).append("low", low)
-                .append("totalTradedBaseAssetVolume", totalTradedBaseAssetVolume)
-                .append("totalTradedQuoteAssetVolume", totalTradedQuoteAssetVolume).toString();
+        return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE)
+                .append("eventType", eventType)
+                .append("eventTime", eventTime)
+                .append("symbol", symbol)
+                .append("price", price)
+                .append("volume", volume)
+                .append("quoteAssetVolume", quoteAssetVolume)
+                .toString();
     }
 }

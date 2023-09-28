@@ -28,7 +28,7 @@ public class Constants {
         /**
          * Streaming API base URL.
          */
-        public static final String BINANCE_WS_API_BASE_URL = "wss://api.binance.pro/";
+        public static final String BINANCE_WS_API_BASE_URL = "wss://fstream.binance.com/stream";
 
         /**
          * HTTP Header to be used for API-KEY authentication.

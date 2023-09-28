@@ -4,7 +4,8 @@ import org.herman.future.FutureSubscriptionClient;
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
 import org.herman.future.FutureSubscriptionOptions;
-import org.herman.future.model.event.AggregateTradeEvent;
+import org.herman.future.model.enums.CandlestickInterval;
+import org.herman.future.model.event.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +17,6 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
     private final List<WebSocketConnection> connections = new LinkedList<>();
 
     private final WebsocketRequestClient requestImpl;
-
 
     public WebSocketFutureSubscriptionClient(FutureSubscriptionOptions options, WebsocketRequestClient requestImpl) {
         this.watchDog = null;
@@ -52,9 +52,44 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
 
     @Override
     public void subscribeAggregateTradeEvent(String symbol,
-                                             FutureSubscriptionListener<AggregateTradeEvent> subscriptionListener,
+                                             FutureSubscriptionListener<AggregateTradeEvent> callback,
                                              FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeAggregateTradeEvent(symbol, subscriptionListener, errorHandler));
+        createConnection(requestImpl.subscribeAggregateTradeEvent(symbol, callback, errorHandler));
+    }
+
+    @Override
+    public void subscribeMarkPriceEvent(String symbol, FutureSubscriptionListener<MarkPriceEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        createConnection(requestImpl.subscribeMarkPriceEvent(symbol, callback, errorHandler));
+    }
+
+    @Override
+    public void subscribeCandlestickEvent(String symbol, CandlestickInterval interval, FutureSubscriptionListener<CandlestickEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        createConnection(requestImpl.subscribeCandlestickEvent(symbol, interval, callback, errorHandler));
+    }
+
+    @Override
+    public void subscribeSymbolMiniTickerEvent(String symbol, FutureSubscriptionListener<SymbolMiniTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        createConnection(requestImpl.subscribeSymbolMiniTickerEvent(symbol, callback, errorHandler));
+    }
+
+    @Override
+    public void subscribeAllMiniTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+        createConnection(requestImpl.subscribeAllMiniTickerEvent(callback, errorHandler));
+    }
+
+    @Override
+    public void subscribeSymbolBookTickerEvent(String symbol, FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        createConnection(requestImpl.subscribeSymbolBookTickerEvent(symbol, callback, errorHandler));
+    }
+
+    @Override
+    public void subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        createConnection(requestImpl.subscribeAllBookTickerEvent(callback, errorHandler));
+    }
+
+    @Override
+    public void subscribeBookDepthEvent(String symbol, Integer limit, FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        createConnection(requestImpl.subscribeBookDepthEvent(symbol, limit, callback, errorHandler));
     }
 
 }

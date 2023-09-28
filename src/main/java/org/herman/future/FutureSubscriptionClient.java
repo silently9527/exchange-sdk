@@ -1,6 +1,9 @@
 package org.herman.future;
 
-import org.herman.future.model.event.AggregateTradeEvent;
+import org.herman.future.model.enums.CandlestickInterval;
+import org.herman.future.model.event.*;
+
+import java.util.List;
 
 /***
  * The subscription client interface, it is used for subscribing any market data
@@ -12,37 +15,34 @@ public interface FutureSubscriptionClient {
 
     void unsubscribeAll();
 
-    void subscribeAggregateTradeEvent(String symbol,
-                                      FutureSubscriptionListener<AggregateTradeEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+    void subscribeAggregateTradeEvent(String symbol, FutureSubscriptionListener<AggregateTradeEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 
-//    void subscribeMarkPriceEvent(String symbol,
-//            FutureSubscriptionListener<MarkPriceEvent> callback, FutureSubscriptionErrorHandler errorHandler);
-//
-//    void subscribeCandlestickEvent(String symbol, CandlestickInterval interval,
-//            FutureSubscriptionListener<CandlestickEvent> callback, FutureSubscriptionErrorHandler errorHandler);
-//
-//    void subscribeSymbolMiniTickerEvent(String symbol,
-//            FutureSubscriptionListener<SymbolMiniTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
-//
-//    void subscribeAllMiniTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
-//
-//    void subscribeSymbolTickerEvent(String symbol,
+    void subscribeMarkPriceEvent(String symbol, FutureSubscriptionListener<MarkPriceEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    void subscribeCandlestickEvent(String symbol, CandlestickInterval interval, FutureSubscriptionListener<CandlestickEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    //最新成交价
+    void subscribeSymbolMiniTickerEvent(String symbol, FutureSubscriptionListener<SymbolMiniTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    void subscribeAllMiniTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    //    void subscribeSymbolTickerEvent(String symbol,
 //            FutureSubscriptionListener<SymbolTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 //
 //    void subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
-//
-//    void subscribeSymbolBookTickerEvent(String symbol,
-//            FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
-//
-//    void subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
-//
+
+    void subscribeSymbolBookTickerEvent(String symbol, FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    void subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+
 //    void subscribeSymbolLiquidationOrderEvent(String symbol,
 //            FutureSubscriptionListener<LiquidationOrderEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 //
 //    void subscribeAllLiquidationOrderEvent(FutureSubscriptionListener<LiquidationOrderEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 //
-//    void subscribeBookDepthEvent(String symbol, Integer limit,
-//            FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+    //limit: 5 10 20
+    void subscribeBookDepthEvent(String symbol, Integer limit,
+                                 FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 //
 //    void subscribeDiffDepthEvent(String symbol,
 //            FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler);

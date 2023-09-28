@@ -13,15 +13,7 @@ public class CandlestickEvent {
 
     private String symbol;
 
-    private Long startTime;
-
-    private Long closeTime;
-
-    private String interval;
-
-    private Long firstTradeId;
-
-    private Long lastTradeId;
+    private Long openTime;
 
     private BigDecimal open;
 
@@ -33,17 +25,15 @@ public class CandlestickEvent {
 
     private BigDecimal volume;
 
-    private Long numTrades;
-
-    private Boolean isClosed;
-
     private BigDecimal quoteAssetVolume;
 
-    private BigDecimal takerBuyBaseAssetVolume;
+    public Long getOpenTime() {
+        return openTime;
+    }
 
-    private BigDecimal takerBuyQuoteAssetVolume;
-
-    private Long ignore;
+    public void setOpenTime(Long openTime) {
+        this.openTime = openTime;
+    }
 
     public String getEventType() {
         return eventType;
@@ -67,46 +57,6 @@ public class CandlestickEvent {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
-    }
-
-    public Long getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Long startTime) {
-        this.startTime = startTime;
-    }
-
-    public Long getCloseTime() {
-        return closeTime;
-    }
-
-    public void setCloseTime(Long closeTime) {
-        this.closeTime = closeTime;
-    }
-
-    public String getInterval() {
-        return interval;
-    }
-
-    public void setInterval(String interval) {
-        this.interval = interval;
-    }
-
-    public Long getFirstTradeId() {
-        return firstTradeId;
-    }
-
-    public void setFirstTradeId(Long firstTradeId) {
-        this.firstTradeId = firstTradeId;
-    }
-
-    public Long getLastTradeId() {
-        return lastTradeId;
-    }
-
-    public void setLastTradeId(Long lastTradeId) {
-        this.lastTradeId = lastTradeId;
     }
 
     public BigDecimal getOpen() {
@@ -149,22 +99,6 @@ public class CandlestickEvent {
         this.volume = volume;
     }
 
-    public Long getNumTrades() {
-        return numTrades;
-    }
-
-    public void setNumTrades(Long numTrades) {
-        this.numTrades = numTrades;
-    }
-
-    public Boolean getIsClosed() {
-        return isClosed;
-    }
-
-    public void setIsClosed(Boolean isClosed) {
-        this.isClosed = isClosed;
-    }
-
     public BigDecimal getQuoteAssetVolume() {
         return quoteAssetVolume;
     }
@@ -173,40 +107,20 @@ public class CandlestickEvent {
         this.quoteAssetVolume = quoteAssetVolume;
     }
 
-    public BigDecimal getTakerBuyBaseAssetVolume() {
-        return takerBuyBaseAssetVolume;
-    }
-
-    public void setTakerBuyBaseAssetVolume(BigDecimal takerBuyBaseAssetVolume) {
-        this.takerBuyBaseAssetVolume = takerBuyBaseAssetVolume;
-    }
-
-    public BigDecimal getTakerBuyQuoteAssetVolume() {
-        return takerBuyQuoteAssetVolume;
-    }
-
-    public void setTakerBuyQuoteAssetVolume(BigDecimal takerBuyQuoteAssetVolume) {
-        this.takerBuyQuoteAssetVolume = takerBuyQuoteAssetVolume;
-    }
-
-    public Long getIgnore() {
-        return ignore;
-    }
-
-    public void setIgnore(Long ignore) {
-        this.ignore = ignore;
-    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("eventType", eventType)
-                .append("eventTime", eventTime).append("symbol", symbol).append("startTime", startTime)
-                .append("closeTime", closeTime).append("symbol", symbol).append("interval", interval)
-                .append("firstTradeId", firstTradeId).append("lastTradeId", lastTradeId).append("open", open)
-                .append("close", close).append("high", high).append("low", low).append("volume", volume)
-                .append("numTrades", numTrades).append("isClosed", isClosed)
-                .append("quoteAssetVolume", quoteAssetVolume).append("takerBuyBaseAssetVolume", takerBuyBaseAssetVolume)
-                .append("takerBuyQuoteAssetVolume", takerBuyQuoteAssetVolume).append("ignore", ignore).toString();
+        return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE)
+                .append("eventType", eventType)
+                .append("eventTime", eventTime)
+                .append("symbol", symbol)
+                .append("open", open)
+                .append("close", close)
+                .append("high", high)
+                .append("low", low)
+                .append("volume", volume)
+                .append("quoteAssetVolume", quoteAssetVolume)
+                .toString();
     }
 
 }
