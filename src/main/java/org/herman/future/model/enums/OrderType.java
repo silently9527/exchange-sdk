@@ -16,21 +16,21 @@ public enum OrderType {
     TAKE_PROFIT_MARKET("TAKE_PROFIT_MARKET"),
     INVALID(null);
 
-  private final String code;
+    private final String code;
 
-  OrderType(String code) {
-    this.code = code;
-  }
+    OrderType(String code) {
+        this.code = code;
+    }
 
-  @Override
-  public String toString() {
-    return code;
-  }
+    @Override
+    public String toString() {
+        return code;
+    }
 
-  private static final EnumLookup<OrderType> lookup = new EnumLookup<>(OrderType.class);
+    private static final EnumLookup<OrderType> lookup = new EnumLookup<>(OrderType.class);
 
-  public static OrderType lookup(String name) {
-    return lookup.lookup(name);
-  }
+    public static OrderType lookup(String name) {
+        return lookup.lookup(name);
+    }
 
 }

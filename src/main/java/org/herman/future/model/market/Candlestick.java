@@ -19,17 +19,7 @@ public class Candlestick {
 
     private BigDecimal volume;
 
-    private Long closeTime;
-
     private BigDecimal quoteAssetVolume;
-
-    private Integer numTrades;
-
-    private BigDecimal takerBuyBaseAssetVolume;
-
-    private BigDecimal takerBuyQuoteAssetVolume;
-
-    private BigDecimal ignore;
 
     public Long getOpenTime() {
         return openTime;
@@ -79,14 +69,6 @@ public class Candlestick {
         this.volume = volume;
     }
 
-    public Long getCloseTime() {
-        return closeTime;
-    }
-
-    public void setCloseTime(Long closeTime) {
-        this.closeTime = closeTime;
-    }
-
     public BigDecimal getQuoteAssetVolume() {
         return quoteAssetVolume;
     }
@@ -95,44 +77,11 @@ public class Candlestick {
         this.quoteAssetVolume = quoteAssetVolume;
     }
 
-    public Integer getNumTrades() {
-        return numTrades;
-    }
-
-    public void setNumTrades(Integer numTrades) {
-        this.numTrades = numTrades;
-    }
-
-    public BigDecimal getTakerBuyBaseAssetVolume() {
-        return takerBuyBaseAssetVolume;
-    }
-
-    public void setTakerBuyBaseAssetVolume(BigDecimal takerBuyBaseAssetVolume) {
-        this.takerBuyBaseAssetVolume = takerBuyBaseAssetVolume;
-    }
-
-    public BigDecimal getTakerBuyQuoteAssetVolume() {
-        return takerBuyQuoteAssetVolume;
-    }
-
-    public void setTakerBuyQuoteAssetVolume(BigDecimal takerBuyQuoteAssetVolume) {
-        this.takerBuyQuoteAssetVolume = takerBuyQuoteAssetVolume;
-    }
-
-    public BigDecimal getIgnore() {
-        return ignore;
-    }
-
-    public void setIgnore(BigDecimal ignore) {
-        this.ignore = ignore;
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("openTime", openTime)
                 .append("open", open).append("high", high).append("low", low).append("close", close)
-                .append("volume", volume).append("closeTime", closeTime).append("quoteAssetVolume", quoteAssetVolume)
-                .append("numTrades", numTrades).append("takerBuyBaseAssetVolume", takerBuyBaseAssetVolume)
-                .append("takerBuyQuoteAssetVolume", takerBuyQuoteAssetVolume).append("ignore", ignore).toString();
+                .append("volume", volume).append("quoteAssetVolume", quoteAssetVolume).toString();
     }
 }

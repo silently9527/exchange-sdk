@@ -4,10 +4,7 @@ import org.herman.future.FutureRequestClient;
 import org.herman.future.RestApiInvoker;
 import org.herman.future.model.ResponseResult;
 import org.herman.future.model.enums.*;
-import org.herman.future.model.market.Candlestick;
-import org.herman.future.model.market.ExchangeInformation;
-import org.herman.future.model.market.FundingRate;
-import org.herman.future.model.market.MarkPrice;
+import org.herman.future.model.market.*;
 import org.herman.future.model.trade.*;
 
 import java.math.BigDecimal;
@@ -25,6 +22,16 @@ public class SyncFutureRequestClientImpl implements FutureRequestClient {
     @Override
     public ExchangeInformation getExchangeInformation() {
         return RestApiInvoker.callSync(requestImpl.getExchangeInformation());
+    }
+
+    @Override
+    public OrderBook getOrderBook(String symbol, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getOrderBook(symbol, limit));
+    }
+
+    @Override
+    public List<Trade> getRecentTrades(String symbol, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getRecentTrades(symbol, limit));
     }
 
     @Override
@@ -75,6 +82,11 @@ public class SyncFutureRequestClientImpl implements FutureRequestClient {
     }
 
     @Override
+    public List<Order> getAllOrders(String symbol, String formId, Long startTime, Long endTime, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getAllOrders(symbol, formId, startTime, endTime, limit));
+    }
+
+    @Override
     public List<AccountBalance> getBalance() {
         return RestApiInvoker.callSync(requestImpl.getBalance());
     }
@@ -86,12 +98,12 @@ public class SyncFutureRequestClientImpl implements FutureRequestClient {
 
     @Override
     public Leverage changeInitialLeverage(String symbol, Integer leverage) {
-        return RestApiInvoker.callSync(requestImpl.changeInitialLeverage(symbol,leverage));
+        return RestApiInvoker.callSync(requestImpl.changeInitialLeverage(symbol, leverage));
     }
 
     @Override
-    public List<PositionRisk> getPositionRisk() {
-        return null;
+    public List<PositionRisk> getPositionRisk(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol));
     }
 
 

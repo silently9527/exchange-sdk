@@ -2,14 +2,8 @@ package org.herman.future.impl;
 
 import org.herman.future.model.ResponseResult;
 import org.herman.future.model.enums.*;
-import org.herman.future.model.market.Candlestick;
-import org.herman.future.model.market.ExchangeInformation;
-import org.herman.future.model.market.FundingRate;
-import org.herman.future.model.market.MarkPrice;
-import org.herman.future.model.trade.AccountBalance;
-import org.herman.future.model.trade.AccountInformation;
-import org.herman.future.model.trade.Leverage;
-import org.herman.future.model.trade.Order;
+import org.herman.future.model.market.*;
+import org.herman.future.model.trade.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,4 +34,12 @@ public interface RestApiRequestClient {
     RestApiRequest<List<Order>> getOpenOrders(String symbol);
 
     RestApiRequest<Leverage> changeInitialLeverage(String symbol, Integer leverage);
+
+    RestApiRequest<OrderBook> getOrderBook(String symbol, Integer limit);
+
+    RestApiRequest<List<Order>> getAllOrders(String symbol, String formId, Long startTime, Long endTime, Integer limit);
+
+    RestApiRequest<List<PositionRisk>> getPositionRisk(String symbol);
+
+    RestApiRequest<List<Trade>> getRecentTrades(String symbol, Integer limit);
 }

@@ -37,45 +37,7 @@ public abstract class AbstractRestApiRequestClient implements RestApiRequestClie
         }
     }
 
-    protected Request createRequestWithSignature(String url, String address, UrlParamsBuilder builder) {
-        if (builder == null) {
-            throw new ApiException(ApiException.RUNTIME_ERROR,
-                    "[Invoking] Builder is null when create request with Signature");
-        }
-        String requestUrl = url + address;
-        new ApiSignature().createSignature(apiKey, secretKey, builder);
-        if (builder.hasPostParam()) {
-            requestUrl += builder.buildUrl();
-            return new Request.Builder().url(requestUrl).post(builder.buildPostBody())
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("X-MBX-APIKEY", apiKey)
-                    .addHeader("client_SDK_Version", getClientSdkVersion())
-                    .build();
-        } else if (builder.checkMethod("PUT")) {
-            requestUrl += builder.buildUrl();
-            return new Request.Builder().url(requestUrl)
-                    .put(builder.buildPostBody())
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .addHeader("X-MBX-APIKEY", apiKey)
-                    .addHeader("client_SDK_Version", getClientSdkVersion())
-                    .build();
-        } else if (builder.checkMethod("DELETE")) {
-            requestUrl += builder.buildUrl();
-            return new Request.Builder().url(requestUrl)
-                    .delete()
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .addHeader("client_SDK_Version", getClientSdkVersion())
-                    .addHeader("X-MBX-APIKEY", apiKey)
-                    .build();
-        } else {
-            requestUrl += builder.buildUrl();
-            return new Request.Builder().url(requestUrl)
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .addHeader("client_SDK_Version", getClientSdkVersion())
-                    .addHeader("X-MBX-APIKEY", apiKey)
-                    .build();
-        }
-    }
+    protected abstract Request createRequestWithSignature(String url, String address, UrlParamsBuilder builder);
 
     protected Request createRequestByPostWithSignature(String address, UrlParamsBuilder builder) {
         return createRequestWithSignature(serverUrl, address, builder.setMethod("POST"));

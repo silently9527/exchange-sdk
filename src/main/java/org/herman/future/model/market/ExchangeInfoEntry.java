@@ -2,40 +2,36 @@ package org.herman.future.model.market;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.herman.Constants;
+import org.herman.future.model.enums.FutureStatus;
+import org.herman.future.model.enums.FutureType;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
 public class ExchangeInfoEntry {
 
     private String symbol;
+    private String baseAsset;           // 标的资产
+    private String quoteAsset;          // 报价资产
+    private Long onboardDate;           // 上线日期
+    private FutureStatus status;
+    private FutureType futureType;
+    private BigDecimal maxPrice;        // 价格上限, 最大价格
+    private BigDecimal minPrice;        // 价格下限, 最小价格
+    private BigDecimal tickSize;        // 订单最小价格间隔
+    private BigDecimal maxQty;          // 数量上限, 最大数量
+    private BigDecimal minQty;          // 数量下限, 最小数量
+    private BigDecimal stepSize;        // 订单最小数量间隔
+    private Integer maxNumOrders;       // 最多订单数限制
+    private BigDecimal minNotional;     // 最小名义价值
+    private BigDecimal multiplier;
 
-    private String status;
+    public BigDecimal getMultiplier() {
+        return multiplier;
+    }
 
-    private BigDecimal maintMarginPercent;
-
-    private BigDecimal requiredMarginPercent;
-
-    private String contractType;
-    private String baseAsset;
-    private Long onboardDate;
-
-    private String quoteAsset;
-
-    private Long pricePrecision;
-
-    private Long quantityPrecision;
-
-    private Long baseAssetPrecision;
-
-    private Long quotePrecision;
-
-    private List<String> orderTypes;
-
-    private List<String> timeInForce;
-
-    private List<List<Map<String, String>>> filters;
+    public void setMultiplier(BigDecimal multiplier) {
+        this.multiplier = multiplier;
+    }
 
     public Long getOnboardDate() {
         return onboardDate;
@@ -45,12 +41,20 @@ public class ExchangeInfoEntry {
         this.onboardDate = onboardDate;
     }
 
-    public String getContractType() {
-        return contractType;
+    public BigDecimal getStepSize() {
+        return stepSize;
     }
 
-    public void setContractType(String contractType) {
-        this.contractType = contractType;
+    public void setStepSize(BigDecimal stepSize) {
+        this.stepSize = stepSize;
+    }
+
+    public FutureType getFutureType() {
+        return futureType;
+    }
+
+    public void setFutureType(FutureType futureType) {
+        this.futureType = futureType;
     }
 
     public String getSymbol() {
@@ -61,28 +65,12 @@ public class ExchangeInfoEntry {
         this.symbol = symbol;
     }
 
-    public String getStatus() {
+    public FutureStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(FutureStatus status) {
         this.status = status;
-    }
-
-    public BigDecimal getMaintMarginPercent() {
-        return maintMarginPercent;
-    }
-
-    public void setMaintMarginPercent(BigDecimal maintMarginPercent) {
-        this.maintMarginPercent = maintMarginPercent;
-    }
-
-    public BigDecimal getRequiredMarginPercent() {
-        return requiredMarginPercent;
-    }
-
-    public void setRequiredMarginPercent(BigDecimal requiredMarginPercent) {
-        this.requiredMarginPercent = requiredMarginPercent;
     }
 
     public String getBaseAsset() {
@@ -101,70 +89,76 @@ public class ExchangeInfoEntry {
         this.quoteAsset = quoteAsset;
     }
 
-    public Long getPricePrecision() {
-        return pricePrecision;
+    public BigDecimal getMaxPrice() {
+        return maxPrice;
     }
 
-    public void setPricePrecision(Long pricePrecision) {
-        this.pricePrecision = pricePrecision;
+    public void setMaxPrice(BigDecimal maxPrice) {
+        this.maxPrice = maxPrice;
     }
 
-    public Long getQuantityPrecision() {
-        return quantityPrecision;
+    public BigDecimal getMinPrice() {
+        return minPrice;
     }
 
-    public void setQuantityPrecision(Long quantityPrecision) {
-        this.quantityPrecision = quantityPrecision;
+    public void setMinPrice(BigDecimal minPrice) {
+        this.minPrice = minPrice;
     }
 
-    public Long getBaseAssetPrecision() {
-        return baseAssetPrecision;
+    public BigDecimal getTickSize() {
+        return tickSize;
     }
 
-    public void setBaseAssetPrecision(Long baseAssetPrecision) {
-        this.baseAssetPrecision = baseAssetPrecision;
+    public void setTickSize(BigDecimal tickSize) {
+        this.tickSize = tickSize;
     }
 
-    public Long getQuotePrecision() {
-        return quotePrecision;
+    public BigDecimal getMaxQty() {
+        return maxQty;
     }
 
-    public void setQuotePrecision(Long quotePrecision) {
-        this.quotePrecision = quotePrecision;
+    public void setMaxQty(BigDecimal maxQty) {
+        this.maxQty = maxQty;
     }
 
-    public List<String> getOrderTypes() {
-        return orderTypes;
+    public BigDecimal getMinQty() {
+        return minQty;
     }
 
-    public void setOrderTypes(List<String> orderTypes) {
-        this.orderTypes = orderTypes;
+    public void setMinQty(BigDecimal minQty) {
+        this.minQty = minQty;
     }
 
-    public List<String> getTimeInForce() {
-        return timeInForce;
+    public Integer getMaxNumOrders() {
+        return maxNumOrders;
     }
 
-    public void setTimeInForce(List<String> timeInForce) {
-        this.timeInForce = timeInForce;
+    public void setMaxNumOrders(Integer maxNumOrders) {
+        this.maxNumOrders = maxNumOrders;
     }
 
-    public List<List<Map<String, String>>> getFilters() {
-        return filters;
+    public BigDecimal getMinNotional() {
+        return minNotional;
     }
 
-    public void setFilters(List<List<Map<String, String>>> filters) {
-        this.filters = filters;
+    public void setMinNotional(BigDecimal minNotional) {
+        this.minNotional = minNotional;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("symbol", symbol)
-                .append("status", status).append("maintMarginPercent", maintMarginPercent)
-                .append("requiredMarginPercent", requiredMarginPercent).append("baseAsset", baseAsset)
-                .append("quoteAsset", quoteAsset).append("pricePrecision", pricePrecision)
-                .append("quantityPrecision", quantityPrecision).append("baseAssetPrecision", baseAssetPrecision)
-                .append("quotePrecision", quotePrecision).append("orderTypes", orderTypes)
-                .append("timeInForce", timeInForce).append("filters", filters).toString();
+        return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE)
+                .append("symbol", symbol)
+                .append("status", status)
+                .append("baseAsset", baseAsset)
+                .append("quoteAsset", quoteAsset)
+                .append("onboardDate", onboardDate)
+                .append("maxPrice", maxPrice)
+                .append("minPrice", minPrice)
+                .append("tickSize", tickSize)
+                .append("minNotional", minNotional)
+                .append("minQty", minQty)
+                .append("maxQty", maxQty)
+                .toString();
     }
 }

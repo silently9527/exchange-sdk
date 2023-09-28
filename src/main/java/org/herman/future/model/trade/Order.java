@@ -2,6 +2,10 @@ package org.herman.future.model.trade;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.herman.Constants;
+import org.herman.future.model.enums.OrderSide;
+import org.herman.future.model.enums.OrderStatus;
+import org.herman.future.model.enums.OrderType;
+import org.herman.future.model.enums.PositionSide;
 
 import java.math.BigDecimal;
 
@@ -9,9 +13,9 @@ public class Order {
 
     private String clientOrderId;
 
-    private BigDecimal cumQuote;
+    private BigDecimal cumQuote; // 成交金额
 
-    private BigDecimal executedQty;
+    private BigDecimal executedQty; // 成交量
 
     private Long orderId;
 
@@ -21,11 +25,11 @@ public class Order {
 
     private Boolean reduceOnly;
 
-    private String side;
+    private OrderSide side;
 
-    private String positionSide;
+    private PositionSide positionSide;
 
-    private String status;
+    private OrderStatus status;
 
     private BigDecimal stopPrice;
 
@@ -33,7 +37,7 @@ public class Order {
 
     private String timeInForce;
 
-    private String type;
+    private OrderType type;
 
     private Long time;
     private Long updateTime;
@@ -104,27 +108,27 @@ public class Order {
         this.reduceOnly = reduceOnly;
     }
 
-    public String getSide() {
+    public OrderSide getSide() {
         return side;
     }
 
-    public void setSide(String side) {
+    public void setSide(OrderSide side) {
         this.side = side;
     }
 
-    public String getPositionSide() {
+    public PositionSide getPositionSide() {
         return positionSide;
     }
 
-    public void setPositionSide(String positionSide) {
+    public void setPositionSide(PositionSide positionSide) {
         this.positionSide = positionSide;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 
@@ -152,11 +156,11 @@ public class Order {
         this.timeInForce = timeInForce;
     }
 
-    public String getType() {
+    public OrderType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(OrderType type) {
         this.type = type;
     }
 

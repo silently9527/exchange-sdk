@@ -23,7 +23,7 @@ public class Constants {
          * REST API base URL.
          */
         public static final String BINANCE_REST_API_BASE_URL = "https://fapi.binance.com";
-        public static final String OKEX_REST_API_BASE_URL = "https://www.okx.com/";
+        public static final String OKEX_REST_API_BASE_URL = "https://www.okx.com";
 
         /**
          * Streaming API base URL.

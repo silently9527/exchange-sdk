@@ -17,6 +17,7 @@ public class UrlParamsBuilder {
 
         final Map<String, String> map = new LinkedHashMap<>();
         final Map<String, List> stringListMap = new HashMap<>();
+        final List list = new ArrayList();
 
         void put(String name, String value) {
 
@@ -47,6 +48,9 @@ public class UrlParamsBuilder {
             put(name, value != null ? value.toPlainString() : null);
         }
 
+        void put(List list) {
+            this.list.addAll(list);
+        }
     }
 
     private static final MediaType JSON_TYPE = MediaType.parse("application/json");
@@ -107,6 +111,11 @@ public class UrlParamsBuilder {
         return this;
     }
 
+    public UrlParamsBuilder putToPost(List list) {
+        postBodyMap.put(list);
+        return this;
+    }
+
     public <T extends Enum> UrlParamsBuilder putToPost(String name, T value) {
         if (value != null) {
             postBodyMap.put(name, value.toString());
@@ -142,6 +151,9 @@ public class UrlParamsBuilder {
     public String buildUrl() {
         Map<String, String> map = new LinkedHashMap<>(paramsMap.map);
         StringBuilder head = new StringBuilder("");
+        if (map.isEmpty()) {
+            return "";
+        }
         return "?" + AppendUrl(map, head);
 
     }
@@ -166,6 +178,9 @@ public class UrlParamsBuilder {
     }
 
     public RequestBody buildPostBody() {
+        if (!postBodyMap.list.isEmpty()) {
+            return RequestBody.create(JSON_TYPE, JSON.toJSONString(postBodyMap.list));
+        }
         if (postBodyMap.stringListMap.isEmpty()) {
             if (postBodyMap.map.isEmpty()) {
                 return RequestBody.create(JSON_TYPE, "");
@@ -173,8 +188,7 @@ public class UrlParamsBuilder {
                 return RequestBody.create(JSON_TYPE, JSON.toJSONString(postBodyMap.map));
             }
         } else {
-            return RequestBody.create(JSON_TYPE, JSON.toJSONString(postBodyMap.stringListMap));
-
+            return RequestBody.create(JSON_TYPE, JSON.toJSONString(postBodyMap.stringListMap.values()));
         }
     }
 
@@ -184,6 +198,27 @@ public class UrlParamsBuilder {
 
     public String buildUrlToJsonString() {
         return JSON.toJSONString(paramsMap.map);
+    }
+
+    public String buildBodToJsonString() {
+        if (!postBodyMap.list.isEmpty()) {
+            return JSON.toJSONString(postBodyMap.list);
+        }
+
+        if (postBodyMap.stringListMap.isEmpty()) {
+            if (postBodyMap.map.isEmpty()) {
+                return "";
+            } else {
+                return JSON.toJSONString(postBodyMap.map);
+            }
+        } else {
+            return JSON.toJSONString(postBodyMap.stringListMap);
+
+        }
+    }
+
+    public String getMethod() {
+        return method;
     }
 
     /**

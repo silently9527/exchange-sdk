@@ -2,6 +2,7 @@ package org.herman.future.model.market;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.herman.Constants;
+import org.herman.future.model.enums.OrderSide;
 
 import java.math.BigDecimal;
 
@@ -13,11 +14,19 @@ public class Trade {
 
     private BigDecimal qty;
 
-    private BigDecimal quoteQty;
+    private BigDecimal quoteQty;  // 成交额
 
     private Long time;
 
-    private Boolean isBuyerMaker;
+    private OrderSide side;
+
+    public OrderSide getSide() {
+        return side;
+    }
+
+    public void setSide(OrderSide side) {
+        this.side = side;
+    }
 
     public Long getId() {
         return id;
@@ -59,18 +68,11 @@ public class Trade {
         this.time = time;
     }
 
-    public Boolean getIsBuyerMaker() {
-        return isBuyerMaker;
-    }
-
-    public void setIsBuyerMaker(Boolean isBuyerMaker) {
-        this.isBuyerMaker = isBuyerMaker;
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("id", id)
                 .append("price", price).append("qty", qty).append("quoteQty", quoteQty).append("time", time)
-                .append("isBuyerMaker", isBuyerMaker).toString();
+                .append("side", side).toString();
     }
 }

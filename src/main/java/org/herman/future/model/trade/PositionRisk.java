@@ -2,6 +2,8 @@ package org.herman.future.model.trade;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.herman.Constants;
+import org.herman.future.model.enums.MarginType;
+import org.herman.future.model.enums.PositionSide;
 
 import java.math.BigDecimal;
 
@@ -11,7 +13,7 @@ public class PositionRisk {
 
     private BigDecimal leverage;
 
-    private Double maxNotionalValue;
+    private Double maxNotionalValue;  // 当前杠杆倍数允许的名义价值上限
 
     private BigDecimal liquidationPrice;
 
@@ -21,13 +23,23 @@ public class PositionRisk {
 
     private String symbol;
 
-    private String isolatedMargin;
+    private BigDecimal isolatedMargin;  // 逐仓保证金
 
-    private String positionSide;
+    private PositionSide positionSide;
 
-    private String marginType;
+    private MarginType marginType;
 
     private BigDecimal unrealizedProfit;
+
+    private Long updateTime;
+
+    public Long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Long updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public BigDecimal getEntryPrice() {
         return entryPrice;
@@ -93,27 +105,27 @@ public class PositionRisk {
         this.unrealizedProfit = unrealizedProfit;
     }
 
-    public String getIsolatedMargin() {
+    public BigDecimal getIsolatedMargin() {
         return isolatedMargin;
     }
 
-    public void setIsolatedMargin(String isolatedMargin) {
+    public void setIsolatedMargin(BigDecimal isolatedMargin) {
         this.isolatedMargin = isolatedMargin;
     }
 
-    public String getPositionSide() {
+    public PositionSide getPositionSide() {
         return positionSide;
     }
 
-    public void setPositionSide(String positionSide) {
+    public void setPositionSide(PositionSide positionSide) {
         this.positionSide = positionSide;
     }
 
-    public String getMarginType() {
+    public MarginType getMarginType() {
         return marginType;
     }
 
-    public void setMarginType(String marginType) {
+    public void setMarginType(MarginType marginType) {
         this.marginType = marginType;
     }
 

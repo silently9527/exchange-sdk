@@ -23,11 +23,11 @@ import java.math.BigDecimal;
 public class AccountBalance {
 
     private String asset;
-    private BigDecimal balance;
-    private BigDecimal crossWalletBalance;
-    private BigDecimal crossUnPnl;
-    private BigDecimal availableBalance;
-    private BigDecimal maxWithdrawAmount;
+    private BigDecimal balance;             // 总余额
+    private BigDecimal crossWalletBalance;  // 全仓余额
+    private BigDecimal crossUnPnl;          // 全仓持仓未实现盈亏
+    private BigDecimal availableBalance;    // 下单可用余额
+    private BigDecimal maxWithdrawAmount;   // 最大可转出余额
     private Boolean marginAvailable;
 
     public String getAsset() {
