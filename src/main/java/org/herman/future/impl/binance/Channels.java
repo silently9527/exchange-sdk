@@ -1,4 +1,4 @@
-package org.herman.future.impl;
+package org.herman.future.impl.binance;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;

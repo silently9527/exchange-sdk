@@ -29,23 +29,9 @@ public class Constants {
          * Streaming API base URL.
          */
         public static final String BINANCE_WS_API_BASE_URL = "wss://fstream.binance.com/stream";
-
-        /**
-         * HTTP Header to be used for API-KEY authentication.
-         */
-        public static final String API_KEY_HEADER = "X-MBX-APIKEY";
-
-        /**
-         * Decorator to indicate that an endpoint requires an API key.
-         */
-        public static final String ENDPOINT_SECURITY_TYPE_APIKEY = "APIKEY";
-        public static final String ENDPOINT_SECURITY_TYPE_APIKEY_HEADER = ENDPOINT_SECURITY_TYPE_APIKEY + ": #";
-
-        /**
-         * Decorator to indicate that an endpoint requires a signature.
-         */
-        public static final String ENDPOINT_SECURITY_TYPE_SIGNED = "SIGNED";
-        public static final String ENDPOINT_SECURITY_TYPE_SIGNED_HEADER = ENDPOINT_SECURITY_TYPE_SIGNED + ": #";
+        public static final String OKEX_PUBLIC_WS_API_BASE_URL = "wss://ws.okx.com:8443/ws/v5/public";
+        public static final String OKEX_PRIVATE_WS_API_BASE_URL = "wss://ws.okx.com:8443/ws/v5/private";
+        public static final String OKEX_BUSINESS_WS_API_BASE_URL = "wss://ws.okx.com:8443/ws/v5/business";
 
         /**
          * Default receiving window.

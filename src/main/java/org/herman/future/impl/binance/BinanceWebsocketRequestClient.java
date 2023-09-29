@@ -2,7 +2,6 @@ package org.herman.future.impl.binance;
 
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
-import org.herman.future.impl.Channels;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.model.enums.CandlestickInterval;
@@ -55,7 +54,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<MarkPriceEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Mark Price for " + symbol + "***";
-        request.connectionHandler = (connection) -> connection.send(Channels.markPriceChannel(symbol));
+        request.connectionHandler = (connection) -> connection.send(Channels.markPriceChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
             JsonWrapper data = jsonWrapper.getJsonObject("data");
@@ -78,7 +77,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<CandlestickEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Candlestick for " + symbol + "***";
-        request.connectionHandler = (connection) -> connection.send(Channels.candlestickChannel(symbol, interval));
+        request.connectionHandler = (connection) -> connection.send(Channels.candlestickChannel(symbol.toLowerCase(), interval));
 
         request.jsonParser = (jsonWrapper) -> {
             CandlestickEvent result = new CandlestickEvent();
@@ -89,6 +88,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
             result.setEventTime(data.getLong("E"));
 
             JsonWrapper jsondata = data.getJsonObject("k");
+            result.setOpenTime(jsondata.getLong("t"));
             result.setOpen(jsondata.getBigDecimal("o"));
             result.setClose(jsondata.getBigDecimal("c"));
             result.setHigh(jsondata.getBigDecimal("h"));
@@ -110,7 +110,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<OrderBookEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Partial Book Depth for " + symbol + "***";
-        request.connectionHandler = (connection) -> connection.send(Channels.bookDepthChannel(symbol, limit));
+        request.connectionHandler = (connection) -> connection.send(Channels.bookDepthChannel(symbol.toLowerCase(), limit));
 
         request.jsonParser = (jsonWrapper) -> {
             OrderBookEvent result = new OrderBookEvent();
@@ -156,7 +156,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<SymbolMiniTickerEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Individual Symbol Mini Ticker for " + symbol + "***";
-        request.connectionHandler = (connection) -> connection.send(Channels.miniTickerChannel(symbol));
+        request.connectionHandler = (connection) -> connection.send(Channels.miniTickerChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
             SymbolMiniTickerEvent result = new SymbolMiniTickerEvent();
@@ -207,7 +207,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<SymbolBookTickerEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Individual Symbol Book Ticker for " + symbol + "***";
-        request.connectionHandler = (connection) -> connection.send(Channels.bookTickerChannel(symbol));
+        request.connectionHandler = (connection) -> connection.send(Channels.bookTickerChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
             SymbolBookTickerEvent result = new SymbolBookTickerEvent();

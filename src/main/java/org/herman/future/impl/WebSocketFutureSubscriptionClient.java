@@ -29,7 +29,7 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
         if (watchDog == null) {
             watchDog = new WebSocketWatchDog(options);
         }
-        WebSocketConnection connection = new WebSocketConnection(request, watchDog, autoClose);
+        WebSocketConnection connection = new WebSocketConnection(request, options, watchDog, autoClose);
         if (!autoClose) {
             connections.add(connection);
         }

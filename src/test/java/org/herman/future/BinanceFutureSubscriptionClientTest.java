@@ -26,98 +26,14 @@ public class BinanceFutureSubscriptionClientTest {
 
         String symbol = "ETHUSDT".toLowerCase();
 
-//        subscriptionClient.subscribeAggregateTradeEvent(symbol, new FutureSubscriptionListener<AggregateTradeEvent>() {
-//            @Override
-//            public void onReceive(AggregateTradeEvent data) {
-//                System.out.println(data);
-//            }
-//        }, new FutureSubscriptionErrorHandler() {
-//            @Override
-//            public void onError(ApiException exception) {
-//                exception.printStackTrace();
-//            }
-//        });
-//        subscriptionClient.subscribeMarkPriceEvent(symbol, new FutureSubscriptionListener<MarkPriceEvent>() {
-//            @Override
-//            public void onReceive(MarkPriceEvent data) {
-//                System.out.println(data);
-//            }
-//        }, new FutureSubscriptionErrorHandler() {
-//            @Override
-//            public void onError(ApiException exception) {
-//                exception.printStackTrace();
-//            }
-//        });
-
-
-//        subscriptionClient.subscribeCandlestickEvent(symbol, CandlestickInterval.ONE_MINUTE, new FutureSubscriptionListener<CandlestickEvent>() {
-//            @Override
-//            public void onReceive(CandlestickEvent data) {
-//                System.out.println(data);
-//            }
-//        }, new FutureSubscriptionErrorHandler() {
-//            @Override
-//            public void onError(ApiException exception) {
-//            }
-//        });
-//
-
-//        subscriptionClient.subscribeBookDepthEvent(symbol, 5, new FutureSubscriptionListener<OrderBookEvent>() {
-//            @Override
-//            public void onReceive(OrderBookEvent data) {
-//                System.out.println(data);
-//            }
-//        }, new FutureSubscriptionErrorHandler() {
-//            @Override
-//            public void onError(ApiException exception) {
-//
-//            }
-//        });
-
-//        subscriptionClient.subscribeSymbolMiniTickerEvent(symbol, new FutureSubscriptionListener<SymbolMiniTickerEvent>() {
-//            @Override
-//            public void onReceive(SymbolMiniTickerEvent data) {
-//                System.out.println(data);
-//            }
-//        }, new FutureSubscriptionErrorHandler() {
-//            @Override
-//            public void onError(ApiException exception) {
-//            }
-//        });
-
-//        subscriptionClient.subscribeAllMiniTickerEvent(new FutureSubscriptionListener<List<SymbolMiniTickerEvent>>() {
-//            @Override
-//            public void onReceive(List<SymbolMiniTickerEvent> data) {
-//                System.out.println(data);
-//            }
-//        }, new FutureSubscriptionErrorHandler() {
-//            @Override
-//            public void onError(ApiException exception) {
-//            }
-//        });
-
-//        subscriptionClient.subscribeSymbolBookTickerEvent(symbol, new FutureSubscriptionListener<SymbolBookTickerEvent>() {
-//            @Override
-//            public void onReceive(SymbolBookTickerEvent data) {
-//                System.out.println(data);
-//            }
-//        }, new FutureSubscriptionErrorHandler() {
-//            @Override
-//            public void onError(ApiException exception) {
-//            }
-//        });
-
-        subscriptionClient.subscribeAllBookTickerEvent(new FutureSubscriptionListener<SymbolBookTickerEvent>() {
-            @Override
-            public void onReceive(SymbolBookTickerEvent data) {
-                System.out.println(data);
-            }
-        }, new FutureSubscriptionErrorHandler() {
-            @Override
-            public void onError(ApiException exception) {
-
-            }
-        });
+//        subscriptionClient.subscribeAggregateTradeEvent(symbol, System.out::println, null);
+//        subscriptionClient.subscribeMarkPriceEvent(symbol, System.out::println,null);
+//        subscriptionClient.subscribeCandlestickEvent(symbol, CandlestickInterval.ONE_MINUTE,System.out::println, null);
+//        subscriptionClient.subscribeBookDepthEvent(symbol, 5, System.out::println,null);
+//        subscriptionClient.subscribeSymbolMiniTickerEvent(symbol,System.out::println, null);
+//        subscriptionClient.subscribeAllMiniTickerEvent(System.out::println, null);
+//        subscriptionClient.subscribeSymbolBookTickerEvent(symbol, System.out::println,null);
+        subscriptionClient.subscribeAllBookTickerEvent(System.out::println, null);
         Thread.sleep(60000 * 10);
     }
 

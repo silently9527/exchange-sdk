@@ -2,6 +2,7 @@ package org.herman.future;
 
 import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.event.*;
+import org.herman.future.model.user.UserDataUpdateEvent;
 
 import java.util.List;
 
@@ -43,12 +44,12 @@ public interface FutureSubscriptionClient {
     //limit: 5 10 20
     void subscribeBookDepthEvent(String symbol, Integer limit,
                                  FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler);
-//
+
 //    void subscribeDiffDepthEvent(String symbol,
 //            FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler);
-//
+
 //    void subscribeUserDataEvent(String listenKey,
-//            FutureSubscriptionListener<UserDataUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+//                                FutureSubscriptionListener<UserDataUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 
 
 }
