@@ -38,4 +38,19 @@ public abstract class Channels {
         json.put("args", args);
         return json.toJSONString();
     }
+
+    public static String bookDepthChannel(String symbol) {
+        JSONObject param = new JSONObject();
+        param.put("channel", "books5");
+        param.put("instId", symbol);
+        return subscribe(param);
+    }
+
+    public static String tickerChannel(String symbol) {
+        JSONObject param = new JSONObject();
+        param.put("channel", "tickers");
+        param.put("instId", symbol);
+        return subscribe(param);
+    }
+
 }

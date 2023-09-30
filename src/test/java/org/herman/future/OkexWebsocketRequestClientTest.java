@@ -32,6 +32,8 @@ public class OkexWebsocketRequestClientTest {
 
 //        subscriptionClient.subscribeMarkPriceEvent(symbol, System.out::println, null);
 
+//        subscriptionClient.subscribeBookDepthEvent(symbol, 5, System.out::println, null);
+        subscriptionClient.subscribeSymbolTickerEvent(symbol, System.out::println, null);
 
         Thread.sleep(60000 * 10);
     }

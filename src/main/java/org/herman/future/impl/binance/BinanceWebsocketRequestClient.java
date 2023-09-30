@@ -150,13 +150,13 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<SymbolMiniTickerEvent> subscribeSymbolMiniTickerEvent(String symbol, FutureSubscriptionListener<SymbolMiniTickerEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<SymbolMiniTickerEvent> subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolMiniTickerEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<SymbolMiniTickerEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
-        request.name = "***Individual Symbol Mini Ticker for " + symbol + "***";
-        request.connectionHandler = (connection) -> connection.send(Channels.miniTickerChannel(symbol.toLowerCase()));
+        request.name = "***Individual Symbol Ticker for " + symbol + "***";
+        request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
             SymbolMiniTickerEvent result = new SymbolMiniTickerEvent();
@@ -165,7 +165,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
             result.setEventTime(data.getLong("E"));
             result.setSymbol(data.getString("s"));
             result.setPrice(data.getBigDecimal("c"));
-            result.setVolume(data.getBigDecimal("v"));
+            result.setVolume(data.getBigDecimal("Q"));
             result.setQuoteAssetVolume(data.getBigDecimal("q"));
             return result;
         };
@@ -173,13 +173,13 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<List<SymbolMiniTickerEvent>> subscribeAllMiniTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> subscriptionListener,
-                                                                                     FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<List<SymbolMiniTickerEvent>> subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> subscriptionListener,
+                                                                                 FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<List<SymbolMiniTickerEvent>> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
-        request.name = "***All Market Mini Tickers";
-        request.connectionHandler = (connection) -> connection.send(Channels.miniTickerChannel());
+        request.name = "***All Market Tickers";
+        request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel());
 
         request.jsonParser = (jsonWrapper) -> {
             List<SymbolMiniTickerEvent> result = new LinkedList<>();
@@ -190,7 +190,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 element.setEventType(item.getString("e"));
                 element.setPrice(item.getBigDecimal("c"));
                 element.setSymbol(item.getString("s"));
-                element.setVolume(item.getBigDecimal("v"));
+                element.setVolume(item.getBigDecimal("Q"));
                 element.setQuoteAssetVolume(item.getBigDecimal("q"));
                 result.add(element);
             });

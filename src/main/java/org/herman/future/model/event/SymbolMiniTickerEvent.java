@@ -15,7 +15,7 @@ public class SymbolMiniTickerEvent {
 
     private BigDecimal price;
 
-    private BigDecimal volume; //24h 成交量
+    private BigDecimal volume;
 
     private BigDecimal quoteAssetVolume; //24h 成交额
 
