@@ -2,8 +2,8 @@ package org.herman.future.impl.binance;
 
 import com.alibaba.fastjson.JSONArray;
 import okhttp3.Request;
-import org.herman.Constants;
 import org.herman.exception.ApiException;
+import org.herman.future.FutureRestApiOptions;
 import org.herman.future.impl.AbstractRestApiRequestClient;
 import org.herman.future.impl.RestApiRequest;
 import org.herman.future.model.ResponseResult;
@@ -22,10 +22,10 @@ import java.util.Objects;
 public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
 
 
-    public BinanceRestApiRequestClient(String apiKey, String secretKey) {
-        this.apiKey = apiKey;
-        this.secretKey = secretKey;
-        this.serverUrl = Constants.Future.BINANCE_REST_API_BASE_URL;
+    public BinanceRestApiRequestClient(FutureRestApiOptions options) {
+        this.apiKey = options.getApiKey();
+        this.secretKey = options.getSecretKey();
+        this.serverUrl = options.getUrl();
     }
 
     protected Request createRequestWithSignature(String url, String address, UrlParamsBuilder builder) {
@@ -688,4 +688,22 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         return "binance_futures-1.0.0-java";
     }
 
+    public RestApiRequest<String> startListenKey() {
+        RestApiRequest<String> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build();
+
+        request.request = createRequestByPostWithSignature("/fapi/v1/listenKey", builder);
+        request.jsonParser = (jsonWrapper -> jsonWrapper.getString("listenKey"));
+        return request;
+    }
+
+    public RestApiRequest<String> keepListenKey(String listenKey) {
+        RestApiRequest<String> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("listenKey", listenKey);
+
+        request.request = createRequestByPutWithSignature("/fapi/v1/listenKey", builder);
+        request.jsonParser = (jsonWrapper -> "Ok");
+        return request;
+    }
 }

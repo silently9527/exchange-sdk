@@ -16,19 +16,14 @@ public class OkexWebsocketRequestClientTest {
     public void test() throws InterruptedException {
         String symbol = "ETH-USDT-SWAP";
 
-
-        FutureSubscriptionOptions options = new FutureSubscriptionOptions();
-        options.setUri(Constants.Future.OKEX_BUSINESS_WS_API_BASE_URL);
-        WebsocketRequestClient requestImpl = new OkexWebsocketRequestClient();
-        FutureSubscriptionClient subscriptionClient = new WebSocketFutureSubscriptionClient(options, requestImpl);
+        FutureSubscriptionOptions options = new FutureSubscriptionOptions(Constants.Future.OKEX_BUSINESS_WS_API_BASE_URL, "", "");
+        FutureSubscriptionClient subscriptionClient = FutureApiInternalFactory.getInstance().createOkexFutureSubscriptionClient(options);
 
         subscriptionClient.subscribeCandlestickEvent(symbol, CandlestickInterval.ONE_MINUTE, System.out::println, null);
 
 
-        options = new FutureSubscriptionOptions();
-        options.setUri(Constants.Future.OKEX_PUBLIC_WS_API_BASE_URL);
-        requestImpl = new OkexWebsocketRequestClient();
-        subscriptionClient = new WebSocketFutureSubscriptionClient(options, requestImpl);
+        options = new FutureSubscriptionOptions(Constants.Future.OKEX_PUBLIC_WS_API_BASE_URL, "", "");
+        subscriptionClient = FutureApiInternalFactory.getInstance().createOkexFutureSubscriptionClient(options);
 
 //        subscriptionClient.subscribeMarkPriceEvent(symbol, System.out::println, null);
 

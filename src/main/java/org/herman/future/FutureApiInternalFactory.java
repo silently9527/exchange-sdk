@@ -1,8 +1,13 @@
 package org.herman.future;
 
 import org.herman.future.impl.RestApiRequestClient;
-import org.herman.future.impl.SyncFutureRequestClientImpl;
+import org.herman.future.impl.FutureRestApiClientImpl;
+import org.herman.future.impl.WebSocketFutureSubscriptionClient;
+import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.impl.binance.BinanceRestApiRequestClient;
+import org.herman.future.impl.binance.BinanceWebsocketRequestClient;
+import org.herman.future.impl.okex.OkexRestApiRequestClient;
+import org.herman.future.impl.okex.OkexWebsocketRequestClient;
 
 public final class FutureApiInternalFactory {
 
@@ -15,22 +20,24 @@ public final class FutureApiInternalFactory {
     private FutureApiInternalFactory() {
     }
 
-    public FutureRequestClient createBinanceFutureRequestClient(String apiKey, String secretKey) {
-        RestApiRequestClient requestImpl = new BinanceRestApiRequestClient(apiKey, secretKey);
-        return new SyncFutureRequestClientImpl(requestImpl);
+    public FutureRestApiClient createBinanceFutureRequestClient(FutureRestApiOptions options) {
+        RestApiRequestClient requestImpl = new BinanceRestApiRequestClient(options);
+        return new FutureRestApiClientImpl(requestImpl);
     }
 
-//    public FutureSubscriptionClient createFutureSubscriptionClient(FutureSubscriptionOptions options) {
-//        FutureSubscriptionOptions subscriptionOptions = new FutureSubscriptionOptions(options);
-//        FutureRequestOptions futureRequestOptions = new FutureRequestOptions();
-//        try {
-//            String host = new URI(options.getUri()).getHost();
-//            futureRequestOptions.setUrl("https://" + host);
-//        } catch (Exception e) {
-//
-//        }
-//        FutureSubscriptionClient webSocketStreamClient = new WebSocketStreamClientImpl(subscriptionOptions);
-//        return webSocketStreamClient;
-//    }
+    public FutureRestApiClient createOkexFutureRequestClient(FutureRestApiOptions options) {
+        RestApiRequestClient requestImpl = new OkexRestApiRequestClient(options);
+        return new FutureRestApiClientImpl(requestImpl);
+    }
+
+    public FutureSubscriptionClient createBinanceFutureSubscriptionClient(FutureSubscriptionOptions options) {
+        WebsocketRequestClient requestImpl = new BinanceWebsocketRequestClient(options);
+        return new WebSocketFutureSubscriptionClient(options, requestImpl);
+    }
+
+    public FutureSubscriptionClient createOkexFutureSubscriptionClient(FutureSubscriptionOptions options) {
+        WebsocketRequestClient requestImpl = new OkexWebsocketRequestClient(options);
+        return new WebSocketFutureSubscriptionClient(options, requestImpl);
+    }
 
 }

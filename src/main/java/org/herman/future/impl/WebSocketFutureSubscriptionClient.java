@@ -6,6 +6,7 @@ import org.herman.future.FutureSubscriptionListener;
 import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.event.*;
+import org.herman.future.model.user.PositionUpdateEvent;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -90,6 +91,15 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
     @Override
     public void subscribeBookDepthEvent(String symbol, Integer limit, FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
         createConnection(requestImpl.subscribeBookDepthEvent(symbol, limit, callback, errorHandler));
+    }
+
+    @Override
+    public void subscribePositionEvent(FutureSubscriptionListener<PositionUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        //1. listenerKey
+        String listenerKey = requestImpl.listenerKey(options);
+        //2. new connection
+
+        //3. authentication
     }
 
 }

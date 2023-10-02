@@ -5,7 +5,7 @@ import org.herman.Constants;
 
 import java.math.BigDecimal;
 
-public class PositionUpdate {
+public class PositionUpdateEvent {
 
     private String symbol;
 

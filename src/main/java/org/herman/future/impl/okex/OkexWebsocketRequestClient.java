@@ -2,6 +2,7 @@ package org.herman.future.impl.okex;
 
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
+import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.model.enums.CandlestickInterval;
@@ -15,6 +16,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class OkexWebsocketRequestClient implements WebsocketRequestClient {
+    public OkexWebsocketRequestClient(FutureSubscriptionOptions options) {
+
+    }
+
     @Override
     public WebsocketRequest<AggregateTradeEvent> subscribeAggregateTradeEvent(String symbol, FutureSubscriptionListener<AggregateTradeEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
 
@@ -170,5 +175,10 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
     @Override
     public WebsocketRequest<SymbolBookTickerEvent> subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String listenerKey(FutureSubscriptionOptions options) {
+        return "";
     }
 }

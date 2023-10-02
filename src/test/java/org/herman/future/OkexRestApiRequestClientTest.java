@@ -1,18 +1,12 @@
 package org.herman.future;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.herman.future.impl.SyncFutureRequestClientImpl;
-import org.herman.future.impl.binance.BinanceRestApiRequestClient;
+import org.herman.Constants;
+import org.herman.future.impl.FutureRestApiClientImpl;
 import org.herman.future.impl.okex.OkexRestApiRequestClient;
-import org.herman.future.model.ResponseResult;
-import org.herman.future.model.enums.*;
 import org.herman.future.model.market.*;
-import org.herman.future.model.trade.AccountBalance;
-import org.herman.future.model.trade.Order;
-import org.herman.future.model.trade.PositionRisk;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -24,8 +18,9 @@ public class OkexRestApiRequestClientTest {
 
     @Test
     public void test() {
-        OkexRestApiRequestClient restApiRequestClient = new OkexRestApiRequestClient(appKey, secret, passphrase);
-        FutureRequestClient client = new SyncFutureRequestClientImpl(restApiRequestClient);
+        FutureRestApiOptions options = new FutureRestApiOptions(Constants.Future.BINANCE_REST_API_BASE_URL, appKey, secret, passphrase);
+        OkexRestApiRequestClient restApiRequestClient = new OkexRestApiRequestClient(options);
+        FutureRestApiClient client = new FutureRestApiClientImpl(restApiRequestClient);
 
 //        ExchangeInformation exchangeInformation = client.getExchangeInformation();
 //        System.out.println(exchangeInformation);

@@ -9,7 +9,7 @@ public class AccountUpdate {
 
     private List<BalanceUpdate> balances;
 
-    private List<PositionUpdate> positions;
+    private List<PositionUpdateEvent> positions;
 
     public List<BalanceUpdate> getBalances() {
         return balances;
@@ -19,11 +19,11 @@ public class AccountUpdate {
         this.balances = balances;
     }
 
-    public List<PositionUpdate> getPositions() {
+    public List<PositionUpdateEvent> getPositions() {
         return positions;
     }
 
-    public void setPositions(List<PositionUpdate> positions) {
+    public void setPositions(List<PositionUpdateEvent> positions) {
         this.positions = positions;
     }
 

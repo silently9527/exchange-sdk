@@ -1,17 +1,10 @@
 package org.herman.future;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.herman.future.FutureRequestClient;
-import org.herman.future.impl.SyncFutureRequestClientImpl;
-import org.herman.future.impl.binance.BinanceRestApiRequestClient;
-import org.herman.future.model.enums.*;
+import org.herman.Constants;
 import org.herman.future.model.market.*;
-import org.herman.future.model.trade.AccountBalance;
-import org.herman.future.model.trade.Order;
-import org.herman.future.model.trade.PositionRisk;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -22,8 +15,8 @@ public class BinanceRestApiRequestClientTest {
 
     @Test
     public void test() {
-        BinanceRestApiRequestClient restApiRequestClient = new BinanceRestApiRequestClient(appKey, secret);
-        FutureRequestClient client = new SyncFutureRequestClientImpl(restApiRequestClient);
+        FutureRestApiOptions options = new FutureRestApiOptions(Constants.Future.BINANCE_REST_API_BASE_URL, appKey, secret);
+        FutureRestApiClient client = FutureApiInternalFactory.getInstance().createBinanceFutureRequestClient(options);
 
 //        ExchangeInformation exchangeInformation = client.getExchangeInformation();
 //        System.out.println(exchangeInformation);

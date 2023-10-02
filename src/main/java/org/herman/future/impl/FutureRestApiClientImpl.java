@@ -1,6 +1,6 @@
 package org.herman.future.impl;
 
-import org.herman.future.FutureRequestClient;
+import org.herman.future.FutureRestApiClient;
 import org.herman.future.RestApiInvoker;
 import org.herman.future.model.ResponseResult;
 import org.herman.future.model.enums.*;
@@ -10,14 +10,13 @@ import org.herman.future.model.trade.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class SyncFutureRequestClientImpl implements FutureRequestClient {
+public class FutureRestApiClientImpl implements FutureRestApiClient {
 
     private final RestApiRequestClient requestImpl;
 
-    public SyncFutureRequestClientImpl(RestApiRequestClient restApiRequestClient) {
+    public FutureRestApiClientImpl(RestApiRequestClient restApiRequestClient) {
         this.requestImpl = restApiRequestClient;
     }
-
 
     @Override
     public ExchangeInformation getExchangeInformation() {

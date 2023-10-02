@@ -2,6 +2,7 @@ package org.herman.future.impl;
 
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
+import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.event.*;
 
@@ -30,4 +31,7 @@ public interface WebsocketRequestClient {
     WebsocketRequest<SymbolBookTickerEvent> subscribeSymbolBookTickerEvent(String symbol, FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 
     WebsocketRequest<SymbolBookTickerEvent> subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    //获取listenerKey
+    String listenerKey(FutureSubscriptionOptions options);
 }

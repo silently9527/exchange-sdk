@@ -1,7 +1,6 @@
 package org.herman.future;
 
 
-import com.alibaba.fastjson.JSONObject;
 import org.herman.future.model.ResponseResult;
 import org.herman.future.model.enums.*;
 import org.herman.future.model.market.*;
@@ -10,7 +9,7 @@ import org.herman.future.model.trade.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface FutureRequestClient {
+public interface FutureRestApiClient {
 
     ExchangeInformation getExchangeInformation();
 

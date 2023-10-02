@@ -1,7 +1,7 @@
 package org.herman.future.impl.binance;
 
-import org.herman.future.FutureSubscriptionErrorHandler;
-import org.herman.future.FutureSubscriptionListener;
+import org.herman.Constants;
+import org.herman.future.*;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.model.enums.CandlestickInterval;
@@ -14,8 +14,22 @@ import org.herman.utils.JsonWrapperArray;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.*;
 
 public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
+    private final BinanceRestApiRequestClient restApiRequestClient;
+    private final Set<String> listenerKeys = new CopyOnWriteArraySet<>();
+
+    public BinanceWebsocketRequestClient(FutureSubscriptionOptions options) {
+        FutureRestApiOptions requestOptions = new FutureRestApiOptions(Constants.Future.BINANCE_REST_API_BASE_URL, options.getApiKey(), options.getSecretKey());
+        this.restApiRequestClient = new BinanceRestApiRequestClient(requestOptions);
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            listenerKeys.forEach(key -> RestApiInvoker.callSync(restApiRequestClient.keepListenKey(key)));
+        }, 10, 30, TimeUnit.MINUTES);
+    }
+
     @Override
     public WebsocketRequest<AggregateTradeEvent> subscribeAggregateTradeEvent(String symbol,
                                                                               FutureSubscriptionListener<AggregateTradeEvent> subscriptionListener,
@@ -244,4 +258,13 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         };
         return request;
     }
+
+    @Override
+    public String listenerKey(FutureSubscriptionOptions options) {
+        String listenerKey = RestApiInvoker.callSync(restApiRequestClient.startListenKey());
+        listenerKeys.add(listenerKey);
+        return listenerKey;
+    }
+
+
 }

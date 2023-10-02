@@ -3,8 +3,8 @@ package org.herman.future.impl.okex;
 import com.alibaba.fastjson.JSONObject;
 import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
-import org.herman.Constants;
 import org.herman.exception.ApiException;
+import org.herman.future.FutureRestApiOptions;
 import org.herman.future.RestApiInvoker;
 import org.herman.future.impl.AbstractRestApiRequestClient;
 import org.herman.future.impl.RestApiRequest;
@@ -20,17 +20,16 @@ import org.herman.utils.UrlParamsBuilder;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     private final String passphrase;
 
-    public OkexRestApiRequestClient(String apiKey, String secretKey, String passphrase) {
-        this.apiKey = apiKey;
-        this.secretKey = secretKey;
-        this.passphrase = passphrase;
-        this.serverUrl = Constants.Future.OKEX_REST_API_BASE_URL;
+    public OkexRestApiRequestClient(FutureRestApiOptions options) {
+        this.apiKey = options.getApiKey();
+        this.secretKey = options.getSecretKey();
+        this.passphrase = options.getPassphrase();
+        this.serverUrl = options.getUrl();
     }
 
     @Override

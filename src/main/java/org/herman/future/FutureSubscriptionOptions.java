@@ -10,18 +10,23 @@ import java.net.URI;
 public class FutureSubscriptionOptions {
 
     private String uri;
+    protected String apiKey;
+    protected String secretKey;
+    protected String passphrase;
     private boolean isAutoReconnect = true;
     private int receiveLimitMs = 300_000;
     private int connectionDelayOnFailure = 15;
 
-    public FutureSubscriptionOptions(FutureSubscriptionOptions options) {
-        this.uri = options.uri;
-        this.isAutoReconnect = options.isAutoReconnect;
-        this.receiveLimitMs = options.receiveLimitMs;
-        this.connectionDelayOnFailure = options.connectionDelayOnFailure;
+
+    public FutureSubscriptionOptions(String uri, String apiKey, String secretKey, String passphrase) {
+        this.uri = uri;
+        this.apiKey = apiKey;
+        this.secretKey = secretKey;
+        this.passphrase = passphrase;
     }
 
-    public FutureSubscriptionOptions() {
+    public FutureSubscriptionOptions(String uri, String apiKey, String secretKey) {
+        this(uri, apiKey, secretKey, "");
     }
 
     /**
@@ -92,5 +97,29 @@ public class FutureSubscriptionOptions {
 
     public String getUri() {
         return uri;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getPassphrase() {
+        return passphrase;
+    }
+
+    public void setPassphrase(String passphrase) {
+        this.passphrase = passphrase;
     }
 }
