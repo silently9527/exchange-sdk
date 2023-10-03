@@ -8,6 +8,9 @@ import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.event.*;
 import org.herman.future.model.market.OrderBookEntry;
+import org.herman.future.model.user.BalanceUpdateEvent;
+import org.herman.future.model.user.OrderUpdateEvent;
+import org.herman.future.model.user.PositionUpdateEvent;
 import org.herman.utils.InputChecker;
 import org.herman.utils.JsonWrapper;
 import org.herman.utils.JsonWrapperArray;
@@ -178,7 +181,27 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
+    public WebsocketRequest<String> authentication(FutureSubscriptionListener<String> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return null;
+    }
+
+    @Override
     public String listenerKey(FutureSubscriptionOptions options) {
         return "";
+    }
+
+    @Override
+    public WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String listenerKey, String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return null;
+    }
+
+    @Override
+    public WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String listenerKey, String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return null;
+    }
+
+    @Override
+    public WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String listenerKey, String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return null;
     }
 }

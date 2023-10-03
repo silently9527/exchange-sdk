@@ -2,6 +2,8 @@ package org.herman.future;
 
 import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.event.*;
+import org.herman.future.model.user.BalanceUpdateEvent;
+import org.herman.future.model.user.OrderUpdateEvent;
 import org.herman.future.model.user.PositionUpdateEvent;
 
 import java.util.List;
@@ -47,7 +49,11 @@ public interface FutureSubscriptionClient {
 
 //    void subscribeDiffDepthEvent(String symbol, FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 
-    void subscribePositionEvent(FutureSubscriptionListener<PositionUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+    void subscribePositionEvent(String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    void subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    void subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 
 
 }

@@ -5,11 +5,21 @@ import org.herman.Constants;
 
 import java.math.BigDecimal;
 
-public class BalanceUpdate {
+public class BalanceUpdateEvent {
+
+    private String eventType;
 
     private String asset;
 
     private BigDecimal walletBalance;
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
     public String getAsset() {
         return asset;

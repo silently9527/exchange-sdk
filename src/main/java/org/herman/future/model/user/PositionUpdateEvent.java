@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 
 public class PositionUpdateEvent {
 
+    private String eventType; //ORDER
+
     private String symbol;
 
     private BigDecimal amount;
@@ -16,6 +18,14 @@ public class PositionUpdateEvent {
     private BigDecimal preFee;
 
     private BigDecimal unrealizedPnl;
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
     public String getSymbol() {
         return symbol;

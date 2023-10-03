@@ -5,6 +5,9 @@ import org.herman.future.FutureSubscriptionListener;
 import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.event.*;
+import org.herman.future.model.user.BalanceUpdateEvent;
+import org.herman.future.model.user.OrderUpdateEvent;
+import org.herman.future.model.user.PositionUpdateEvent;
 
 import java.util.List;
 
@@ -32,6 +35,15 @@ public interface WebsocketRequestClient {
 
     WebsocketRequest<SymbolBookTickerEvent> subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 
+    WebsocketRequest<String> authentication(FutureSubscriptionListener<String> callback, FutureSubscriptionErrorHandler errorHandler);
+
     //获取listenerKey
+
     String listenerKey(FutureSubscriptionOptions options);
+
+    WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String listenerKey, String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String listenerKey, String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
+
+    WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String listenerKey, String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 }

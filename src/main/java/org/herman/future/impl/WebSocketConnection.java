@@ -12,6 +12,8 @@ import org.herman.utils.JsonWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 public class WebSocketConnection extends WebSocketListener {
 
     private static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
@@ -29,7 +31,7 @@ public class WebSocketConnection extends WebSocketListener {
     private volatile ConnectionState state = ConnectionState.IDLE;
     private int delayInSecond = 0;
 
-    private final WebsocketRequest request;
+    private WebsocketRequest request;
     private final Request okhttpRequest;
     private final WebSocketWatchDog watchDog;
     private final int connectionId;
@@ -139,7 +141,9 @@ public class WebSocketConnection extends WebSocketListener {
             onError("Failed to parse server's response: " + e.getMessage(), e);
         }
         try {
-            request.updateCallback.onReceive(obj);
+            if (Objects.nonNull(obj)) {
+                request.updateCallback.onReceive(obj);
+            }
         } catch (Exception e) {
             onError("Process error: " + e.getMessage() + " You should capture the exception in your error handler", e);
         }
@@ -190,5 +194,9 @@ public class WebSocketConnection extends WebSocketListener {
             state = ConnectionState.CLOSED_ON_ERROR;
             log.error("[Sub][" + this.connectionId + "] Connection is closing due to error");
         }
+    }
+
+    public void setRequest(WebsocketRequest request) {
+        this.request = request;
     }
 }

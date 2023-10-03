@@ -6,13 +6,19 @@ import org.herman.future.FutureSubscriptionListener;
 import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.event.*;
+import org.herman.future.model.user.BalanceUpdateEvent;
+import org.herman.future.model.user.OrderUpdateEvent;
 import org.herman.future.model.user.PositionUpdateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClient {
+    private final Logger logger = LoggerFactory.getLogger(WebSocketFutureSubscriptionClient.class);
+
     private final FutureSubscriptionOptions options;
     private WebSocketWatchDog watchDog;
     private final List<WebSocketConnection> connections = new LinkedList<>();
@@ -26,7 +32,7 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
         this.requestImpl = requestImpl;
     }
 
-    private <T> void createConnection(WebsocketRequest<T> request, boolean autoClose) {
+    private <T> WebSocketConnection createConnection(WebsocketRequest<T> request, boolean autoClose) {
         if (watchDog == null) {
             watchDog = new WebSocketWatchDog(options);
         }
@@ -35,10 +41,12 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
             connections.add(connection);
         }
         connection.connect();
+
+        return connection;
     }
 
-    private <T> void createConnection(WebsocketRequest<T> request) {
-        createConnection(request, false);
+    private <T> WebSocketConnection createConnection(WebsocketRequest<T> request) {
+        return createConnection(request, false);
     }
 
     @Override
@@ -94,12 +102,42 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
     }
 
     @Override
-    public void subscribePositionEvent(FutureSubscriptionListener<PositionUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public void subscribePositionEvent(String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
         //1. listenerKey
         String listenerKey = requestImpl.listenerKey(options);
-        //2. new connection
 
-        //3. authentication
+        //2. authentication
+        WebSocketConnection connection = createConnection(requestImpl.authentication(data -> logger.info("authentication successful"), errorHandler));
+
+        //3. new connection
+        WebsocketRequest<List<PositionUpdateEvent>> request = requestImpl.subscribePositionEvent(listenerKey, symbol, callback, errorHandler);
+        connection.setRequest(request);
+    }
+
+    @Override
+    public void subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+        //1. listenerKey
+        String listenerKey = requestImpl.listenerKey(options);
+
+        //2. authentication
+        WebSocketConnection connection = createConnection(requestImpl.authentication(data -> logger.info("authentication successful"), errorHandler));
+
+        //3. new connection
+        WebsocketRequest<List<BalanceUpdateEvent>> request = requestImpl.subscribeAccountEvent(listenerKey, currency, callback, errorHandler);
+        connection.setRequest(request);
+    }
+
+    @Override
+    public void subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        //1. listenerKey
+        String listenerKey = requestImpl.listenerKey(options);
+
+        //2. authentication
+        WebSocketConnection connection = createConnection(requestImpl.authentication(data -> logger.info("authentication successful"), errorHandler));
+
+        //3. new connection
+        WebsocketRequest<OrderUpdateEvent> request = requestImpl.subscribeOrderUpdateEvent(listenerKey, symbol, callback, errorHandler);
+        connection.setRequest(request);
     }
 
 }

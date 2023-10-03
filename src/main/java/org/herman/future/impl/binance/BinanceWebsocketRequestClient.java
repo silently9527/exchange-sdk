@@ -1,5 +1,6 @@
 package org.herman.future.impl.binance;
 
+import org.apache.commons.lang3.StringUtils;
 import org.herman.Constants;
 import org.herman.future.*;
 import org.herman.future.impl.WebsocketRequest;
@@ -8,10 +9,14 @@ import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.enums.OrderSide;
 import org.herman.future.model.event.*;
 import org.herman.future.model.market.OrderBookEntry;
+import org.herman.future.model.user.BalanceUpdateEvent;
+import org.herman.future.model.user.OrderUpdateEvent;
+import org.herman.future.model.user.PositionUpdateEvent;
 import org.herman.utils.InputChecker;
 import org.herman.utils.JsonWrapper;
 import org.herman.utils.JsonWrapperArray;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -260,11 +265,147 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
+    public WebsocketRequest<String> authentication(FutureSubscriptionListener<String> callback, FutureSubscriptionErrorHandler errorHandler) {
+        InputChecker.checker()
+                .shouldNotNull(callback, "listener");
+        WebsocketRequest<String> request = new WebsocketRequest<>(callback, errorHandler);
+        request.name = "*** Authentication ***";
+
+        request.jsonParser = (jsonWrapper) -> "OK";
+        return request;
+    }
+
+    @Override
     public String listenerKey(FutureSubscriptionOptions options) {
         String listenerKey = RestApiInvoker.callSync(restApiRequestClient.startListenKey());
         listenerKeys.add(listenerKey);
         return listenerKey;
     }
 
+    @Override
+    public WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String listenerKey, String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+        InputChecker.checker()
+                .shouldNotNull(listenerKey, "listenKey")
+                .shouldNotNull(callback, "listener");
+        WebsocketRequest<List<BalanceUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
+        request.name = "***User Account***";
+        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(listenerKey));
+
+        request.jsonParser = (jsonWrapper) -> {
+            JsonWrapper data = jsonWrapper.getJsonObject("data");
+
+            if (data.getString("e").equals("ACCOUNT_UPDATE")) {
+                List<BalanceUpdateEvent> balanceList = new LinkedList<>();
+                String eventType = data.getJsonObject("a").getString("m");
+                JsonWrapperArray datalist = data.getJsonObject("a").getJsonArray("B");
+                datalist.forEach(item -> {
+                    String itemCurrency = item.getString("a");
+                    if (StringUtils.isNotEmpty(currency) && !itemCurrency.equalsIgnoreCase(currency)) {
+                        return;
+                    }
+                    BalanceUpdateEvent balance = new BalanceUpdateEvent();
+                    balance.setEventType(eventType);
+                    balance.setAsset(item.getString("a"));
+                    balance.setWalletBalance(item.getBigDecimal("wb"));
+                    balanceList.add(balance);
+                });
+                return balanceList;
+            }
+            return null;
+        };
+        return request;
+    }
+
+    @Override
+    public WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String listenerKey, String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback,
+                                                                              FutureSubscriptionErrorHandler errorHandler) {
+        InputChecker.checker()
+                .shouldNotNull(listenerKey, "listenKey")
+                .shouldNotNull(callback, "listener");
+        WebsocketRequest<List<PositionUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
+        request.name = "***User Position***";
+        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(listenerKey));
+
+        request.jsonParser = (jsonWrapper) -> {
+            JsonWrapper data = jsonWrapper.getJsonObject("data");
+
+            if (data.getString("e").equals("ACCOUNT_UPDATE")) {
+                List<PositionUpdateEvent> positionList = new LinkedList<>();
+                String eventType = data.getJsonObject("a").getString("m");
+                JsonWrapperArray datalist = data.getJsonObject("a").getJsonArray("P");
+                datalist.forEach(item -> {
+                    String itemSymbol = item.getString("s");
+                    if (StringUtils.isNotEmpty(symbol) && !itemSymbol.equalsIgnoreCase(symbol)) {
+                        return;
+                    }
+                    PositionUpdateEvent position = new PositionUpdateEvent();
+                    position.setSymbol(itemSymbol);
+                    position.setAmount(item.getBigDecimal("pa")); // 仓位
+                    position.setEntryPrice(item.getBigDecimal("ep")); // 入仓价格
+                    position.setPreFee(item.getBigDecimal("cr")); // (费前)累计实现损益
+                    position.setUnrealizedPnl(item.getBigDecimal("up")); // 持仓未实现盈亏
+                    position.setEventType(eventType);
+                    positionList.add(position);
+                });
+                return positionList;
+            }
+            return null;
+        };
+        return request;
+    }
+
+    @Override
+    public WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String listenerKey, String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        InputChecker.checker()
+                .shouldNotNull(listenerKey, "listenKey")
+                .shouldNotNull(callback, "listener");
+        WebsocketRequest<OrderUpdateEvent> request = new WebsocketRequest<>(callback, errorHandler);
+        request.name = "***User Order***";
+        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(listenerKey));
+
+        request.jsonParser = (jsonWrapper) -> {
+            JsonWrapper data = jsonWrapper.getJsonObject("data");
+            if (data.getString("e").equals("ORDER_TRADE_UPDATE")) {
+                OrderUpdateEvent orderUpdate = new OrderUpdateEvent();
+
+                JsonWrapper jsondata = data.getJsonObject("o");
+                String itemSymbol = jsondata.getStringOrDefault("s", "");
+                orderUpdate.setSymbol(itemSymbol);
+
+                if (StringUtils.isNotEmpty(symbol) && !itemSymbol.equalsIgnoreCase(symbol)) {
+                    return null;
+                }
+
+                orderUpdate.setClientOrderId(jsondata.getString("c"));
+                orderUpdate.setSide(jsondata.getString("S"));
+                orderUpdate.setType(jsondata.getString("o"));
+                orderUpdate.setTimeInForce(jsondata.getString("f"));
+                orderUpdate.setOrigQty(jsondata.getBigDecimal("q"));
+                orderUpdate.setPrice(jsondata.getBigDecimal("p"));
+                orderUpdate.setAvgPrice(jsondata.getBigDecimal("ap"));
+                orderUpdate.setStopPrice(jsondata.getBigDecimal("sp"));
+                orderUpdate.setExecutionType(jsondata.getString("x"));
+                orderUpdate.setOrderStatus(jsondata.getString("X"));
+                orderUpdate.setOrderId(jsondata.getLong("i"));
+                orderUpdate.setLastFilledQty(jsondata.getBigDecimal("l"));
+                orderUpdate.setCumulativeFilledQty(jsondata.getBigDecimal("z"));
+                orderUpdate.setLastFilledPrice(jsondata.getBigDecimal("L"));
+                orderUpdate.setCommissionAsset(jsondata.getStringOrDefault("N", ""));
+                orderUpdate.setCommissionAmount(jsondata.getBigDecimalOrDefault("n", BigDecimal.ZERO));
+                orderUpdate.setOrderTradeTime(jsondata.getLong("T"));
+                orderUpdate.setTradeID(jsondata.getLong("t"));
+                orderUpdate.setBidsNotional(jsondata.getBigDecimal("b"));
+                orderUpdate.setAsksNotional(jsondata.getBigDecimal("a"));
+                orderUpdate.setIsMarkerSide(jsondata.getBoolean("m"));
+                orderUpdate.setIsReduceOnly(jsondata.getBoolean("R"));
+                orderUpdate.setWorkingType(jsondata.getString("wt"));
+                orderUpdate.setActivationPrice(jsondata.getBigDecimalOrDefault("AP", BigDecimal.ZERO));
+                orderUpdate.setCallbackRate(jsondata.getBigDecimalOrDefault("cr", BigDecimal.ZERO));
+                return orderUpdate;
+            }
+            return null;
+        };
+        return request;
+    }
 
 }
