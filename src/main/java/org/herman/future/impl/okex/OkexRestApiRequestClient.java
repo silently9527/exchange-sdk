@@ -40,7 +40,7 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
         }
         String requestUrl = url + address;
         String timestamp = DateUtils.getUnixTime();
-        String signature = new ApiSignature().createSignature(apiKey, secretKey, timestamp, address, builder);
+        String signature = ApiSignature.createSignature(apiKey, secretKey, timestamp, address, builder);
         if (builder.hasPostParam()) {
             requestUrl += builder.buildUrl();
             return new Request.Builder().url(requestUrl).post(builder.buildPostBody())

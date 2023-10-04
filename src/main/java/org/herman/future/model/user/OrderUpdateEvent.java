@@ -2,6 +2,9 @@ package org.herman.future.model.user;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.herman.Constants;
+import org.herman.future.model.enums.OrderSide;
+import org.herman.future.model.enums.OrderStatus;
+import org.herman.future.model.enums.OrderType;
 
 import java.math.BigDecimal;
 
@@ -11,9 +14,9 @@ public class OrderUpdateEvent {
 
     private String clientOrderId;
 
-    private String side;
+    private OrderSide side;
 
-    private String type;
+    private OrderType type;
 
     private String timeInForce;
 
@@ -27,7 +30,7 @@ public class OrderUpdateEvent {
 
     private String executionType;
 
-    private String orderStatus;
+    private OrderStatus status;
 
     private Long orderId;
 
@@ -75,19 +78,19 @@ public class OrderUpdateEvent {
         this.clientOrderId = clientOrderId;
     }
 
-    public String getSide() {
+    public OrderSide getSide() {
         return side;
     }
 
-    public void setSide(String side) {
+    public void setSide(OrderSide side) {
         this.side = side;
     }
 
-    public String getType() {
+    public OrderType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(OrderType type) {
         this.type = type;
     }
 
@@ -139,12 +142,12 @@ public class OrderUpdateEvent {
         this.executionType = executionType;
     }
 
-    public String getOrderStatus() {
-        return orderStatus;
+    public OrderStatus getStatus() {
+        return status;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 
     public Long getOrderId() {
@@ -273,7 +276,7 @@ public class OrderUpdateEvent {
                 .append("clientOrderId", clientOrderId).append("side", side).append("type", type)
                 .append("timeInForce", timeInForce).append("origQty", origQty).append("price", price)
                 .append("avgPrice", avgPrice).append("stopPrice", stopPrice).append("executionType", executionType)
-                .append("orderStatus", orderStatus).append("orderId", orderId).append("lastFilledQty", lastFilledQty)
+                .append("orderStatus", status).append("orderId", orderId).append("lastFilledQty", lastFilledQty)
                 .append("cumulativeFilledQty", cumulativeFilledQty).append("lastFilledPrice", lastFilledPrice)
                 .append("commissionAsset", commissionAsset).append("commissionAmount", commissionAmount)
                 .append("orderTradeTime", orderTradeTime).append("tradeID", tradeID)

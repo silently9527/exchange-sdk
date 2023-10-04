@@ -70,7 +70,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public String listenerKey(FutureSubscriptionOptions options) {
+    public String getPrivateToken() {
         //获取token，修改option中的url
 
         return null;

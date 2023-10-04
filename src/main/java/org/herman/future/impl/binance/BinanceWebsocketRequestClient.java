@@ -5,8 +5,7 @@ import org.herman.Constants;
 import org.herman.future.*;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
-import org.herman.future.model.enums.CandlestickInterval;
-import org.herman.future.model.enums.OrderSide;
+import org.herman.future.model.enums.*;
 import org.herman.future.model.event.*;
 import org.herman.future.model.market.OrderBookEntry;
 import org.herman.future.model.user.BalanceUpdateEvent;
@@ -276,7 +275,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public String listenerKey(FutureSubscriptionOptions options) {
+    public String getPrivateToken() {
         String listenerKey = RestApiInvoker.callSync(restApiRequestClient.startListenKey());
         listenerKeys.add(listenerKey);
         return listenerKey;
@@ -342,7 +341,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                     position.setSymbol(itemSymbol);
                     position.setAmount(item.getBigDecimal("pa")); // 仓位
                     position.setEntryPrice(item.getBigDecimal("ep")); // 入仓价格
-                    position.setPreFee(item.getBigDecimal("cr")); // (费前)累计实现损益
+                    position.setSide(PositionSide.valueOf(item.getString("ps")));
                     position.setUnrealizedPnl(item.getBigDecimal("up")); // 持仓未实现盈亏
                     position.setEventType(eventType);
                     positionList.add(position);
@@ -377,15 +376,15 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 }
 
                 orderUpdate.setClientOrderId(jsondata.getString("c"));
-                orderUpdate.setSide(jsondata.getString("S"));
-                orderUpdate.setType(jsondata.getString("o"));
+                orderUpdate.setSide(OrderSide.valueOf(jsondata.getString("S")));
+                orderUpdate.setType(OrderType.valueOf(jsondata.getString("o")));
                 orderUpdate.setTimeInForce(jsondata.getString("f"));
                 orderUpdate.setOrigQty(jsondata.getBigDecimal("q"));
                 orderUpdate.setPrice(jsondata.getBigDecimal("p"));
                 orderUpdate.setAvgPrice(jsondata.getBigDecimal("ap"));
                 orderUpdate.setStopPrice(jsondata.getBigDecimal("sp"));
                 orderUpdate.setExecutionType(jsondata.getString("x"));
-                orderUpdate.setOrderStatus(jsondata.getString("X"));
+                orderUpdate.setStatus(OrderStatus.valueOf(jsondata.getString("X")));
                 orderUpdate.setOrderId(jsondata.getLong("i"));
                 orderUpdate.setLastFilledQty(jsondata.getBigDecimal("l"));
                 orderUpdate.setCumulativeFilledQty(jsondata.getBigDecimal("z"));

@@ -1,32 +1,37 @@
 package org.herman.future.impl.okex;
 
+import org.apache.commons.lang3.StringUtils;
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
 import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
-import org.herman.future.model.enums.CandlestickInterval;
+import org.herman.future.model.enums.*;
 import org.herman.future.model.event.*;
 import org.herman.future.model.market.OrderBookEntry;
 import org.herman.future.model.user.BalanceUpdateEvent;
 import org.herman.future.model.user.OrderUpdateEvent;
 import org.herman.future.model.user.PositionUpdateEvent;
+import org.herman.utils.DateUtils;
 import org.herman.utils.InputChecker;
 import org.herman.utils.JsonWrapper;
 import org.herman.utils.JsonWrapperArray;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 public class OkexWebsocketRequestClient implements WebsocketRequestClient {
-    public OkexWebsocketRequestClient(FutureSubscriptionOptions options) {
+    private final FutureSubscriptionOptions options;
 
+    public OkexWebsocketRequestClient(FutureSubscriptionOptions options) {
+        this.options = options;
     }
 
     @Override
     public WebsocketRequest<AggregateTradeEvent> subscribeAggregateTradeEvent(String symbol, FutureSubscriptionListener<AggregateTradeEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
-
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -182,26 +187,138 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
 
     @Override
     public WebsocketRequest<String> authentication(FutureSubscriptionListener<String> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return null;
+        InputChecker.checker()
+                .shouldNotNull(callback, "listener");
+        WebsocketRequest<String> request = new WebsocketRequest<>(callback, errorHandler);
+        request.name = "*** Authentication ***";
+
+        String timestamp = DateUtils.getUnixTime();
+        String signature = ApiSignature.doSignature(options.getSecretKey(), timestamp, "/users/self/verify", "", "", "GET");
+        request.connectionHandler = (connection) -> connection.send(Channels.authenticationChannel(options, timestamp, signature));
+
+        request.jsonParser = (jsonWrapper) -> jsonWrapper.getString("msg");
+        return request;
     }
 
     @Override
-    public String listenerKey(FutureSubscriptionOptions options) {
+    public String getPrivateToken() {
         return "";
     }
 
     @Override
     public WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String listenerKey, String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return null;
+        InputChecker.checker()
+                .shouldNotNull(callback, "listener");
+        WebsocketRequest<List<BalanceUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
+        request.name = "***User Account***";
+        request.authHandler = (connection) -> {
+            String timestamp = (new Date().getTime() / 1000) + "";
+            String signature = ApiSignature.doSignature(options.getSecretKey(), timestamp, "/users/self/verify", "", "", "GET");
+            connection.send(Channels.authenticationChannel(options, timestamp, signature));
+        };
+        request.connectionHandler = (connection) -> connection.send(Channels.accountChannel(currency));
+
+        request.jsonParser = (jsonWrapper) -> {
+            List<BalanceUpdateEvent> balanceList = new LinkedList<>();
+            JsonWrapperArray details = jsonWrapper.getJsonArray("data").getJsonObjectAt(0).getJsonArray("details");
+            details.forEach(item -> {
+                String itemCurrency = item.getString("ccy");
+                if (StringUtils.isNotEmpty(currency) && !itemCurrency.equalsIgnoreCase(currency)) {
+                    return;
+                }
+                BalanceUpdateEvent balance = new BalanceUpdateEvent();
+                balance.setAsset(itemCurrency);
+                balance.setWalletBalance(item.getBigDecimal("eq"));
+                balanceList.add(balance);
+            });
+            return balanceList;
+        };
+        return request;
     }
 
     @Override
     public WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String listenerKey, String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return null;
+        InputChecker.checker()
+                .shouldNotNull(callback, "listener");
+        WebsocketRequest<List<PositionUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
+        request.name = "***User Position***";
+        request.authHandler = (connection) -> {
+            String timestamp = (new Date().getTime() / 1000) + "";
+            String signature = ApiSignature.doSignature(options.getSecretKey(), timestamp, "/users/self/verify", "", "", "GET");
+            connection.send(Channels.authenticationChannel(options, timestamp, signature));
+        };
+        request.connectionHandler = (connection) -> connection.send(Channels.positionChannel(symbol));
+
+        request.jsonParser = (jsonWrapper) -> {
+            List<PositionUpdateEvent> positionList = new LinkedList<>();
+            JsonWrapperArray datalist = jsonWrapper.getJsonArray("data");
+            datalist.forEach(item -> {
+                String itemSymbol = item.getString("instId");
+                if (StringUtils.isNotEmpty(symbol) && !itemSymbol.equalsIgnoreCase(symbol)) {
+                    return;
+                }
+                PositionUpdateEvent position = new PositionUpdateEvent();
+                position.setSymbol(itemSymbol);
+                position.setAmount(item.getBigDecimal("pos")); // 仓位
+                position.setEntryPrice(item.getBigDecimal("avgPx")); // 入仓价格
+                position.setSide("net".equalsIgnoreCase(item.getString("posSide")) ? PositionSide.BOTH : PositionSide.valueOf(item.getString("posSide").toUpperCase()));
+                position.setUnrealizedPnl(item.getBigDecimal("upl")); // 持仓未实现盈亏
+                positionList.add(position);
+            });
+            return positionList;
+        };
+        return request;
     }
 
     @Override
     public WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String listenerKey, String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return null;
+        InputChecker.checker()
+                .shouldNotNull(symbol, "symbol")
+                .shouldNotNull(callback, "listener");
+        WebsocketRequest<OrderUpdateEvent> request = new WebsocketRequest<>(callback, errorHandler);
+        request.name = "***User Order***";
+        request.authHandler = (connection) -> {
+            String timestamp = (new Date().getTime() / 1000) + "";
+            String signature = ApiSignature.doSignature(options.getSecretKey(), timestamp, "/users/self/verify", "", "", "GET");
+            connection.send(Channels.authenticationChannel(options, timestamp, signature));
+        };
+        request.connectionHandler = (connection) -> connection.send(Channels.orderChannel(symbol));
+
+        request.jsonParser = (jsonWrapper) -> {
+            OrderUpdateEvent orderUpdate = new OrderUpdateEvent();
+
+            JsonWrapper jsondata = jsonWrapper.getJsonArray("data").getJsonObjectAt(0);
+            String itemSymbol = jsondata.getStringOrDefault("instId", "");
+            orderUpdate.setSymbol(itemSymbol);
+
+            if (StringUtils.isNotEmpty(symbol) && !itemSymbol.equalsIgnoreCase(symbol)) {
+                return null;
+            }
+
+            orderUpdate.setClientOrderId(jsondata.getString("clOrdId"));
+            orderUpdate.setOrderId(jsondata.getLong("ordId"));
+            orderUpdate.setSide(OrderSide.valueOf(jsondata.getString("side").toUpperCase()));
+            orderUpdate.setType("limit".equals(jsondata.getString("ordType")) ? OrderType.LIMIT : OrderType.MARKET);
+            orderUpdate.setOrigQty(jsondata.getBigDecimal("sz"));
+            orderUpdate.setPrice(StringUtils.isEmpty(jsondata.getString("px")) ? null : jsondata.getBigDecimal("px"));
+            String status = jsondata.getString("state");
+            if ("live".equalsIgnoreCase(status)) {
+                orderUpdate.setStatus(OrderStatus.NEW);
+            } else if ("partially_filled".equalsIgnoreCase(status)) {
+                orderUpdate.setStatus(OrderStatus.PARTIALLY_FILLED);
+            } else if ("canceled".equalsIgnoreCase(status)) {
+                orderUpdate.setStatus(OrderStatus.CANCELED);
+            } else if ("filled".equalsIgnoreCase(status)) {
+                orderUpdate.setStatus(OrderStatus.FILLED);
+            }
+            orderUpdate.setAvgPrice(jsondata.getBigDecimal("avgPx"));
+
+            orderUpdate.setCommissionAsset(jsondata.getStringOrDefault("fillFeeCcy", "USDT"));
+            orderUpdate.setCommissionAmount(jsondata.getBigDecimalOrDefault("fillFee", BigDecimal.ZERO));
+            orderUpdate.setOrderTradeTime(jsondata.containKey("fillTime") ? jsondata.getLong("fillTime") : null);
+            orderUpdate.setIsReduceOnly(jsondata.getBoolean("reduceOnly"));
+            return orderUpdate;
+        };
+        return request;
     }
 }

@@ -94,6 +94,7 @@ public class WebSocketConnection extends WebSocketListener {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
@@ -107,6 +108,8 @@ public class WebSocketConnection extends WebSocketListener {
                     || jsonWrapper.containKey("result")
                     || jsonWrapper.containKey("id")) {
                 // onReceiveAndClose(jsonWrapper);
+            } else if (jsonWrapper.containKey("event") && "login".equals(jsonWrapper.getString("event")) && request.connectionHandler != null) {
+                request.connectionHandler.handle(this);
             } else {
                 onReceiveAndClose(jsonWrapper);
             }
@@ -175,7 +178,9 @@ public class WebSocketConnection extends WebSocketListener {
         this.webSocket = webSocket;
         log.info("[Sub][" + this.connectionId + "] Connected to server");
         watchDog.onConnectionCreated(this);
-        if (request.connectionHandler != null) {
+        if (request.authHandler != null) {
+            request.authHandler.handle(this);
+        } else if (request.connectionHandler != null) {
             request.connectionHandler.handle(this);
         }
         state = ConnectionState.CONNECTED;
@@ -196,7 +201,4 @@ public class WebSocketConnection extends WebSocketListener {
         }
     }
 
-    public void setRequest(WebsocketRequest request) {
-        this.request = request;
-    }
 }

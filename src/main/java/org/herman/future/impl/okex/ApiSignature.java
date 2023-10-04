@@ -14,14 +14,25 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class ApiSignature {
-    private Logger logger = LoggerFactory.getLogger(ApiSignature.class);
     private static final String signatureMethodValue = "HmacSHA256";
 
-    public String createSignature(String accessKey, String secretKey, String timestamp, String requestPath, UrlParamsBuilder builder) {
+    public static String createSignature(String accessKey, String secretKey, String timestamp, String requestPath, UrlParamsBuilder builder) {
         if (accessKey == null || "".equals(accessKey) || secretKey == null || "".equals(secretKey)) {
             throw new ApiException(ApiException.KEY_MISSING, "API key and secret key are required");
         }
 
+        String queryString = "", body = "", method = builder.getMethod();
+        if (method.equalsIgnoreCase("GET") || method.equalsIgnoreCase("DELETE")) {
+            queryString = builder.buildUrl();
+        } else {
+            body = builder.buildBodToJsonString();
+        }
+
+        return doSignature(secretKey, timestamp, requestPath, queryString, body, method);
+    }
+
+    public static String doSignature(String secretKey, String timestamp, String requestPath, String queryString, String body, String method) {
+        String preHash = preHash(timestamp, method.toUpperCase(), requestPath, queryString, body);
         Mac hmacSha256;
         try {
             hmacSha256 = Mac.getInstance(signatureMethodValue);
@@ -34,20 +45,11 @@ public class ApiSignature {
             throw new ApiException(ApiException.RUNTIME_ERROR,
                     "[Signature] Invalid key: " + e.getMessage());
         }
-        String queryString = "", body = "", method = builder.getMethod();
-        if (method.equalsIgnoreCase("GET") || method.equalsIgnoreCase("DELETE")) {
-            queryString = builder.buildUrl();
-        } else {
-            body = builder.buildBodToJsonString();
-        }
-
-        String preHash = preHash(timestamp, method.toUpperCase(), requestPath, queryString, body);
-        logger.debug("preHash:{}", preHash);
         return Base64.getEncoder().encodeToString(hmacSha256.doFinal(preHash.getBytes(StandardCharsets.UTF_8)));
     }
 
 
-    public static String preHash(String timestamp, String method, String requestPath, String queryString, String body) {
+    private static String preHash(String timestamp, String method, String requestPath, String queryString, String body) {
         StringBuilder preHash = new StringBuilder();
         preHash.append(timestamp);
         preHash.append(method.toUpperCase());

@@ -2,6 +2,7 @@ package org.herman.future.model.user;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.herman.Constants;
+import org.herman.future.model.enums.PositionSide;
 
 import java.math.BigDecimal;
 
@@ -15,9 +16,17 @@ public class PositionUpdateEvent {
 
     private BigDecimal entryPrice;
 
-    private BigDecimal preFee;
-
     private BigDecimal unrealizedPnl;
+
+    private PositionSide side;
+
+    public PositionSide getSide() {
+        return side;
+    }
+
+    public void setSide(PositionSide side) {
+        this.side = side;
+    }
 
     public String getEventType() {
         return eventType;
@@ -51,14 +60,6 @@ public class PositionUpdateEvent {
         this.entryPrice = entryPrice;
     }
 
-    public BigDecimal getPreFee() {
-        return preFee;
-    }
-
-    public void setPreFee(BigDecimal preFee) {
-        this.preFee = preFee;
-    }
-
     public BigDecimal getUnrealizedPnl() {
         return unrealizedPnl;
     }
@@ -70,7 +71,7 @@ public class PositionUpdateEvent {
     @Override
     public String toString() {
         return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("symbol", symbol)
-                .append("amount", amount).append("entryPrice", entryPrice).append("preFee", preFee)
+                .append("amount", amount).append("entryPrice", entryPrice).append("side", side)
                 .append("unrealizedPnl", unrealizedPnl).toString();
     }
 }

@@ -38,12 +38,11 @@ public interface WebsocketRequestClient {
     WebsocketRequest<String> authentication(FutureSubscriptionListener<String> callback, FutureSubscriptionErrorHandler errorHandler);
 
     //获取listenerKey
+    String getPrivateToken();
 
-    String listenerKey(FutureSubscriptionOptions options);
+    WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String privateToken, String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
 
-    WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String listenerKey, String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
+    WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String privateToken, String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
 
-    WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String listenerKey, String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler);
-
-    WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String listenerKey, String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler);
+    WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String privateToken, String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 }
