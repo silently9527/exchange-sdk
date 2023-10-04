@@ -104,26 +104,27 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
             List<ExchangeInfoEntry> symbolList = new LinkedList<>();
             JsonWrapperArray symbolArray = jsonWrapper.getJsonArray("data");
             symbolArray.forEach((item) -> {
-                ExchangeInfoEntry symbol = new ExchangeInfoEntry();
-                symbol.setSymbol(item.getString("instId"));
-                symbol.setBaseAsset(item.getString("ctValCcy"));
-                symbol.setQuoteAsset(item.getString("settleCcy"));
+                ExchangeInfoEntry entry = new ExchangeInfoEntry();
+                entry.setSymbol(item.getString("instId"));
+                entry.setBaseAsset(item.getString("ctValCcy"));
+                entry.setQuoteAsset(item.getString("settleCcy"));
 
                 if (item.getString("state").equals("live")) {
-                    symbol.setStatus(FutureStatus.TRADING);
+                    entry.setStatus(FutureStatus.TRADING);
                 } else if (item.getString("state").equals("suspend")) {
-                    symbol.setStatus(FutureStatus.PAUSE);
+                    entry.setStatus(FutureStatus.PAUSE);
                 } else {
-                    symbol.setStatus(FutureStatus.UN_KNOW);
+                    entry.setStatus(FutureStatus.UN_KNOW);
                 }
-                symbol.setOnboardDate(item.getLong("listTime"));
-                symbol.setFutureType(FutureType.PERPETUAL);
+                entry.setOnboardDate(item.getLong("listTime"));
+                entry.setFutureType(FutureType.PERPETUAL);
 
-                symbol.setMultiplier(item.getBigDecimal("ctVal"));
-                symbol.setTickSize(item.getBigDecimal("tickSz"));
-                symbol.setStepSize(item.getBigDecimal("lotSz"));
-                symbol.setMinQty(item.getBigDecimal("minSz"));
-                symbolList.add(symbol);
+                entry.setMultiplier(item.getBigDecimal("ctVal"));
+                entry.setTickSize(item.getBigDecimal("tickSz"));
+                entry.setStepSize(item.getBigDecimal("lotSz"));
+                entry.setMinQty(item.getBigDecimal("minSz"));
+                entry.setSource(item);
+                symbolList.add(entry);
             });
             result.setSymbols(symbolList);
 
@@ -498,6 +499,7 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
                 positionRisk.setMarginType(MarginType.valueOf(item.getString("mgnMode")));
                 positionRisk.setUnrealizedProfit(item.getBigDecimal("upl"));
                 positionRisk.setUpdateTime(item.getLong("uTime"));
+                positionRisk.setSource(item);
                 result.add(positionRisk);
             });
             return result;

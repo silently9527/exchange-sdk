@@ -3,6 +3,7 @@ package org.herman.future;
 import org.apache.commons.lang3.time.DateUtils;
 import org.herman.Constants;
 import org.herman.future.model.market.*;
+import org.herman.future.model.trade.AccountBalance;
 import org.junit.Test;
 
 import java.util.Date;
@@ -69,8 +70,8 @@ public class BinanceRestApiRequestClientTest {
 //        orderBookTicker = client.getSymbolOrderBookTicker("");
 //        System.out.println(orderBookTicker);
 
-        List<AggregateTrade> aggregateTrades = client.getAggregateTrades("ETHUSDT", "", start, end, 10);
-        System.out.println(aggregateTrades);
+//        List<AggregateTrade> aggregateTrades = client.getAggregateTrades("ETHUSDT", "", start, end, 10);
+//        System.out.println(aggregateTrades);
     }
 
 

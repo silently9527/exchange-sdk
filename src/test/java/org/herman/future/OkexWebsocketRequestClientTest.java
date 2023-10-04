@@ -34,8 +34,8 @@ public class OkexWebsocketRequestClientTest {
 //        subscriptionClient.subscribeBookDepthEvent(symbol, 5, System.out::println, null);
 //        subscriptionClient.subscribeSymbolTickerEvent(symbol, System.out::println, null);
 //        subscriptionClient.subscribeAccountEvent("USDT", System.out::println, null);
-//        subscriptionClient.subscribePositionEvent("", System.out::println, null);
-        subscriptionClient.subscribeOrderUpdateEvent("BTC-USD-SWAP", System.out::println, null);
+        subscriptionClient.subscribePositionEvent("", System.out::println, null);
+//        subscriptionClient.subscribeOrderUpdateEvent("BTC-USD-SWAP", System.out::println, null);
 
         Thread.sleep(60000 * 10);
     }

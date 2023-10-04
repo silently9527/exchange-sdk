@@ -49,7 +49,7 @@ public class JsonWrapperArray {
         }
     }
 
-    private Object getObjectAt(int index) {
+    public Object getObjectAt(int index) {
         if (array != null && array.size() > index) {
             return array.get(index);
         } else {

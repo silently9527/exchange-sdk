@@ -25,6 +25,16 @@ public class ExchangeInfoEntry {
     private BigDecimal minNotional;     // 最小名义价值
     private BigDecimal multiplier;
 
+    private Object source;
+
+    public Object getSource() {
+        return source;
+    }
+
+    public void setSource(Object source) {
+        this.source = source;
+    }
+
     public BigDecimal getMultiplier() {
         return multiplier;
     }

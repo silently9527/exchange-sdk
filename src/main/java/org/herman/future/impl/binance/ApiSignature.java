@@ -17,7 +17,7 @@ public class ApiSignature {
     private static final String signatureMethodValue = "HmacSHA256";
     public static final String signatureVersionValue = "2";
 
-    public void createSignature(String accessKey, String secretKey, UrlParamsBuilder builder) {
+    public static void createSignature(String accessKey, String secretKey, UrlParamsBuilder builder) {
 
         if (accessKey == null || "".equals(accessKey) || secretKey == null || "".equals(secretKey)) {
             throw new ApiException(ApiException.KEY_MISSING, "API key and secret key are required");

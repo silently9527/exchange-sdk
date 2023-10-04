@@ -6,6 +6,7 @@ import org.herman.future.impl.WebSocketFutureSubscriptionClient;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.impl.binance.BinanceRestApiRequestClient;
 import org.herman.future.impl.binance.BinanceWebsocketRequestClient;
+import org.herman.future.impl.kucoin.KucoinRestApiRequestClient;
 import org.herman.future.impl.okex.OkexRestApiRequestClient;
 import org.herman.future.impl.okex.OkexWebsocketRequestClient;
 
@@ -18,6 +19,11 @@ public final class FutureApiInternalFactory {
     }
 
     private FutureApiInternalFactory() {
+    }
+
+    public FutureRestApiClient createKucoinFutureRequestClient(FutureRestApiOptions options) {
+        RestApiRequestClient requestImpl = new KucoinRestApiRequestClient(options);
+        return new FutureRestApiClientImpl(requestImpl);
     }
 
     public FutureRestApiClient createBinanceFutureRequestClient(FutureRestApiOptions options) {

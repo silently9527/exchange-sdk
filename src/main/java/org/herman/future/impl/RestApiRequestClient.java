@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface RestApiRequestClient {
+    //todo:缓存
     RestApiRequest<ExchangeInformation> getExchangeInformation();
 
     RestApiRequest<List<MarkPrice>> getMarkPrice(String symbol);

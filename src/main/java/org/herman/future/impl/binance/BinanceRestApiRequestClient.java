@@ -34,7 +34,7 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
                     "[Invoking] Builder is null when create request with Signature");
         }
         String requestUrl = url + address;
-        new ApiSignature().createSignature(apiKey, secretKey, builder);
+        ApiSignature.createSignature(apiKey, secretKey, builder);
         if (builder.hasPostParam()) {
             requestUrl += builder.buildUrl();
             return new Request.Builder().url(requestUrl).post(builder.buildPostBody())
@@ -105,38 +105,40 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
             List<ExchangeInfoEntry> symbolList = new LinkedList<>();
             JsonWrapperArray symbolArray = jsonWrapper.getJsonArray("symbols");
             symbolArray.forEach((item) -> {
-                ExchangeInfoEntry symbol = new ExchangeInfoEntry();
-                symbol.setSymbol(item.getString("symbol"));
-                symbol.setMultiplier(BigDecimal.ONE);
+                ExchangeInfoEntry entry = new ExchangeInfoEntry();
+                entry.setSymbol(item.getString("entry"));
+                entry.setMultiplier(BigDecimal.ONE);
                 if (item.getString("status").equals("TRADING")) {
-                    symbol.setStatus(FutureStatus.TRADING);
+                    entry.setStatus(FutureStatus.TRADING);
                 } else if (item.getString("status").equals("CLOSE")) {
-                    symbol.setStatus(FutureStatus.CLOSE);
+                    entry.setStatus(FutureStatus.CLOSE);
                 } else {
-                    symbol.setStatus(FutureStatus.UN_KNOW);
+                    entry.setStatus(FutureStatus.UN_KNOW);
                 }
 
-                symbol.setBaseAsset(item.getString("baseAsset"));
-                symbol.setFutureType(FutureType.PERPETUAL);
-                symbol.setOnboardDate(item.getLong("onboardDate"));
-                symbol.setQuoteAsset(item.getString("quoteAsset"));
+                entry.setBaseAsset(item.getString("baseAsset"));
+                entry.setFutureType(FutureType.PERPETUAL);
+                entry.setOnboardDate(item.getLong("onboardDate"));
+                entry.setQuoteAsset(item.getString("quoteAsset"));
                 JsonWrapperArray valArray = item.getJsonArray("filters");
                 valArray.forEach((val) -> {
                     if ("PRICE_FILTER".equals(val.getString("filterType"))) {
-                        symbol.setMaxPrice(val.getBigDecimal("maxPrice"));
-                        symbol.setMinPrice(val.getBigDecimal("minPrice"));
-                        symbol.setTickSize(val.getBigDecimal("tickSize"));
+                        entry.setMaxPrice(val.getBigDecimal("maxPrice"));
+                        entry.setMinPrice(val.getBigDecimal("minPrice"));
+                        entry.setTickSize(val.getBigDecimal("tickSize"));
                     } else if ("LOT_SIZE".equals(val.getString("filterType"))) {
-                        symbol.setMinQty(val.getBigDecimal("minQty"));
-                        symbol.setMaxQty(val.getBigDecimal("maxQty"));
-                        symbol.setStepSize(val.getBigDecimal("stepSize"));
+                        entry.setMinQty(val.getBigDecimal("minQty"));
+                        entry.setMaxQty(val.getBigDecimal("maxQty"));
+                        entry.setStepSize(val.getBigDecimal("stepSize"));
                     } else if ("MAX_NUM_ORDERS".equals(val.getString("filterType"))) {
-                        symbol.setMaxNumOrders(val.getInteger("limit"));
+                        entry.setMaxNumOrders(val.getInteger("limit"));
                     } else if ("MIN_NOTIONAL".equals(val.getString("filterType"))) {
-                        symbol.setMinNotional(val.getBigDecimal("notional"));
+                        entry.setMinNotional(val.getBigDecimal("notional"));
                     }
                 });
-                symbolList.add(symbol);
+
+                entry.setSource(item);
+                symbolList.add(entry);
             });
             result.setSymbols(symbolList);
 
@@ -560,6 +562,7 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
                 element.setMarginType(MarginType.valueOf(item.getString("marginType")));
                 element.setUnrealizedProfit(item.getBigDecimal("unRealizedProfit"));
                 element.setUpdateTime(item.getLong("updateTime"));
+                element.setSource(item);
                 result.add(element);
             });
             return result;

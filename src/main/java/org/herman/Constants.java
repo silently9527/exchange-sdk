@@ -17,13 +17,13 @@ public class Constants {
     public static ToStringStyle TO_STRING_BUILDER_STYLE = ToStringStyle.SHORT_PREFIX_STYLE;
 
 
-
     public static class Future {
         /**
          * REST API base URL.
          */
         public static final String BINANCE_REST_API_BASE_URL = "https://fapi.binance.com";
         public static final String OKEX_REST_API_BASE_URL = "https://www.okx.com";
+        public static final String KUCOIN_REST_API_BASE_URL = "https://api-futures.kucoin.com";
 
         /**
          * Streaming API base URL.
