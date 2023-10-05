@@ -2,13 +2,14 @@ package org.herman.future;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.herman.Constants;
-import org.herman.future.model.enums.CandlestickInterval;
-import org.herman.future.model.market.AggregateTrade;
-import org.herman.future.model.market.MarkPrice;
+import org.herman.future.model.enums.OrderSide;
+import org.herman.future.model.enums.OrderType;
+import org.herman.future.model.enums.PositionSide;
+import org.herman.future.model.enums.TimeInForce;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 public class KucoinRestApiRequestClientTest {
 
@@ -36,9 +37,20 @@ public class KucoinRestApiRequestClientTest {
 //        System.out.println(client.getRecentTrades("ETHUSDTM", 10));
 
 //        System.out.println(client.getPositionRisk(""));
-        System.out.println(client.getPositionRisk("ETHUSDTM"));
+//        System.out.println(client.getPositionRisk("ETHUSDTM"));
 
+//        System.out.println(client.getOpenOrders("ETHUSDTM"));
+//        System.out.println(client.getAllOrders("ETHUSDTM", "1", start, end, 2));
+//        99410585954889728  99066920745111552
+//        System.out.println(client.getOrder("","99410585954889728",""));
 
+//        99417981246783488
+        String orderId = client.postOrder("ETHUSDTM", OrderSide.SELL, PositionSide.BOTH, OrderType.LIMIT,
+                TimeInForce.GTC, BigDecimal.ONE, new BigDecimal("2001"), false, System.currentTimeMillis() + "", null, null, 5);
+        System.out.println(orderId);
+
+//        System.out.println(client.cancelOrder("ETHUSDTM", orderId, ""));
+        System.out.println(client.cancelAllOpenOrder("ETHUSDTM"));
     }
 
 

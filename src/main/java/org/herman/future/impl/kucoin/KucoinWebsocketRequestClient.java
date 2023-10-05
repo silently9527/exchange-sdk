@@ -2,7 +2,6 @@ package org.herman.future.impl.kucoin;
 
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
-import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.model.enums.CandlestickInterval;

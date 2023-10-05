@@ -349,7 +349,9 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId, BigDecimal stopPrice, WorkingType workingType) {
+    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
+                                            TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
+                                            String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage) {
         RestApiRequest<String> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()
                 .putToUrl("symbol", symbol)
@@ -430,7 +432,7 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         result.setStatus(OrderStatus.valueOf(jsonWrapper.getString("status").toUpperCase()));
         result.setStopPrice(jsonWrapper.getBigDecimal("stopPrice"));
         result.setSymbol(jsonWrapper.getString("symbol"));
-        result.setTimeInForce(jsonWrapper.getString("timeInForce"));
+        result.setTimeInForce(TimeInForce.valueOf(jsonWrapper.getString("timeInForce")));
         result.setType(OrderType.valueOf(jsonWrapper.getString("type").toUpperCase()));
         result.setUpdateTime(jsonWrapper.getLong("updateTime"));
         result.setWorkingType(jsonWrapper.getString("workingType"));
@@ -526,9 +528,7 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         request.jsonParser = (jsonWrapper -> {
             List<Order> result = new LinkedList<>();
             JsonWrapperArray dataArray = jsonWrapper.getJsonArray("data");
-            dataArray.forEach((item) -> {
-                result.add(parseOrderDetail(item));
-            });
+            dataArray.forEach((item) -> result.add(parseOrderDetail(item)));
             return result;
         });
         return request;

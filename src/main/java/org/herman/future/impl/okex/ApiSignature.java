@@ -3,8 +3,6 @@ package org.herman.future.impl.okex;
 import org.apache.commons.lang3.StringUtils;
 import org.herman.exception.ApiException;
 import org.herman.utils.UrlParamsBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

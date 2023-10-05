@@ -2,7 +2,6 @@ package org.herman.future.impl;
 
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
-import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.model.enums.CandlestickInterval;
 import org.herman.future.model.event.*;
 import org.herman.future.model.user.BalanceUpdateEvent;

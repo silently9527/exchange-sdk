@@ -69,10 +69,12 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
-    public String postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId, BigDecimal stopPrice, WorkingType workingType) {
+    public String postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce,
+                            BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId,
+                            BigDecimal stopPrice, WorkingType workingType, Integer leverage) {
         return RestApiInvoker.callSync(requestImpl.postOrder(symbol, side, positionSide, orderType,
                 timeInForce, quantity, price, reduceOnly,
-                newClientOrderId, stopPrice, workingType));
+                newClientOrderId, stopPrice, workingType, leverage));
     }
 
     @Override

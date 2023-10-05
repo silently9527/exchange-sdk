@@ -2,10 +2,7 @@ package org.herman.future.model.trade;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.herman.Constants;
-import org.herman.future.model.enums.OrderSide;
-import org.herman.future.model.enums.OrderStatus;
-import org.herman.future.model.enums.OrderType;
-import org.herman.future.model.enums.PositionSide;
+import org.herman.future.model.enums.*;
 
 import java.math.BigDecimal;
 
@@ -35,7 +32,7 @@ public class Order {
 
     private String symbol;
 
-    private String timeInForce;
+    private TimeInForce timeInForce;
 
     private OrderType type;
 
@@ -148,11 +145,11 @@ public class Order {
         this.symbol = symbol;
     }
 
-    public String getTimeInForce() {
+    public TimeInForce getTimeInForce() {
         return timeInForce;
     }
 
-    public void setTimeInForce(String timeInForce) {
+    public void setTimeInForce(TimeInForce timeInForce) {
         this.timeInForce = timeInForce;
     }
 

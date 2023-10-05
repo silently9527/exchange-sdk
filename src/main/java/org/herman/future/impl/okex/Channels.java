@@ -6,8 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.model.enums.CandlestickInterval;
 
-import java.util.Arrays;
-
 public abstract class Channels {
 
     public static final String OP_SUB = "subscribe";

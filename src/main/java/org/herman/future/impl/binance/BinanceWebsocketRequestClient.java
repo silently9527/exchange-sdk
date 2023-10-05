@@ -19,7 +19,9 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     private final BinanceRestApiRequestClient restApiRequestClient;

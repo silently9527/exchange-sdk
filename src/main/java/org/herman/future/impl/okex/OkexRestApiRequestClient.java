@@ -270,7 +270,9 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId, BigDecimal stopPrice, WorkingType workingType) {
+    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
+                                            TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
+                                            String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage) {
         RestApiRequest<String> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()
                 .putToPost("instId", symbol)
@@ -388,9 +390,7 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
         request.jsonParser = (jsonWrapper -> {
             List<Order> result = new LinkedList<>();
             JsonWrapperArray dataArray = jsonWrapper.getJsonArray("data");
-            dataArray.forEach((item) -> {
-                result.add(parseOrderDetail(item));
-            });
+            dataArray.forEach((item) -> result.add(parseOrderDetail(item)));
             return result;
         });
         return request;

@@ -24,7 +24,7 @@ public interface RestApiRequestClient {
 
     RestApiRequest<List<AccountBalance>> getBalance();
 
-    RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId, BigDecimal stopPrice, WorkingType workingType);
+    RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage);
 
     RestApiRequest<String> cancelOrder(String symbol, String orderId, String origClientOrderId);
 

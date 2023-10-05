@@ -14,6 +14,7 @@ import org.herman.future.model.ResponseResult;
 import org.herman.future.model.enums.*;
 import org.herman.future.model.market.*;
 import org.herman.future.model.trade.*;
+import org.herman.utils.InputChecker;
 import org.herman.utils.JsonWrapper;
 import org.herman.utils.JsonWrapperArray;
 import org.herman.utils.UrlParamsBuilder;
@@ -249,28 +250,121 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId, BigDecimal stopPrice, WorkingType workingType) {
-        return null;
+    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
+                                            TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
+                                            String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage) {
+        RestApiRequest<String> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToPost("clientOid", newClientOrderId)
+                .putToPost("symbol", symbol)
+                .putToPost("side", side.name().toLowerCase())
+                .putToPost("type", orderType.name().toLowerCase())
+                .putToPost("leverage", leverage)
+                .putToPost("size", quantity.stripTrailingZeros().toPlainString())
+                .putToPost("price", price.stripTrailingZeros().toPlainString())
+                .putToPost("timeInForce", timeInForce)
+                .putToPost("reduceOnly", reduceOnly.toString());
+
+        request.request = createRequestByPostWithSignature("/api/v1/orders", builder);
+
+        request.jsonParser = (jsonWrapper -> jsonWrapper.getJsonObject("data").getString("orderId"));
+        return request;
     }
 
     @Override
     public RestApiRequest<String> cancelOrder(String symbol, String orderId, String origClientOrderId) {
-        return null;
+        InputChecker.checker()
+                .shouldNotNull(orderId, "orderId");
+        RestApiRequest<String> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build();
+        request.request = createRequestByDeleteWithSignature("/api/v1/orders/" + orderId, builder);
+
+        request.jsonParser = (jsonWrapper -> jsonWrapper.getJsonObject("data").getJsonArray("cancelledOrderIds").getStringAt(0));
+        return request;
     }
 
     @Override
     public RestApiRequest<ResponseResult> cancelAllOpenOrder(String symbol) {
-        return null;
+        RestApiRequest<ResponseResult> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("symbol", symbol);
+        request.request = createRequestByDeleteWithSignature("/api/v1/orders", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            ResponseResult responseResult = new ResponseResult();
+            responseResult.setCode(jsonWrapper.getInteger("code") == 200000 ? 200 : jsonWrapper.getInteger("code"));
+            responseResult.setMsg("OK");
+            return responseResult;
+        });
+        return request;
     }
 
     @Override
     public RestApiRequest<Order> getOrder(String symbol, String orderId, String origClientOrderId) {
-        return null;
+        RestApiRequest<Order> request = new RestApiRequest<>();
+
+        if (StringUtils.isNotEmpty(origClientOrderId)) {
+            UrlParamsBuilder builder = UrlParamsBuilder.build()
+                    .putToUrl("clientOid", origClientOrderId);
+            request.request = createRequestByGetWithSignature("/api/v1/orders/byClientOid", builder);
+        } else {
+            UrlParamsBuilder builder = UrlParamsBuilder.build();
+            request.request = createRequestByGetWithSignature("/api/v1/orders/" + orderId, builder);
+        }
+
+        request.jsonParser = (jsonWrapper -> parseOrderDetail(jsonWrapper.getJsonObject("data")));
+        return request;
     }
 
     @Override
     public RestApiRequest<List<Order>> getOpenOrders(String symbol) {
-        return null;
+        RestApiRequest<List<Order>> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("status", "active")
+                .putToUrl("pageSize", 100);
+        if (StringUtils.isNotEmpty(symbol)) {
+            builder.putToUrl("symbol", symbol);
+        }
+        request.request = createRequestByGetWithSignature("/api/v1/orders", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<Order> result = new LinkedList<>();
+            JsonWrapper data = jsonWrapper.getJsonObject("data");
+            JsonWrapperArray items = data.getJsonArray("items");
+            items.forEach((item) -> result.add(parseOrderDetail(item)));
+            return result;
+        });
+        return request;
+    }
+
+    private Order parseOrderDetail(JsonWrapper jsonWrapper) {
+        Order result = new Order();
+        result.setSymbol(jsonWrapper.getString("symbol"));
+        result.setClientOrderId(jsonWrapper.getString("clientOid"));
+        result.setCumQuote(jsonWrapper.getBigDecimal("dealValue"));
+        result.setExecutedQty(jsonWrapper.getBigDecimal("dealSize"));
+        result.setOrderId(jsonWrapper.getLong("id"));
+        result.setOrigQty(jsonWrapper.getBigDecimal("size"));
+        result.setPrice(jsonWrapper.getBigDecimal("price"));
+        result.setReduceOnly(jsonWrapper.getBoolean("reduceOnly"));
+        result.setSide(OrderSide.valueOf(jsonWrapper.getString("side").toUpperCase()));
+        result.setPositionSide(PositionSide.BOTH);
+        String itemStatus = jsonWrapper.getString("status");
+        if ("active".equals(itemStatus) && result.getExecutedQty().doubleValue() == 0) {
+            result.setStatus(OrderStatus.NEW);
+        } else if ("active".equals(itemStatus) && result.getExecutedQty().doubleValue() != 0) {
+            result.setStatus(OrderStatus.PARTIALLY_FILLED);
+        } else if ("done".equals(itemStatus)) {
+            result.setStatus(OrderStatus.FILLED);
+        } else {
+            result.setStatus(OrderStatus.INVALID);
+        }
+//        result.setStopPrice(jsonWrapper.getBigDecimal("stopPrice"));
+        result.setTimeInForce(TimeInForce.valueOf(jsonWrapper.getString("timeInForce").toUpperCase()));
+        result.setType(OrderType.valueOf(jsonWrapper.getString("type").toUpperCase()));
+        result.setUpdateTime(jsonWrapper.getLong("updatedAt"));
+        result.setWorkingType(jsonWrapper.getString("stopPriceType"));
+        return result;
     }
 
     @Override
@@ -317,8 +411,26 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<List<Order>> getAllOrders(String symbol, String formId, Long startTime, Long endTime, Integer limit) {
-        return null;
+    public RestApiRequest<List<Order>> getAllOrders(String symbol, String currentPage, Long startTime, Long endTime, Integer limit) {
+        RestApiRequest<List<Order>> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("startAt", startTime)
+                .putToUrl("endAt", endTime)
+                .putToUrl("currentPage", currentPage)
+                .putToUrl("pageSize", limit);
+        if (StringUtils.isNotEmpty(symbol)) {
+            builder.putToUrl("symbol", symbol);
+        }
+        request.request = createRequestByGetWithSignature("/api/v1/orders", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<Order> result = new LinkedList<>();
+            JsonWrapper data = jsonWrapper.getJsonObject("data");
+            JsonWrapperArray items = data.getJsonArray("items");
+            items.forEach((item) -> result.add(parseOrderDetail(item)));
+            return result;
+        });
+        return request;
     }
 
     @Override

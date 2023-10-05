@@ -1,7 +1,7 @@
 package org.herman.future;
 
-import org.herman.future.impl.RestApiRequestClient;
 import org.herman.future.impl.FutureRestApiClientImpl;
+import org.herman.future.impl.RestApiRequestClient;
 import org.herman.future.impl.WebSocketFutureSubscriptionClient;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.impl.binance.BinanceRestApiRequestClient;

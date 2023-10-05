@@ -44,7 +44,7 @@ public interface FutureRestApiClient {
 
     String postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
                      TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
-                     String newClientOrderId, BigDecimal stopPrice, WorkingType workingType);
+                     String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage);
 
     String cancelOrder(String symbol, String orderId, String origClientOrderId);
 
@@ -52,7 +52,7 @@ public interface FutureRestApiClient {
 
 //    ResponseResult changePositionSide(boolean dual);
 
-//    ResponseResult changeMarginType(String symbolName, String marginType);
+    //    ResponseResult changeMarginType(String symbolName, String marginType);
 //
 //    JSONObject addIsolatedPositionMargin(String symbolName, int type, String amount, PositionSide positionSide);
 //

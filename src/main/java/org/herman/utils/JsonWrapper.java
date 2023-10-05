@@ -16,7 +16,7 @@ public class JsonWrapper {
     public static JsonWrapper parseFromString(String text) {
         try {
             JSONObject jsonObject;
-            if(JSON.parse(text) instanceof JSONArray) {
+            if (JSON.parse(text) instanceof JSONArray) {
                 jsonObject = (JSONObject) JSON.parse("{data:" + text + "}");
             } else {
                 jsonObject = (JSONObject) JSON.parse(text);
@@ -126,6 +126,7 @@ public class JsonWrapper {
                     "[Json] Get long error: " + name + " " + e.getMessage());
         }
     }
+
     public Double getDouble(String name) {
         checkMandatoryField(name);
         try {
@@ -193,8 +194,9 @@ public class JsonWrapper {
             throw new ApiException(ApiException.RUNTIME_ERROR, "[Json] Get array: " + name + " error");
         }
         if (array == null) {
-            throw new ApiException(ApiException.RUNTIME_ERROR,
-                    "[Json] Array: " + name + " does not exist");
+//            throw new ApiException(ApiException.RUNTIME_ERROR,
+//                    "[Json] Array: " + name + " does not exist");
+            array = new JSONArray();
         }
         return new JsonWrapperArray(array);
     }

@@ -4,7 +4,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import org.herman.Constants;
 import org.herman.exception.ApiException;
 import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.RestApiInvoker;
