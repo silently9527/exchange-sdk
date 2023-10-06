@@ -7,7 +7,7 @@ import org.herman.future.model.enums.FutureType;
 
 import java.math.BigDecimal;
 
-public class ExchangeInfoEntry {
+public class Future {
 
     private String symbol;
     private String baseAsset;           // 标的资产

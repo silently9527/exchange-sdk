@@ -17,8 +17,8 @@ public class BinanceRestApiRequestClientTest {
                 .getInstance()
                 .createBinanceFutureRestApiClient(Constants.Future.BINANCE_REST_API_BASE_URL, appKey, secret);
 
-//        ExchangeInformation exchangeInformation = client.getExchangeInformation();
-//        System.out.println(exchangeInformation);
+//        System.out.println(client.getFutures());
+        System.out.println(client.getFuture("ETHUSDT"));
 
 //        List<AccountBalance> balance = client.getBalance();
 //        System.out.println(balance);

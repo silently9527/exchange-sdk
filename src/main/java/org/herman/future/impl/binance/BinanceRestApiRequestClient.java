@@ -65,80 +65,79 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<ExchangeInformation> getExchangeInformation() {
-        RestApiRequest<ExchangeInformation> request = new RestApiRequest<>();
+    public RestApiRequest<List<Future>> getFutures() {
+        RestApiRequest<List<Future>> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         request.request = createRequestByGet("/fapi/v1/exchangeInfo", builder);
 
         request.jsonParser = (jsonWrapper -> {
-            ExchangeInformation result = new ExchangeInformation();
-            result.setTimezone(jsonWrapper.getString("timezone"));
-            result.setServerTime(jsonWrapper.getLong("serverTime"));
-
-            List<RateLimit> elementList = new LinkedList<>();
-            JsonWrapperArray dataArray = jsonWrapper.getJsonArray("rateLimits");
-            dataArray.forEach((item) -> {
-                RateLimit element = new RateLimit();
-                element.setRateLimitType(item.getString("rateLimitType"));
-                element.setInterval(item.getString("interval"));
-                element.setIntervalNum(item.getLong("intervalNum"));
-                element.setLimit(item.getLong("limit"));
-                elementList.add(element);
-            });
-            result.setRateLimits(elementList);
-
-            List<ExchangeFilter> filterList = new LinkedList<>();
-            JsonWrapperArray filterArray = jsonWrapper.getJsonArray("exchangeFilters");
-            filterArray.forEach((item) -> {
-                ExchangeFilter filter = new ExchangeFilter();
-                filter.setFilterType(item.getString("filterType"));
-                filter.setMaxNumOrders(item.getLong("maxNumOrders"));
-                filter.setMaxNumAlgoOrders(item.getLong("maxNumAlgoOrders"));
-                filterList.add(filter);
-            });
-            result.setExchangeFilters(filterList);
-
-            List<ExchangeInfoEntry> symbolList = new LinkedList<>();
+            List<Future> futures = new LinkedList<>();
             JsonWrapperArray symbolArray = jsonWrapper.getJsonArray("symbols");
             symbolArray.forEach((item) -> {
-                ExchangeInfoEntry entry = new ExchangeInfoEntry();
-                entry.setSymbol(item.getString("entry"));
-                entry.setMultiplier(BigDecimal.ONE);
-                if (item.getString("status").equals("TRADING")) {
-                    entry.setStatus(FutureStatus.TRADING);
-                } else if (item.getString("status").equals("CLOSE")) {
-                    entry.setStatus(FutureStatus.CLOSE);
-                } else {
-                    entry.setStatus(FutureStatus.UN_KNOW);
-                }
-
-                entry.setBaseAsset(item.getString("baseAsset"));
-                entry.setFutureType(FutureType.PERPETUAL);
-                entry.setOnboardDate(item.getLong("onboardDate"));
-                entry.setQuoteAsset(item.getString("quoteAsset"));
-                JsonWrapperArray valArray = item.getJsonArray("filters");
-                valArray.forEach((val) -> {
-                    if ("PRICE_FILTER".equals(val.getString("filterType"))) {
-                        entry.setMaxPrice(val.getBigDecimal("maxPrice"));
-                        entry.setMinPrice(val.getBigDecimal("minPrice"));
-                        entry.setTickSize(val.getBigDecimal("tickSize"));
-                    } else if ("LOT_SIZE".equals(val.getString("filterType"))) {
-                        entry.setMinQty(val.getBigDecimal("minQty"));
-                        entry.setMaxQty(val.getBigDecimal("maxQty"));
-                        entry.setStepSize(val.getBigDecimal("stepSize"));
-                    } else if ("MAX_NUM_ORDERS".equals(val.getString("filterType"))) {
-                        entry.setMaxNumOrders(val.getInteger("limit"));
-                    } else if ("MIN_NOTIONAL".equals(val.getString("filterType"))) {
-                        entry.setMinNotional(val.getBigDecimal("notional"));
-                    }
-                });
+                Future entry = parseFuture(item);
 
                 entry.setSource(item);
-                symbolList.add(entry);
+                futures.add(entry);
             });
-            result.setSymbols(symbolList);
+            return futures;
+        });
+        return request;
+    }
 
-            return result;
+    private Future parseFuture(JsonWrapper item) {
+        Future entry = new Future();
+        entry.setSymbol(item.getString("symbol"));
+        entry.setMultiplier(BigDecimal.ONE);
+        if (item.getString("status").equals("TRADING")) {
+            entry.setStatus(FutureStatus.TRADING);
+        } else if (item.getString("status").equals("CLOSE")) {
+            entry.setStatus(FutureStatus.CLOSE);
+        } else {
+            entry.setStatus(FutureStatus.UN_KNOW);
+        }
+
+        entry.setBaseAsset(item.getString("baseAsset"));
+        entry.setFutureType(FutureType.PERPETUAL);
+        entry.setOnboardDate(item.getLong("onboardDate"));
+        entry.setQuoteAsset(item.getString("quoteAsset"));
+        JsonWrapperArray valArray = item.getJsonArray("filters");
+        valArray.forEach((val) -> {
+            if ("PRICE_FILTER".equals(val.getString("filterType"))) {
+                entry.setMaxPrice(val.getBigDecimal("maxPrice"));
+                entry.setMinPrice(val.getBigDecimal("minPrice"));
+                entry.setTickSize(val.getBigDecimal("tickSize"));
+            } else if ("LOT_SIZE".equals(val.getString("filterType"))) {
+                entry.setMinQty(val.getBigDecimal("minQty"));
+                entry.setMaxQty(val.getBigDecimal("maxQty"));
+                entry.setStepSize(val.getBigDecimal("stepSize"));
+            } else if ("MAX_NUM_ORDERS".equals(val.getString("filterType"))) {
+                entry.setMaxNumOrders(val.getInteger("limit"));
+            } else if ("MIN_NOTIONAL".equals(val.getString("filterType"))) {
+                entry.setMinNotional(val.getBigDecimal("notional"));
+            }
+        });
+        return entry;
+    }
+
+    @Override
+    public RestApiRequest<Future> getFuture(String symbol) {
+        RestApiRequest<Future> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build();
+        request.request = createRequestByGet("/fapi/v1/exchangeInfo", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<Future> futures = new LinkedList<>();
+            JsonWrapperArray symbolArray = jsonWrapper.getJsonArray("symbols");
+            symbolArray.forEach((item) -> {
+                String itemSymbol = item.getString("symbol");
+                if (!symbol.equals(itemSymbol)) {
+                    return;
+                }
+                Future entry = parseFuture(item);
+                entry.setSource(item);
+                futures.add(entry);
+            });
+            return futures.isEmpty() ? null : futures.get(0);
         });
         return request;
     }

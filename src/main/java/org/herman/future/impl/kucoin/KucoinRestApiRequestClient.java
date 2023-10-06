@@ -99,41 +99,55 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<ExchangeInformation> getExchangeInformation() {
-        RestApiRequest<ExchangeInformation> request = new RestApiRequest<>();
+    public RestApiRequest<List<Future>> getFutures() {
+        RestApiRequest<List<Future>> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         request.request = createRequestByGet("/api/v1/contracts/active", builder);
 
         request.jsonParser = (jsonWrapper -> {
-            ExchangeInformation result = new ExchangeInformation();
-
-            List<ExchangeInfoEntry> symbolList = new LinkedList<>();
+            List<Future> futures = new LinkedList<>();
             JsonWrapperArray symbolArray = jsonWrapper.getJsonArray("data");
             symbolArray.forEach((item) -> {
-                ExchangeInfoEntry entry = new ExchangeInfoEntry();
-                entry.setSymbol(item.getString("symbol"));
-                entry.setBaseAsset(item.getString("baseCurrency"));
-                entry.setQuoteAsset(item.getString("quoteCurrency"));
-
-                if (item.getString("status").equals("Open")) {
-                    entry.setStatus(FutureStatus.TRADING);
-                } else if (item.getString("status").equals("Pause")) {
-                    entry.setStatus(FutureStatus.PAUSE);
-                } else {
-                    entry.setStatus(FutureStatus.UN_KNOW);
-                }
-                entry.setOnboardDate(item.getLong("firstOpenDate"));
-                entry.setFutureType("FFWCSX".equals(item.getString("type")) ? FutureType.PERPETUAL : FutureType.SETTLEMENT);
-
-                entry.setMultiplier(item.getBigDecimal("multiplier"));
-                entry.setTickSize(item.getBigDecimal("tickSize"));
-                entry.setMinQty(item.getBigDecimal("lotSize"));
-                entry.setSource(item);
-                symbolList.add(entry);
+                Future entry = parseFuture(item);
+                futures.add(entry);
             });
-            result.setSymbols(symbolList);
+            return futures;
+        });
+        return request;
+    }
 
-            return result;
+    private Future parseFuture(JsonWrapper item) {
+        Future entry = new Future();
+        entry.setSymbol(item.getString("symbol"));
+        entry.setBaseAsset(item.getString("baseCurrency"));
+        entry.setQuoteAsset(item.getString("quoteCurrency"));
+
+        if (item.getString("status").equals("Open")) {
+            entry.setStatus(FutureStatus.TRADING);
+        } else if (item.getString("status").equals("Pause")) {
+            entry.setStatus(FutureStatus.PAUSE);
+        } else {
+            entry.setStatus(FutureStatus.UN_KNOW);
+        }
+        entry.setOnboardDate(item.getLong("firstOpenDate"));
+        entry.setFutureType("FFWCSX".equals(item.getString("type")) ? FutureType.PERPETUAL : FutureType.SETTLEMENT);
+
+        entry.setMultiplier(item.getBigDecimal("multiplier"));
+        entry.setTickSize(item.getBigDecimal("tickSize"));
+        entry.setMinQty(item.getBigDecimal("lotSize"));
+        entry.setSource(item);
+        return entry;
+    }
+
+    @Override
+    public RestApiRequest<Future> getFuture(String symbol) {
+        RestApiRequest<Future> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build();
+        request.request = createRequestByGet("/api/v1/contracts/" + symbol, builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            JsonWrapper item = jsonWrapper.getJsonObject("data");
+            return parseFuture(item);
         });
         return request;
     }
@@ -166,11 +180,9 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
 
     @Override
     public RestApiRequest<FundingRate> getFundingRate(String symbol) {
-        ExchangeInformation exchangeInformation = RestApiInvoker.callSync(this.getExchangeInformation());
-        ExchangeInfoEntry exchangeInfoEntry = exchangeInformation.getSymbols().stream()
-                .filter(entry -> entry.getSymbol().equals(symbol)).findFirst().orElseThrow(IllegalArgumentException::new);
+        Future future = RestApiInvoker.callSync(this.getFuture(symbol));
 
-        JsonWrapper source = (JsonWrapper) exchangeInfoEntry.getSource();
+        JsonWrapper source = (JsonWrapper) future.getSource();
 
         RestApiRequest<FundingRate> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build();

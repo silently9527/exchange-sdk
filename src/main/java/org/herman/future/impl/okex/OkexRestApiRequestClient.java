@@ -89,43 +89,64 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<ExchangeInformation> getExchangeInformation() {
-        RestApiRequest<ExchangeInformation> request = new RestApiRequest<>();
+    public RestApiRequest<List<Future>> getFutures() {
+        RestApiRequest<List<Future>> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()
                 .putToUrl("instType", "SWAP");
         request.request = createRequestByGet("/api/v5/public/instruments", builder);
 
         request.jsonParser = (jsonWrapper -> {
-            ExchangeInformation result = new ExchangeInformation();
-
-            List<ExchangeInfoEntry> symbolList = new LinkedList<>();
+            List<Future> futures = new LinkedList<>();
             JsonWrapperArray symbolArray = jsonWrapper.getJsonArray("data");
             symbolArray.forEach((item) -> {
-                ExchangeInfoEntry entry = new ExchangeInfoEntry();
-                entry.setSymbol(item.getString("instId"));
-                entry.setBaseAsset(item.getString("ctValCcy"));
-                entry.setQuoteAsset(item.getString("settleCcy"));
-
-                if (item.getString("state").equals("live")) {
-                    entry.setStatus(FutureStatus.TRADING);
-                } else if (item.getString("state").equals("suspend")) {
-                    entry.setStatus(FutureStatus.PAUSE);
-                } else {
-                    entry.setStatus(FutureStatus.UN_KNOW);
-                }
-                entry.setOnboardDate(item.getLong("listTime"));
-                entry.setFutureType(FutureType.PERPETUAL);
-
-                entry.setMultiplier(item.getBigDecimal("ctVal"));
-                entry.setTickSize(item.getBigDecimal("tickSz"));
-                entry.setStepSize(item.getBigDecimal("lotSz"));
-                entry.setMinQty(item.getBigDecimal("minSz"));
-                entry.setSource(item);
-                symbolList.add(entry);
+                Future entry = parseFuture(item);
+                futures.add(entry);
             });
-            result.setSymbols(symbolList);
+            return futures;
+        });
+        return request;
+    }
 
-            return result;
+    private Future parseFuture(JsonWrapper item) {
+        Future entry = new Future();
+        entry.setSymbol(item.getString("instId"));
+        entry.setBaseAsset(item.getString("ctValCcy"));
+        entry.setQuoteAsset(item.getString("settleCcy"));
+
+        if (item.getString("state").equals("live")) {
+            entry.setStatus(FutureStatus.TRADING);
+        } else if (item.getString("state").equals("suspend")) {
+            entry.setStatus(FutureStatus.PAUSE);
+        } else {
+            entry.setStatus(FutureStatus.UN_KNOW);
+        }
+        entry.setOnboardDate(item.getLong("listTime"));
+        entry.setFutureType(FutureType.PERPETUAL);
+
+        entry.setMultiplier(item.getBigDecimal("ctVal"));
+        entry.setTickSize(item.getBigDecimal("tickSz"));
+        entry.setStepSize(item.getBigDecimal("lotSz"));
+        entry.setMinQty(item.getBigDecimal("minSz"));
+        entry.setSource(item);
+        return entry;
+    }
+
+    @Override
+    public RestApiRequest<Future> getFuture(String symbol) {
+        RestApiRequest<Future> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("instType", "SWAP")
+                .putToUrl("instId", symbol);
+        request.request = createRequestByGet("/api/v5/public/instruments", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<Future> futures = new LinkedList<>();
+            JsonWrapperArray symbolArray = jsonWrapper.getJsonArray("data");
+            symbolArray.forEach((item) -> {
+                Future entry = parseFuture(item);
+                futures.add(entry);
+            });
+            return futures.isEmpty() ? null : futures.get(0);
         });
         return request;
     }

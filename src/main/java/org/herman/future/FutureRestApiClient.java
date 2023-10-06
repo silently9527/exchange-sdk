@@ -11,7 +11,9 @@ import java.util.List;
 
 public interface FutureRestApiClient {
 
-    ExchangeInformation getExchangeInformation();
+    List<Future> getFutures();
+
+    Future getFuture(String symbol);
 
     OrderBook getOrderBook(String symbol, Integer limit);
 
@@ -32,11 +34,10 @@ public interface FutureRestApiClient {
 
     //    List<PriceChangeTicker> get24hrTickerPriceChange(String symbol);
     //最新价格
-    List<SymbolPrice> getSymbolPriceTicker(String symbol);
+    SymbolPrice getSymbolPriceTicker(String symbol);
 
     //当前最优挂单
-    List<SymbolOrderBook> getSymbolOrderBookTicker(String symbol);
-
+    SymbolOrderBook getSymbolOrderBookTicker(String symbol);
 
 //    List<LiquidationOrder> getLiquidationOrders(String symbol, Long startTime, Long endTime, Integer limit);
 
@@ -72,7 +73,7 @@ public interface FutureRestApiClient {
 
     Leverage changeInitialLeverage(String symbol, Integer leverage);
 
-    List<PositionRisk> getPositionRisk(String symbol);
+    PositionRisk getPositionRisk(String symbol);
 
 //    List<MyTrade> getAccountTrades(String symbol, Long startTime, Long endTime, Long fromId, Integer limit);
 

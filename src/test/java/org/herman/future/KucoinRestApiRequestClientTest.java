@@ -2,13 +2,8 @@ package org.herman.future;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.herman.Constants;
-import org.herman.future.model.enums.OrderSide;
-import org.herman.future.model.enums.OrderType;
-import org.herman.future.model.enums.PositionSide;
-import org.herman.future.model.enums.TimeInForce;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class KucoinRestApiRequestClientTest {
@@ -27,7 +22,8 @@ public class KucoinRestApiRequestClientTest {
         long start = DateUtils.addDays(new Date(), -1).getTime();
         long end = new Date().getTime();
 //        System.out.println(client.getMarkPrice("ETHUSDTM"));
-//        System.out.println(client.getExchangeInformation());
+//        System.out.println(client.getFutures());
+        System.out.println(client.getFuture("ETHUSDTM"));
 //        System.out.println(client.getFundingRate("ETHUSDTM"));
 //        System.out.println(client.getCandlestick("ETHUSDTM", CandlestickInterval.FIVE_MINUTES, start, end, 10));
 //        System.out.println(client.getBalance());
@@ -46,12 +42,12 @@ public class KucoinRestApiRequestClientTest {
 //        System.out.println(client.getOrder("","99410585954889728",""));
 
 //        99417981246783488
-        String orderId = client.postOrder("ETHUSDTM", OrderSide.SELL, PositionSide.BOTH, OrderType.LIMIT,
-                TimeInForce.GTC, BigDecimal.ONE, new BigDecimal("2001"), false, System.currentTimeMillis() + "", null, null, 5);
-        System.out.println(orderId);
+//        String orderId = client.postOrder("ETHUSDTM", OrderSide.SELL, PositionSide.BOTH, OrderType.LIMIT,
+//                TimeInForce.GTC, BigDecimal.ONE, new BigDecimal("2001"), false, System.currentTimeMillis() + "", null, null, 5);
+//        System.out.println(orderId);
 
 //        System.out.println(client.cancelOrder("ETHUSDTM", orderId, ""));
-        System.out.println(client.cancelAllOpenOrder("ETHUSDTM"));
+//        System.out.println(client.cancelAllOpenOrder("ETHUSDTM"));
     }
 
 

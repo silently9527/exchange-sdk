@@ -10,7 +10,9 @@ import java.util.List;
 
 public interface RestApiRequestClient {
     //todo:缓存
-    RestApiRequest<ExchangeInformation> getExchangeInformation();
+    RestApiRequest<List<Future>> getFutures();
+
+    RestApiRequest<Future> getFuture(String symbol);
 
     RestApiRequest<List<MarkPrice>> getMarkPrice(String symbol);
 
@@ -49,6 +51,5 @@ public interface RestApiRequestClient {
     RestApiRequest<List<SymbolOrderBook>> getSymbolOrderBookTicker(String symbol);
 
     RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit);
-
 
 }

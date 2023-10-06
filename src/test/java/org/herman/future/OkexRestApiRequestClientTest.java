@@ -2,13 +2,10 @@ package org.herman.future;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.herman.Constants;
-import org.herman.future.impl.FutureRestApiClientImpl;
-import org.herman.future.impl.okex.OkexRestApiRequestClient;
 import org.herman.future.model.market.*;
 import org.junit.Test;
 
 import java.util.Date;
-import java.util.List;
 
 public class OkexRestApiRequestClientTest {
 
@@ -20,8 +17,8 @@ public class OkexRestApiRequestClientTest {
     public void test() {
         FutureRestApiClient client = FutureApiInternalFactory.getInstance().createOkexFutureRestApiClient(Constants.Future.OKEX_REST_API_BASE_URL, appKey, secret, passphrase);
 
-//        ExchangeInformation exchangeInformation = client.getExchangeInformation();
-//        System.out.println(exchangeInformation);
+//        System.out.println(client.getFutures());
+        System.out.println(client.getFuture("ETH-USDT-SWAP"));
 
 //        ExchangeInformation exchangeInformation = client.getExchangeInformation();
 //        System.out.println(exchangeInformation);
@@ -83,10 +80,10 @@ public class OkexRestApiRequestClientTest {
 //        System.out.println(prices);
 
 
-        List<SymbolOrderBook> orderBookTicker = client.getSymbolOrderBookTicker("ETH-USDT-SWAP");
-        System.out.println(orderBookTicker);
-        orderBookTicker = client.getSymbolOrderBookTicker("");
-        System.out.println(orderBookTicker);
+//        List<SymbolOrderBook> orderBookTicker = client.getSymbolOrderBookTicker("ETH-USDT-SWAP");
+//        System.out.println(orderBookTicker);
+//        orderBookTicker = client.getSymbolOrderBookTicker("");
+//        System.out.println(orderBookTicker);
     }
 
 }

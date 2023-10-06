@@ -19,8 +19,13 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
-    public ExchangeInformation getExchangeInformation() {
-        return RestApiInvoker.callSync(requestImpl.getExchangeInformation());
+    public List<Future> getFutures() {
+        return RestApiInvoker.callSync(requestImpl.getFutures());
+    }
+
+    @Override
+    public Future getFuture(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getFuture(symbol));
     }
 
     @Override
@@ -59,13 +64,13 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
-    public List<SymbolPrice> getSymbolPriceTicker(String symbol) {
-        return RestApiInvoker.callSync(requestImpl.getSymbolPriceTicker(symbol));
+    public SymbolPrice getSymbolPriceTicker(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getSymbolPriceTicker(symbol)).get(0);
     }
 
     @Override
-    public List<SymbolOrderBook> getSymbolOrderBookTicker(String symbol) {
-        return RestApiInvoker.callSync(requestImpl.getSymbolOrderBookTicker(symbol));
+    public SymbolOrderBook getSymbolOrderBookTicker(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getSymbolOrderBookTicker(symbol)).get(0);
     }
 
     @Override
@@ -118,8 +123,8 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
-    public List<PositionRisk> getPositionRisk(String symbol) {
-        return RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol));
+    public PositionRisk getPositionRisk(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol)).get(0);
     }
 
 
