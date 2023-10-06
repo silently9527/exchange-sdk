@@ -20,6 +20,16 @@ public class PositionUpdateEvent {
 
     private PositionSide side;
 
+    private Object source;
+
+    public Object getSource() {
+        return source;
+    }
+
+    public void setSource(Object source) {
+        this.source = source;
+    }
+
     public PositionSide getSide() {
         return side;
     }

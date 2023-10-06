@@ -1,6 +1,7 @@
 package org.herman.future;
 
 import org.herman.Constants;
+import org.herman.future.model.enums.CandlestickInterval;
 import org.junit.Test;
 
 public class KucoinWebsocketRequestClientTest {
@@ -22,7 +23,16 @@ public class KucoinWebsocketRequestClientTest {
                 .getInstance()
                 .createKucoinFutureSubscriptionClient(Constants.Future.KUCOIN_REST_API_BASE_URL, appKey, secret, passphrase, true);
 
-        client.subscribeOrderUpdateEvent("ETHUSDTM", System.out::println, null);
+//        client.subscribeOrderUpdateEvent("ETHUSDTM", System.out::println, null);
+//        client.subscribeBookDepthEvent("ETHUSDTM", 20, System.out::println, null);
+//        client.subscribeSymbolBookTickerEvent("ETHUSDTM", System.out::println, null);
+//        client.subscribeSymbolTickerEvent("ETHUSDTM", System.out::println, null);
+//        client.subscribeCandlestickEvent("ETHUSDTM", CandlestickInterval.FIVE_MINUTES, System.out::println, null);
+
+//        client.subscribePositionEvent("ETHUSDTM", System.out::println, null);
+//        client.subscribePositionEvent("", System.out::println, null);
+        client.subscribeAccountEvent("USDT", System.out::println, null);
+
         Thread.sleep(60000 * 10);
     }
 

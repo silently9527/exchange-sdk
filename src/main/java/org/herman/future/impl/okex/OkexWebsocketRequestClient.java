@@ -3,7 +3,6 @@ package org.herman.future.impl.okex;
 import org.apache.commons.lang3.StringUtils;
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
-import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.model.enums.*;
@@ -12,7 +11,6 @@ import org.herman.future.model.market.OrderBookEntry;
 import org.herman.future.model.user.BalanceUpdateEvent;
 import org.herman.future.model.user.OrderUpdateEvent;
 import org.herman.future.model.user.PositionUpdateEvent;
-import org.herman.utils.DateUtils;
 import org.herman.utils.InputChecker;
 import org.herman.utils.JsonWrapper;
 import org.herman.utils.JsonWrapperArray;
@@ -59,6 +57,7 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
     public WebsocketRequest<CandlestickEvent> subscribeCandlestickEvent(String symbol, CandlestickInterval interval, FutureSubscriptionListener<CandlestickEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
+                .shouldNotNull(interval, "interval")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<CandlestickEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Candlestick for " + symbol + "***";
@@ -130,16 +129,16 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<SymbolMiniTickerEvent> subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolMiniTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<SymbolTickerEvent> subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<SymbolMiniTickerEvent> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<SymbolTickerEvent> request = new WebsocketRequest<>(callback, errorHandler);
         request.name = "***Individual Symbol Ticker for " + symbol + "***";
         request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel(symbol));
 
         request.jsonParser = (jsonWrapper) -> {
-            SymbolMiniTickerEvent result = new SymbolMiniTickerEvent();
+            SymbolTickerEvent result = new SymbolTickerEvent();
             JsonWrapper data = jsonWrapper.getJsonArray("data").getJsonObjectAt(0);
             result.setEventType("SymbolTicker");
             result.setEventTime(data.getLong("ts"));
@@ -153,7 +152,7 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<List<SymbolMiniTickerEvent>> subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<List<SymbolTickerEvent>> subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
         throw new UnsupportedOperationException();
     }
 

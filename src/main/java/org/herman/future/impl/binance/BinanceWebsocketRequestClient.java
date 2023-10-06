@@ -20,8 +20,6 @@ import org.herman.utils.JsonWrapperArray;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -171,16 +169,16 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<SymbolMiniTickerEvent> subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolMiniTickerEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<SymbolTickerEvent> subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolTickerEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<SymbolMiniTickerEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<SymbolTickerEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Individual Symbol Ticker for " + symbol + "***";
         request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
-            SymbolMiniTickerEvent result = new SymbolMiniTickerEvent();
+            SymbolTickerEvent result = new SymbolTickerEvent();
             JsonWrapper data = jsonWrapper.getJsonObject("data");
             result.setEventType(data.getString("e"));
             result.setEventTime(data.getLong("E"));
@@ -194,19 +192,19 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<List<SymbolMiniTickerEvent>> subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> subscriptionListener,
-                                                                                 FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<List<SymbolTickerEvent>> subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolTickerEvent>> subscriptionListener,
+                                                                             FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<List<SymbolMiniTickerEvent>> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<List<SymbolTickerEvent>> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***All Market Tickers";
         request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel());
 
         request.jsonParser = (jsonWrapper) -> {
-            List<SymbolMiniTickerEvent> result = new LinkedList<>();
+            List<SymbolTickerEvent> result = new LinkedList<>();
             JsonWrapperArray dataArray = jsonWrapper.getJsonArray("data");
             dataArray.forEach(item -> {
-                SymbolMiniTickerEvent element = new SymbolMiniTickerEvent();
+                SymbolTickerEvent element = new SymbolTickerEvent();
                 element.setEventTime(item.getLong("E"));
                 element.setEventType(item.getString("e"));
                 element.setPrice(item.getBigDecimal("c"));

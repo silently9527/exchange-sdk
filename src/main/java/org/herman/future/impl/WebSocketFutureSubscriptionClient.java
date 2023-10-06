@@ -78,12 +78,12 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
     }
 
     @Override
-    public void subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolMiniTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public void subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
         createConnection(requestImpl.subscribeSymbolTickerEvent(symbol, callback, errorHandler));
     }
 
     @Override
-    public void subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolMiniTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public void subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
         createConnection(requestImpl.subscribeAllTickerEvent(callback, errorHandler));
     }
 

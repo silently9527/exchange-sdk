@@ -4,6 +4,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import org.apache.commons.lang3.StringUtils;
 import org.herman.exception.ApiException;
 import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.RestApiInvoker;
@@ -105,7 +106,7 @@ public class WebSocketConnection extends WebSocketListener {
 
             if ((jsonWrapper.containKey("event") && "subscribe".equals(jsonWrapper.getString("event")))
                     || jsonWrapper.containKey("result")
-                    || jsonWrapper.containKey("id")) {
+                    || (jsonWrapper.containKey("id") && !jsonWrapper.containKey("subject"))) {
                 // onReceiveAndClose(jsonWrapper);
             } else if (jsonWrapper.containKey("event") && "login".equals(jsonWrapper.getString("event")) && request.connectionHandler != null) {
                 request.connectionHandler.handle(this);
