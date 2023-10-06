@@ -2,12 +2,9 @@ package org.herman.future;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.herman.Constants;
-import org.herman.future.model.market.*;
-import org.herman.future.model.trade.AccountBalance;
 import org.junit.Test;
 
 import java.util.Date;
-import java.util.List;
 
 public class BinanceRestApiRequestClientTest {
 
@@ -16,8 +13,9 @@ public class BinanceRestApiRequestClientTest {
 
     @Test
     public void test() {
-        FutureRestApiOptions options = new FutureRestApiOptions(Constants.Future.BINANCE_REST_API_BASE_URL, appKey, secret);
-        FutureRestApiClient client = FutureApiInternalFactory.getInstance().createBinanceFutureRequestClient(options);
+        FutureRestApiClient client = FutureApiInternalFactory
+                .getInstance()
+                .createBinanceFutureRestApiClient(Constants.Future.BINANCE_REST_API_BASE_URL, appKey, secret);
 
 //        ExchangeInformation exchangeInformation = client.getExchangeInformation();
 //        System.out.println(exchangeInformation);

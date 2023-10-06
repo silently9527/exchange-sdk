@@ -135,4 +135,7 @@ public class JsonWrapperArray {
         return result;
     }
 
+    public JSONArray getArray() {
+        return array;
+    }
 }

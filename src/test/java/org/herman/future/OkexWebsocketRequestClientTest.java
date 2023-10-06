@@ -4,6 +4,7 @@ import org.herman.Constants;
 import org.herman.future.impl.WebSocketFutureSubscriptionClient;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.impl.binance.BinanceWebsocketRequestClient;
+import org.herman.future.impl.okex.OkexFutureSubscriptionOptions;
 import org.herman.future.impl.okex.OkexWebsocketRequestClient;
 import org.herman.future.model.enums.CandlestickInterval;
 import org.junit.Test;
@@ -20,14 +21,14 @@ public class OkexWebsocketRequestClientTest {
     public void test() throws InterruptedException {
         String symbol = "ETH-USDT-SWAP";
 
-        FutureSubscriptionOptions options = new FutureSubscriptionOptions(Constants.Future.OKEX_BUSINESS_WS_API_BASE_URL, appKey, secret, passphrase);
-        FutureSubscriptionClient subscriptionClient = FutureApiInternalFactory.getInstance().createOkexFutureSubscriptionClient(options);
+        FutureSubscriptionClient subscriptionClient = FutureApiInternalFactory.getInstance()
+                .createOkexFutureSubscriptionClient(Constants.Future.OKEX_BUSINESS_WS_API_BASE_URL, appKey, secret, passphrase);
 
 //        subscriptionClient.subscribeCandlestickEvent(symbol, CandlestickInterval.ONE_MINUTE, System.out::println, null);
 
 
-        options = new FutureSubscriptionOptions(Constants.Future.OKEX_PRIVATE_WS_API_BASE_URL, appKey, secret, passphrase);
-        subscriptionClient = FutureApiInternalFactory.getInstance().createOkexFutureSubscriptionClient(options);
+//        subscriptionClient = FutureApiInternalFactory.getInstance()
+//        .createOkexFutureSubscriptionClient(Constants.Future.OKEX_BUSINESS_WS_API_BASE_URL, appKey, secret, passphrase);
 
 //        subscriptionClient.subscribeMarkPriceEvent(symbol, System.out::println, null);
 

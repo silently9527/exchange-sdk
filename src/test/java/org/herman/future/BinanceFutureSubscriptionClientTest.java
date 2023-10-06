@@ -20,8 +20,9 @@ public class BinanceFutureSubscriptionClientTest {
     @Test
     public void subscribeAggregateTradeEvent() throws InterruptedException {
 
-        FutureSubscriptionOptions options = new FutureSubscriptionOptions(Constants.Future.BINANCE_WS_API_BASE_URL, appKey, secret);
-        FutureSubscriptionClient subscriptionClient = FutureApiInternalFactory.getInstance().createBinanceFutureSubscriptionClient(options);
+        FutureSubscriptionClient subscriptionClient = FutureApiInternalFactory
+                .getInstance()
+                .createBinanceFutureSubscriptionClient(Constants.Future.BINANCE_WS_API_BASE_URL, appKey, secret);
 
         String symbol = "ETHUSDT".toLowerCase();
 

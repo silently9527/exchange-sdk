@@ -46,7 +46,7 @@ public class OrderUpdateEvent {
 
     private Long orderTradeTime;
 
-    private Long tradeID;
+    private Long tradeId;
 
     private BigDecimal bidsNotional;
 
@@ -206,12 +206,12 @@ public class OrderUpdateEvent {
         this.orderTradeTime = orderTradeTime;
     }
 
-    public Long getTradeID() {
-        return tradeID;
+    public Long getTradeId() {
+        return tradeId;
     }
 
-    public void setTradeID(Long tradeID) {
-        this.tradeID = tradeID;
+    public void setTradeId(Long tradeId) {
+        this.tradeId = tradeId;
     }
 
     public BigDecimal getBidsNotional() {
@@ -279,7 +279,7 @@ public class OrderUpdateEvent {
                 .append("orderStatus", status).append("orderId", orderId).append("lastFilledQty", lastFilledQty)
                 .append("cumulativeFilledQty", cumulativeFilledQty).append("lastFilledPrice", lastFilledPrice)
                 .append("commissionAsset", commissionAsset).append("commissionAmount", commissionAmount)
-                .append("orderTradeTime", orderTradeTime).append("tradeID", tradeID)
+                .append("orderTradeTime", orderTradeTime).append("tradeId", tradeId)
                 .append("bidsNotional", bidsNotional).append("asksNotional", asksNotional)
                 .append("isMarkerSide", isMarkerSide).append("isReduceOnly", isReduceOnly)
                 .append("workingType", workingType).append("activationPrice", activationPrice)

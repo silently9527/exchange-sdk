@@ -6,10 +6,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.HmacUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.herman.exception.ApiException;
-import org.herman.future.FutureRestApiOptions;
 import org.herman.future.RestApiInvoker;
 import org.herman.future.impl.AbstractRestApiRequestClient;
 import org.herman.future.impl.RestApiRequest;
+import org.herman.future.impl.kucoin.model.InstanceServer;
 import org.herman.future.model.ResponseResult;
 import org.herman.future.model.enums.*;
 import org.herman.future.model.market.*;
@@ -25,12 +25,12 @@ import java.util.List;
 
 public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     private final String passphrase;
+    private final ChooseServerStrategy serverStrategy;
 
-    public KucoinRestApiRequestClient(FutureRestApiOptions options) {
-        this.apiKey = options.getApiKey();
-        this.secretKey = options.getSecretKey();
-        this.passphrase = options.getPassphrase();
-        this.serverUrl = options.getUrl();
+    public KucoinRestApiRequestClient(String serverUrl, String apiKey, String secretKey, String passphrase) {
+        super(apiKey, secretKey, serverUrl);
+        this.passphrase = passphrase;
+        this.serverStrategy = new RandomChooseStrategy();
     }
 
     @Override
@@ -555,5 +555,28 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
         throw new UnsupportedOperationException();
     }
 
+    public RestApiRequest<String> getPublicEndpoint() {
+        return getEndpoint("/api/v1/bullet-public");
+    }
 
+    public RestApiRequest<String> getPrivateEndpoint() {
+        return getEndpoint("/api/v1/bullet-private");
+    }
+
+    private RestApiRequest<String> getEndpoint(String url) {
+        RestApiRequest<String> request = new RestApiRequest<>();
+
+        UrlParamsBuilder builder = UrlParamsBuilder.build();
+        request.request = createRequestByPostWithSignature(url, builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            JsonWrapper data = jsonWrapper.getJsonObject("data");
+            String token = data.getString("token");
+            JsonWrapperArray instanceServers = data.getJsonArray("instanceServers");
+            InstanceServer instanceServer = serverStrategy.choose(instanceServers.getArray().toJavaList(InstanceServer.class));
+
+            return String.format("%s", instanceServer.getEndpoint() + "?token=" + token + "&acceptUserMessage=true");
+        });
+        return request;
+    }
 }

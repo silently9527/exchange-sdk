@@ -53,7 +53,7 @@ public abstract class Channels {
         return subscribe(param);
     }
 
-    public static String authenticationChannel(FutureSubscriptionOptions options, String timestamp, String signature) {
+    public static String authenticationChannel(OkexFutureSubscriptionOptions options, String timestamp, String signature) {
         JSONObject param = new JSONObject();
         param.put("apiKey", options.getApiKey());
         param.put("passphrase", options.getPassphrase());

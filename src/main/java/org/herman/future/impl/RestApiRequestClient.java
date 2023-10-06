@@ -49,4 +49,6 @@ public interface RestApiRequestClient {
     RestApiRequest<List<SymbolOrderBook>> getSymbolOrderBookTicker(String symbol);
 
     RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit);
+
+
 }

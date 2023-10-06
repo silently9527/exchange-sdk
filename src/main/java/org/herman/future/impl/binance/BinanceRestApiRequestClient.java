@@ -3,7 +3,6 @@ package org.herman.future.impl.binance;
 import com.alibaba.fastjson.JSONArray;
 import okhttp3.Request;
 import org.herman.exception.ApiException;
-import org.herman.future.FutureRestApiOptions;
 import org.herman.future.impl.AbstractRestApiRequestClient;
 import org.herman.future.impl.RestApiRequest;
 import org.herman.future.model.ResponseResult;
@@ -21,11 +20,8 @@ import java.util.Objects;
 
 public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
 
-
-    public BinanceRestApiRequestClient(FutureRestApiOptions options) {
-        this.apiKey = options.getApiKey();
-        this.secretKey = options.getSecretKey();
-        this.serverUrl = options.getUrl();
+    public BinanceRestApiRequestClient(String serverUrl, String apiKey, String secretKey) {
+        super(apiKey, secretKey, serverUrl);
     }
 
     protected Request createRequestWithSignature(String url, String address, UrlParamsBuilder builder) {

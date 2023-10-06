@@ -2,7 +2,9 @@ package org.herman.future.impl.binance;
 
 import org.apache.commons.lang3.StringUtils;
 import org.herman.Constants;
-import org.herman.future.*;
+import org.herman.future.FutureSubscriptionErrorHandler;
+import org.herman.future.FutureSubscriptionListener;
+import org.herman.future.RestApiInvoker;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.model.enums.*;
@@ -25,14 +27,13 @@ import java.util.concurrent.TimeUnit;
 
 public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     private final BinanceRestApiRequestClient restApiRequestClient;
-    private final Set<String> listenerKeys = new CopyOnWriteArraySet<>();
+    private final String privateToken;
 
-    public BinanceWebsocketRequestClient(FutureSubscriptionOptions options) {
-        FutureRestApiOptions requestOptions = new FutureRestApiOptions(Constants.Future.BINANCE_REST_API_BASE_URL, options.getApiKey(), options.getSecretKey());
-        this.restApiRequestClient = new BinanceRestApiRequestClient(requestOptions);
-
+    public BinanceWebsocketRequestClient(BinanceFutureSubscriptionOptions options) {
+        this.restApiRequestClient = new BinanceRestApiRequestClient(Constants.Future.BINANCE_REST_API_BASE_URL, options.getApiKey(), options.getSecretKey());
+        this.privateToken = RestApiInvoker.callSync(this.restApiRequestClient.startListenKey());
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            listenerKeys.forEach(key -> RestApiInvoker.callSync(restApiRequestClient.keepListenKey(key)));
+            RestApiInvoker.callSync(restApiRequestClient.keepListenKey(privateToken));
         }, 10, 30, TimeUnit.MINUTES);
     }
 
@@ -266,31 +267,13 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<String> authentication(FutureSubscriptionListener<String> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
-                .shouldNotNull(callback, "listener");
-        WebsocketRequest<String> request = new WebsocketRequest<>(callback, errorHandler);
-        request.name = "*** Authentication ***";
-
-        request.jsonParser = (jsonWrapper) -> "OK";
-        return request;
-    }
-
-    @Override
-    public String getPrivateToken() {
-        String listenerKey = RestApiInvoker.callSync(restApiRequestClient.startListenKey());
-        listenerKeys.add(listenerKey);
-        return listenerKey;
-    }
-
-    @Override
-    public WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String listenerKey, String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        InputChecker.checker()
-                .shouldNotNull(listenerKey, "listenKey")
+                .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<List<BalanceUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
         request.name = "***User Account***";
-        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(listenerKey));
+        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
 
         request.jsonParser = (jsonWrapper) -> {
             JsonWrapper data = jsonWrapper.getJsonObject("data");
@@ -318,14 +301,14 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String listenerKey, String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback,
+    public WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback,
                                                                               FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
-                .shouldNotNull(listenerKey, "listenKey")
+                .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<List<PositionUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
         request.name = "***User Position***";
-        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(listenerKey));
+        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
 
         request.jsonParser = (jsonWrapper) -> {
             JsonWrapper data = jsonWrapper.getJsonObject("data");
@@ -356,13 +339,13 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String listenerKey, String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
-                .shouldNotNull(listenerKey, "listenKey")
+                .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<OrderUpdateEvent> request = new WebsocketRequest<>(callback, errorHandler);
         request.name = "***User Order***";
-        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(listenerKey));
+        request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
 
         request.jsonParser = (jsonWrapper) -> {
             JsonWrapper data = jsonWrapper.getJsonObject("data");
@@ -394,7 +377,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 orderUpdate.setCommissionAsset(jsondata.getStringOrDefault("N", ""));
                 orderUpdate.setCommissionAmount(jsondata.getBigDecimalOrDefault("n", BigDecimal.ZERO));
                 orderUpdate.setOrderTradeTime(jsondata.getLong("T"));
-                orderUpdate.setTradeID(jsondata.getLong("t"));
+                orderUpdate.setTradeId(jsondata.getLong("t"));
                 orderUpdate.setBidsNotional(jsondata.getBigDecimal("b"));
                 orderUpdate.setAsksNotional(jsondata.getBigDecimal("a"));
                 orderUpdate.setIsMarkerSide(jsondata.getBoolean("m"));

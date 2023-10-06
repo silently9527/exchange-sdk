@@ -18,9 +18,7 @@ public class OkexRestApiRequestClientTest {
 
     @Test
     public void test() {
-        FutureRestApiOptions options = new FutureRestApiOptions(Constants.Future.BINANCE_REST_API_BASE_URL, appKey, secret, passphrase);
-        OkexRestApiRequestClient restApiRequestClient = new OkexRestApiRequestClient(options);
-        FutureRestApiClient client = new FutureRestApiClientImpl(restApiRequestClient);
+        FutureRestApiClient client = FutureApiInternalFactory.getInstance().createOkexFutureRestApiClient(Constants.Future.OKEX_REST_API_BASE_URL, appKey, secret, passphrase);
 
 //        ExchangeInformation exchangeInformation = client.getExchangeInformation();
 //        System.out.println(exchangeInformation);

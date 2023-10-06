@@ -9,6 +9,12 @@ public abstract class AbstractRestApiRequestClient implements RestApiRequestClie
     protected String secretKey;
     protected String serverUrl;
 
+    public AbstractRestApiRequestClient(String apiKey, String secretKey, String serverUrl) {
+        this.apiKey = apiKey;
+        this.secretKey = secretKey;
+        this.serverUrl = serverUrl;
+    }
+
     protected Request createRequestByGet(String address, UrlParamsBuilder builder) {
         return createRequestByGet(serverUrl, address, builder);
     }

@@ -23,9 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class OkexWebsocketRequestClient implements WebsocketRequestClient {
-    private final FutureSubscriptionOptions options;
+    private final OkexFutureSubscriptionOptions options;
 
-    public OkexWebsocketRequestClient(FutureSubscriptionOptions options) {
+    public OkexWebsocketRequestClient(OkexFutureSubscriptionOptions options) {
         this.options = options;
     }
 
@@ -186,27 +186,7 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<String> authentication(FutureSubscriptionListener<String> callback, FutureSubscriptionErrorHandler errorHandler) {
-        InputChecker.checker()
-                .shouldNotNull(callback, "listener");
-        WebsocketRequest<String> request = new WebsocketRequest<>(callback, errorHandler);
-        request.name = "*** Authentication ***";
-
-        String timestamp = DateUtils.getUnixTime();
-        String signature = ApiSignature.doSignature(options.getSecretKey(), timestamp, "/users/self/verify", "", "", "GET");
-        request.connectionHandler = (connection) -> connection.send(Channels.authenticationChannel(options, timestamp, signature));
-
-        request.jsonParser = (jsonWrapper) -> jsonWrapper.getString("msg");
-        return request;
-    }
-
-    @Override
-    public String getPrivateToken() {
-        return "";
-    }
-
-    @Override
-    public WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String listenerKey, String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<List<BalanceUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
@@ -237,7 +217,7 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String listenerKey, String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<List<PositionUpdateEvent>> subscribePositionEvent(String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<List<PositionUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
@@ -271,7 +251,7 @@ public class OkexWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String listenerKey, String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+    public WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(callback, "listener");

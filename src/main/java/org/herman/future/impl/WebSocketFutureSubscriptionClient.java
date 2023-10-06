@@ -104,23 +104,17 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
 
     @Override
     public void subscribePositionEvent(String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        //1. privateToken
-        String privateToken = requestImpl.getPrivateToken();
-        createConnection(requestImpl.subscribePositionEvent(privateToken, symbol, callback, errorHandler));
+        createConnection(requestImpl.subscribePositionEvent(symbol, callback, errorHandler));
     }
 
     @Override
     public void subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        //1. privateToken
-        String privateToken = requestImpl.getPrivateToken();
-        createConnection(requestImpl.subscribeAccountEvent(privateToken, currency, callback, errorHandler));
+        createConnection(requestImpl.subscribeAccountEvent(currency, callback, errorHandler));
     }
 
     @Override
     public void subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        //1. privateToken
-        String privateToken = requestImpl.getPrivateToken();
-        createConnection(requestImpl.subscribeOrderUpdateEvent(privateToken, symbol, callback, errorHandler));
+        createConnection(requestImpl.subscribeOrderUpdateEvent(symbol, callback, errorHandler));
     }
 
 }

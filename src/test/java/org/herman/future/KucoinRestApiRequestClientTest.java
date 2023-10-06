@@ -19,8 +19,9 @@ public class KucoinRestApiRequestClientTest {
 
     @Test
     public void test() {
-        FutureRestApiOptions options = new FutureRestApiOptions(Constants.Future.KUCOIN_REST_API_BASE_URL, appKey, secret, passphrase);
-        FutureRestApiClient client = FutureApiInternalFactory.getInstance().createKucoinFutureRequestClient(options);
+        FutureRestApiClient client = FutureApiInternalFactory
+                .getInstance()
+                .createKucoinFutureRestApiClient(Constants.Future.KUCOIN_REST_API_BASE_URL, appKey, secret, passphrase);
 
 
         long start = DateUtils.addDays(new Date(), -1).getTime();

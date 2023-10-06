@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
 import org.herman.exception.ApiException;
-import org.herman.future.FutureRestApiOptions;
 import org.herman.future.RestApiInvoker;
 import org.herman.future.impl.AbstractRestApiRequestClient;
 import org.herman.future.impl.RestApiRequest;
@@ -25,11 +24,9 @@ import java.util.stream.Collectors;
 public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     private final String passphrase;
 
-    public OkexRestApiRequestClient(FutureRestApiOptions options) {
-        this.apiKey = options.getApiKey();
-        this.secretKey = options.getSecretKey();
-        this.passphrase = options.getPassphrase();
-        this.serverUrl = options.getUrl();
+    public OkexRestApiRequestClient(String serverUrl, String apiKey, String secretKey, String passphrase) {
+        super(apiKey, secretKey, serverUrl);
+        this.passphrase = passphrase;
     }
 
     @Override

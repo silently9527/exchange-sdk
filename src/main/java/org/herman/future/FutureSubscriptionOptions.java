@@ -7,26 +7,15 @@ import java.net.URI;
 /**
  * The configuration for the subscription APIs
  */
-public class FutureSubscriptionOptions {
+public abstract class FutureSubscriptionOptions {
 
     private String uri;
-    protected String apiKey;
-    protected String secretKey;
-    protected String passphrase;
     private boolean isAutoReconnect = true;
     private int receiveLimitMs = 300_000;
     private int connectionDelayOnFailure = 15;
 
-
-    public FutureSubscriptionOptions(String uri, String apiKey, String secretKey, String passphrase) {
+    public FutureSubscriptionOptions(String uri) {
         this.uri = uri;
-        this.apiKey = apiKey;
-        this.secretKey = secretKey;
-        this.passphrase = passphrase;
-    }
-
-    public FutureSubscriptionOptions(String uri, String apiKey, String secretKey) {
-        this(uri, apiKey, secretKey, "");
     }
 
     /**
@@ -99,27 +88,4 @@ public class FutureSubscriptionOptions {
         return uri;
     }
 
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getPassphrase() {
-        return passphrase;
-    }
-
-    public void setPassphrase(String passphrase) {
-        this.passphrase = passphrase;
-    }
 }
