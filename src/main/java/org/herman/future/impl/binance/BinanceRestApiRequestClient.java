@@ -353,9 +353,7 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
                 .putToUrl("side", side)
                 .putToUrl("positionSide", positionSide)
                 .putToUrl("type", orderType)
-                .putToUrl("timeInForce", timeInForce)
                 .putToUrl("quantity", quantity.stripTrailingZeros().toPlainString())
-                .putToUrl("price", price.stripTrailingZeros().toPlainString())
                 .putToUrl("reduceOnly", reduceOnly.toString())
                 .putToUrl("newClientOrderId", newClientOrderId);
 
@@ -365,6 +363,11 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         }
         if (Objects.nonNull(workingType)) {
             builder.putToUrl("workingType", workingType);
+        }
+
+        if (orderType.equals(OrderType.LIMIT)) {
+            builder.putToUrl("timeInForce", timeInForce)
+                    .putToUrl("price", price.stripTrailingZeros().toPlainString());
         }
 
         request.request = createRequestByPostWithSignature("/fapi/v1/order", builder);

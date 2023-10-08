@@ -2,8 +2,13 @@ package org.herman.future;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.herman.Constants;
+import org.herman.future.model.enums.OrderSide;
+import org.herman.future.model.enums.OrderType;
+import org.herman.future.model.enums.PositionSide;
+import org.herman.future.model.enums.TimeInForce;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class BinanceRestApiRequestClientTest {
@@ -18,7 +23,7 @@ public class BinanceRestApiRequestClientTest {
                 .createBinanceFutureRestApiClient(Constants.Future.BINANCE_REST_API_BASE_URL, appKey, secret);
 
 //        System.out.println(client.getFutures());
-        System.out.println(client.getFuture("ETHUSDT"));
+//        System.out.println(client.getFuture("ETHUSDT"));
 
 //        List<AccountBalance> balance = client.getBalance();
 //        System.out.println(balance);
@@ -37,8 +42,8 @@ public class BinanceRestApiRequestClientTest {
 //        System.out.println(client.getFundingRateHistory("ETHUSDT", start, end, 100));
 
 
-//        String orderID = client.postOrder("ETHUSDT", OrderSide.SELL, PositionSide.BOTH, OrderType.LIMIT, TimeInForce.GTC,
-//                new BigDecimal("0.1"), new BigDecimal("2000"), false, null, null, null);
+//        String orderID = client.postOrder("ETHUSDT", OrderSide.SELL, PositionSide.BOTH, OrderType.MARKET, TimeInForce.GTC,
+//                new BigDecimal("0.01"), new BigDecimal("2000"), false, null, null, null, 5);
 //        System.out.println(orderID);
 
 //        client.cancelOrder("ETHUSDT", orderID, null);

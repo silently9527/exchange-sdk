@@ -2,9 +2,14 @@ package org.herman.future;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.herman.Constants;
+import org.herman.future.model.enums.OrderSide;
+import org.herman.future.model.enums.OrderType;
+import org.herman.future.model.enums.PositionSide;
+import org.herman.future.model.enums.TimeInForce;
 import org.herman.future.model.market.*;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class OkexRestApiRequestClientTest {
@@ -18,7 +23,7 @@ public class OkexRestApiRequestClientTest {
         FutureRestApiClient client = FutureApiInternalFactory.getInstance().createOkexFutureRestApiClient(Constants.Future.OKEX_REST_API_BASE_URL, appKey, secret, passphrase);
 
 //        System.out.println(client.getFutures());
-        System.out.println(client.getFuture("ETH-USDT-SWAP"));
+//        System.out.println(client.getFuture("ETH-USDT-SWAP"));
 
 //        ExchangeInformation exchangeInformation = client.getExchangeInformation();
 //        System.out.println(exchangeInformation);
@@ -44,7 +49,7 @@ public class OkexRestApiRequestClientTest {
 
 //        2023-09-27T09:54:29.417ZPOST/api/v5/trade/order{"instId":"XRP-USDT-SWAP","tdMode":"cross","side":"BUY","posSide":"BOTH","ordType":"limit","sz":"1","px":"0.001","reduceOnly":"false"}
 //        2023-09-27T09:53:40.109ZPOST/api/v5/trade/order{"instId":"XRP-USDT-SWAP","tdMode":"isolated","ccy":null,"clOrdId":null,"tag":null,"side":"buy","posSide":null,"ordType":"limit","sz":"1","px":"0.1","reduceOnly":null,"tgtCcy":null}
-//        String orderId = client.postOrder("XRP-USDT-SWAP", OrderSide.BUY, PositionSide.BOTH, OrderType.LIMIT, TimeInForce.GTC, BigDecimal.ONE, new BigDecimal("0.1"), false, "", null, null);
+//        String orderId = client.postOrder("XRP-USDT-SWAP", OrderSide.BUY, PositionSide.BOTH, OrderType.MARKET, TimeInForce.GTC, BigDecimal.ONE, new BigDecimal("0.1"), false, "", null, null, 5);
 //        System.out.println(orderId);
 //
 //        String orderId = "627516595312967702";

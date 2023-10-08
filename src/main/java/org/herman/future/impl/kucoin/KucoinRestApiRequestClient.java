@@ -362,10 +362,12 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
         result.setSide(OrderSide.valueOf(jsonWrapper.getString("side").toUpperCase()));
         result.setPositionSide(PositionSide.BOTH);
         String itemStatus = jsonWrapper.getString("status");
-        if ("active".equals(itemStatus) && result.getExecutedQty().doubleValue() == 0) {
+        if (jsonWrapper.getBoolean("isActive") && result.getExecutedQty().doubleValue() == 0) {
             result.setStatus(OrderStatus.NEW);
-        } else if ("active".equals(itemStatus) && result.getExecutedQty().doubleValue() != 0) {
+        } else if (jsonWrapper.getBoolean("isActive") && result.getExecutedQty().doubleValue() != 0) {
             result.setStatus(OrderStatus.PARTIALLY_FILLED);
+        } else if (!jsonWrapper.getBoolean("isActive") && jsonWrapper.getBoolean("cancelExist")) {
+            result.setStatus(OrderStatus.CANCELED);
         } else if ("done".equals(itemStatus)) {
             result.setStatus(OrderStatus.FILLED);
         } else {
