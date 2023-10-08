@@ -52,4 +52,5 @@ public interface RestApiRequestClient {
 
     RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit);
 
+    BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize);
 }

@@ -47,14 +47,13 @@ public class KucoinRestApiRequestClientTest {
 //        System.out.println(client.getOrder("","99410585954889728",""));
 
 //        99417981246783488
-//        String orderId = client.postOrder("ETHUSDTM", OrderSide.SELL, PositionSide.BOTH, OrderType.LIMIT,
-//                TimeInForce.GTC, BigDecimal.ONE, new BigDecimal("2001"), false, System.currentTimeMillis() + "", null, null, 5);
+//        String orderId = client.postOrder("ETHUSDTM", OrderSide.SELL, PositionSide.BOTH, OrderType.MARKET,
+//                TimeInForce.GTC, BigDecimal.ONE, null, false, System.currentTimeMillis() + "", null, null, 5);
 //        System.out.println(client.getOrder("ETHUSDTM", orderId, null));
 //        System.out.println(client.getOrder("ETHUSDTM", "100418879355908097", null));
 
 //        System.out.println(client.cancelOrder("ETHUSDTM", orderId, ""));
 //        System.out.println(client.cancelAllOpenOrder("ETHUSDTM"));
-
 
 
     }

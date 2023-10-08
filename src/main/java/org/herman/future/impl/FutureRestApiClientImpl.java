@@ -127,5 +127,10 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
         return RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol)).get(0);
     }
 
+    @Override
+    public BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize) {
+        return requestImpl.formatTradeSize(multiplier, tradeSize);
+    }
+
 
 }

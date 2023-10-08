@@ -49,7 +49,7 @@ public class OkexRestApiRequestClientTest {
 
 //        2023-09-27T09:54:29.417ZPOST/api/v5/trade/order{"instId":"XRP-USDT-SWAP","tdMode":"cross","side":"BUY","posSide":"BOTH","ordType":"limit","sz":"1","px":"0.001","reduceOnly":"false"}
 //        2023-09-27T09:53:40.109ZPOST/api/v5/trade/order{"instId":"XRP-USDT-SWAP","tdMode":"isolated","ccy":null,"clOrdId":null,"tag":null,"side":"buy","posSide":null,"ordType":"limit","sz":"1","px":"0.1","reduceOnly":null,"tgtCcy":null}
-//        String orderId = client.postOrder("XRP-USDT-SWAP", OrderSide.BUY, PositionSide.BOTH, OrderType.MARKET, TimeInForce.GTC, BigDecimal.ONE, new BigDecimal("0.1"), false, "", null, null, 5);
+//        String orderId = client.postOrder("XRP-USDT-SWAP", OrderSide.BUY, PositionSide.BOTH, OrderType.MARKET, TimeInForce.GTC, BigDecimal.ONE, null, false, "", null, null, 5);
 //        System.out.println(orderId);
 //
 //        String orderId = "627516595312967702";

@@ -77,4 +77,6 @@ public interface FutureRestApiClient {
 
 //    List<MyTrade> getAccountTrades(String symbol, Long startTime, Long endTime, Long fromId, Integer limit);
 
+    BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize);
+
 }

@@ -17,6 +17,7 @@ import org.herman.utils.JsonWrapperArray;
 import org.herman.utils.UrlParamsBuilder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -299,7 +300,6 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
                 .putToPost("side", side.name().toLowerCase())
                 .putToPost("ordType", orderType.name().toLowerCase())
                 .putToPost("sz", quantity.stripTrailingZeros().toPlainString())
-                .putToPost("px", price.stripTrailingZeros().toPlainString())
                 .putToPost("reduceOnly", reduceOnly.toString());
 
         if (!PositionSide.BOTH.equals(positionSide)) {
@@ -308,6 +308,10 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
 
         if (TimeInForce.FOK.equals(timeInForce) || TimeInForce.IOC.equals(timeInForce)) {
             builder.putToPost("ordType", timeInForce.name().toLowerCase());
+        }
+
+        if (OrderType.LIMIT.equals(orderType)) {
+            builder.putToPost("px", price.stripTrailingZeros().toPlainString());
         }
 
         request.request = createRequestByPostWithSignature("/api/v5/trade/order", builder);
@@ -613,5 +617,10 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     @Override
     public RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize) {
+        return tradeSize.divide(multiplier, 0, RoundingMode.DOWN);
     }
 }

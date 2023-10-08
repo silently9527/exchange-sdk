@@ -683,6 +683,11 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         return request;
     }
 
+    @Override
+    public BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize) {
+        return tradeSize;
+    }
+
 
     @Override
     protected String getClientSdkVersion() {

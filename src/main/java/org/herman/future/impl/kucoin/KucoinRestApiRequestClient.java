@@ -20,6 +20,7 @@ import org.herman.utils.JsonWrapperArray;
 import org.herman.utils.UrlParamsBuilder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -273,9 +274,12 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
                 .putToPost("type", orderType.name().toLowerCase())
                 .putToPost("leverage", leverage)
                 .putToPost("size", quantity.stripTrailingZeros().toPlainString())
-                .putToPost("price", price.stripTrailingZeros().toPlainString())
                 .putToPost("timeInForce", timeInForce)
                 .putToPost("reduceOnly", reduceOnly.toString());
+
+        if (OrderType.LIMIT.equals(orderType)) {
+            builder.putToPost("price", price.stripTrailingZeros().toPlainString());
+        }
 
         request.request = createRequestByPostWithSignature("/api/v1/orders", builder);
 
@@ -567,6 +571,11 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     @Override
     public RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize) {
+        return tradeSize.divide(multiplier, 0, RoundingMode.DOWN);
     }
 
     public RestApiRequest<String> getPublicEndpoint() {
