@@ -380,7 +380,7 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
 //        result.setStopPrice(jsonWrapper.getBigDecimal("stopPrice"));
         result.setTimeInForce(TimeInForce.valueOf(jsonWrapper.getString("timeInForce").toUpperCase()));
         result.setType(OrderType.valueOf(jsonWrapper.getString("type").toUpperCase()));
-        result.setUpdateTime(jsonWrapper.getLong("updatedAt"));
+//        result.setUpdateTime(jsonWrapper.getLong("updatedAt"));
         result.setWorkingType(jsonWrapper.getString("stopPriceType"));
         return result;
     }
