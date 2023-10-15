@@ -44,7 +44,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<AggregateTradeEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Aggregate Trade for " + symbol + "***";
-        request.connectionHandler = (connection) -> connection.send(Channels.aggregateTradeChannel(symbol));
+        request.connectionHandler = (connection) -> connection.send(Channels.aggregateTradeChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
             AggregateTradeEvent result = new AggregateTradeEvent();
