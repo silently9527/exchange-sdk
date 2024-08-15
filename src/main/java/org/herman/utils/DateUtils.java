@@ -9,13 +9,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 
-/**
- * Date Utils  <br/>
- *
- * @author Tony Tian
- * @version 1.0.0
- * @date 2018/2/3 20:30
- */
 public class DateUtils {
 
     public static String TIME_STYLE_S1 = "yyyy-MM-dd";
