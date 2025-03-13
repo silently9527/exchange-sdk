@@ -9,6 +9,7 @@ import org.herman.future.model.trade.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Properties;
 
 public class FutureRestApiClientImpl implements FutureRestApiClient {
 
@@ -74,12 +75,8 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
-    public String postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce,
-                            BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId,
-                            BigDecimal stopPrice, WorkingType workingType, Integer leverage) {
-        return RestApiInvoker.callSync(requestImpl.postOrder(symbol, side, positionSide, orderType,
-                timeInForce, quantity, price, reduceOnly,
-                newClientOrderId, stopPrice, workingType, leverage));
+    public String postOrder(String symbol, OrderSide side, OrderType orderType, BigDecimal quantity, BigDecimal price, Properties ext) {
+        return RestApiInvoker.callSync(requestImpl.postOrder(symbol, side, orderType, quantity, price, ext));
     }
 
     @Override
@@ -125,6 +122,26 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     @Override
     public PositionRisk getPositionRisk(String symbol) {
         return RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol)).get(0);
+    }
+
+    @Override
+    public PositionRisk addIsolatedMargin(String symbol, BigDecimal margin) {
+        return RestApiInvoker.callSync(requestImpl.addIsolatedMargin(symbol, margin));
+    }
+
+    @Override
+    public String switchMarginMode(String symbol, String marginMode) {
+        return RestApiInvoker.callSync(requestImpl.switchMarginMode(symbol, marginMode));
+    }
+
+    @Override
+    public String getMarginMode(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getMarginMode(symbol));
+    }
+
+    @Override
+    public MaxOpenSize getMaxOpenSize(String symbol, BigDecimal price, Integer leverage) {
+        return RestApiInvoker.callSync(requestImpl.getMaxOpenSize(symbol, price, leverage));
     }
 
     @Override

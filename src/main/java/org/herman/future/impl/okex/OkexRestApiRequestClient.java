@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
@@ -289,30 +290,26 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
-                                            TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
-                                            String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage) {
+    public RestApiRequest<String> postOrder(String symbol, OrderSide side, OrderType orderType, BigDecimal quantity, BigDecimal price, Properties ext) {
         RestApiRequest<String> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()
                 .putToPost("instId", symbol)
                 .putToPost("tdMode", "cross")
-                .putToPost("clOrdId", newClientOrderId)
                 .putToPost("side", side.name().toLowerCase())
                 .putToPost("ordType", orderType.name().toLowerCase())
-                .putToPost("sz", quantity.stripTrailingZeros().toPlainString())
-                .putToPost("reduceOnly", reduceOnly.toString());
-
-        if (!PositionSide.BOTH.equals(positionSide)) {
-            builder.putToPost("posSide", positionSide.name().toLowerCase());
-        }
-
-        if (TimeInForce.FOK.equals(timeInForce) || TimeInForce.IOC.equals(timeInForce)) {
-            builder.putToPost("ordType", timeInForce.name().toLowerCase());
-        }
-
-        if (OrderType.LIMIT.equals(orderType)) {
-            builder.putToPost("px", price.stripTrailingZeros().toPlainString());
-        }
+                .putToPost("sz", quantity.stripTrailingZeros().toPlainString());
+//
+//        if (!PositionSide.BOTH.equals(positionSide)) {
+//            builder.putToPost("posSide", positionSide.name().toLowerCase());
+//        }
+//
+//        if (TimeInForce.FOK.equals(timeInForce) || TimeInForce.IOC.equals(timeInForce)) {
+//            builder.putToPost("ordType", timeInForce.name().toLowerCase());
+//        }
+//
+//        if (OrderType.LIMIT.equals(orderType)) {
+//            builder.putToPost("px", price.stripTrailingZeros().toPlainString());
+//        }
 
         request.request = createRequestByPostWithSignature("/api/v5/trade/order", builder);
 
@@ -622,5 +619,25 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     @Override
     public BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize) {
         return tradeSize.divide(multiplier, 0, RoundingMode.DOWN);
+    }
+
+    @Override
+    public RestApiRequest<PositionRisk> addIsolatedMargin(String symbol, BigDecimal margin) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<String> switchMarginMode(String symbol, String marginMode) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<String> getMarginMode(String symbol) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<MaxOpenSize> getMaxOpenSize(String symbol, BigDecimal price, Integer leverage) {
+        return null;
     }
 }

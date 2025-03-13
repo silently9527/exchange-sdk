@@ -62,6 +62,16 @@ public class OrderUpdateEvent {
 
     private BigDecimal callbackRate;
 
+    private Object source;
+
+    public Object getSource() {
+        return source;
+    }
+
+    public void setSource(Object source) {
+        this.source = source;
+    }
+
     public String getSymbol() {
         return symbol;
     }

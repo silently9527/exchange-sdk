@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 
 public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
 
@@ -344,31 +345,18 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
-                                            TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
-                                            String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage) {
+    public RestApiRequest<String> postOrder(String symbol, OrderSide side, OrderType orderType, BigDecimal quantity, BigDecimal price, Properties ext) {
         RestApiRequest<String> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()
                 .putToUrl("symbol", symbol)
                 .putToUrl("side", side)
-                .putToUrl("positionSide", positionSide)
                 .putToUrl("type", orderType)
-                .putToUrl("quantity", quantity.stripTrailingZeros().toPlainString())
-                .putToUrl("reduceOnly", reduceOnly.toString())
-                .putToUrl("newClientOrderId", newClientOrderId);
-
-        if (Objects.nonNull(stopPrice)) {
-            builder.putToUrl("stopPrice", stopPrice.stripTrailingZeros().toPlainString());
-
-        }
-        if (Objects.nonNull(workingType)) {
-            builder.putToUrl("workingType", workingType);
-        }
+                .putToUrl("quantity", quantity.stripTrailingZeros().toPlainString());
 
         if (orderType.equals(OrderType.LIMIT)) {
-            builder.putToUrl("timeInForce", timeInForce)
-                    .putToUrl("price", price.stripTrailingZeros().toPlainString());
+            builder.putToUrl("price", price.stripTrailingZeros().toPlainString());
         }
+        ext.forEach((key, value) -> builder.putToUrl(key.toString(), value.toString()));
 
         request.request = createRequestByPostWithSignature("/fapi/v1/order", builder);
 
@@ -686,6 +674,26 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
     @Override
     public BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize) {
         return tradeSize;
+    }
+
+    @Override
+    public RestApiRequest<PositionRisk> addIsolatedMargin(String symbol, BigDecimal margin) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<String> switchMarginMode(String symbol, String marginMode) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<String> getMarginMode(String symbol) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<MaxOpenSize> getMaxOpenSize(String symbol, BigDecimal price, Integer leverage) {
+        return null;
     }
 
 

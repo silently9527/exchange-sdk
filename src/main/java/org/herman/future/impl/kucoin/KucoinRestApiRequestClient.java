@@ -14,15 +14,13 @@ import org.herman.future.model.ResponseResult;
 import org.herman.future.model.enums.*;
 import org.herman.future.model.market.*;
 import org.herman.future.model.trade.*;
-import org.herman.utils.InputChecker;
-import org.herman.utils.JsonWrapper;
-import org.herman.utils.JsonWrapperArray;
-import org.herman.utils.UrlParamsBuilder;
+import org.herman.utils.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     private final String passphrase;
@@ -136,6 +134,7 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
         entry.setMultiplier(item.getBigDecimal("multiplier"));
         entry.setTickSize(item.getBigDecimal("tickSize"));
         entry.setMinQty(item.getBigDecimal("lotSize"));
+        entry.setMaxLeverage(item.getInteger("maxLeverage"));
         entry.setSource(item);
         return entry;
     }
@@ -263,23 +262,21 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
-                                            TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
-                                            String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage) {
+    public RestApiRequest<String> postOrder(String symbol, OrderSide side, OrderType orderType, BigDecimal quantity, BigDecimal price, Properties ext) {
         RestApiRequest<String> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()
-                .putToPost("clientOid", newClientOrderId)
                 .putToPost("symbol", symbol)
                 .putToPost("side", side.name().toLowerCase())
                 .putToPost("type", orderType.name().toLowerCase())
-                .putToPost("leverage", leverage)
-                .putToPost("size", quantity.stripTrailingZeros().toPlainString())
-                .putToPost("timeInForce", timeInForce)
-                .putToPost("reduceOnly", reduceOnly.toString());
+                .putToPost("size", quantity.stripTrailingZeros().toPlainString());
+        ext.forEach((key, value) -> builder.putToPost(key.toString(), value.toString()));
 
         if (OrderType.LIMIT.equals(orderType)) {
             builder.putToPost("price", price.stripTrailingZeros().toPlainString());
         }
+
+        final String marginMode = RestApiInvoker.callSync(this.getMarginMode(symbol));
+        builder.putToPost("marginMode", marginMode);
 
         request.request = createRequestByPostWithSignature("/api/v1/orders", builder);
 
@@ -387,7 +384,19 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
 
     @Override
     public RestApiRequest<Leverage> changeInitialLeverage(String symbol, Integer leverage) {
-        throw new UnsupportedOperationException();
+        RestApiRequest<Leverage> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToPost("symbol", symbol)
+                .putToPost("leverage", leverage);
+        request.request = createRequestByPostWithSignature("/api/v2/changeCrossUserLeverage", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            Leverage result = new Leverage();
+            result.setSymbol(symbol);
+            result.setLeverage(new BigDecimal(leverage));
+            return result;
+        });
+        return request;
     }
 
     @Override
@@ -576,6 +585,84 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     @Override
     public BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize) {
         return tradeSize.divide(multiplier, 0, RoundingMode.DOWN);
+    }
+
+    @Override
+    public RestApiRequest<PositionRisk> addIsolatedMargin(String symbol, BigDecimal margin) {
+        RestApiRequest<PositionRisk> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToPost("symbol", symbol)
+                .putToPost("margin", margin.stripTrailingZeros().toPlainString())
+                .putToPost("bizNo", Utils.uuid());
+        request.request = createRequestByPostWithSignature("/api/v1/position/margin/deposit-margin", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            JsonWrapper item = jsonWrapper.getJsonObject("data");
+            PositionRisk positionRisk = new PositionRisk();
+            positionRisk.setEntryPrice(item.getBigDecimal("avgEntryPrice"));
+            positionRisk.setLeverage(item.getBigDecimal("realLeverage"));
+            positionRisk.setLiquidationPrice(StringUtils.isEmpty(item.getString("liquidationPrice")) ? null : item.getBigDecimal("liquidationPrice"));
+            positionRisk.setMarkPrice(item.getBigDecimal("markPrice"));
+            positionRisk.setPositionAmt(item.getBigDecimal("currentQty"));
+            positionRisk.setSymbol(item.getString("symbol"));
+            positionRisk.setIsolatedMargin(StringUtils.isEmpty(item.getString("posInit")) ? null : item.getBigDecimal("posInit"));
+            positionRisk.setPositionSide(PositionSide.BOTH);
+            positionRisk.setMarginType(MarginType.isolated);
+            positionRisk.setUnrealizedProfit(item.getBigDecimal("unrealisedPnl"));
+//                positionRisk.setUpdateTime(item.getLong("uTime"));
+            positionRisk.setSource(item);
+            return positionRisk;
+        });
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<String> switchMarginMode(String symbol, String marginMode) {
+        RestApiRequest<String> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToPost("symbol", symbol)
+                .putToPost("marginMode", marginMode);
+        request.request = createRequestByPostWithSignature("/api/v2/position/changeMarginMode", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            JsonWrapper item = jsonWrapper.getJsonObject("data");
+            return item.getString("marginMode");
+        });
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<String> getMarginMode(String symbol) {
+        RestApiRequest<String> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("symbol", symbol);
+        request.request = createRequestByGetWithSignature("/api/v2/position/getMarginMode", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            JsonWrapper item = jsonWrapper.getJsonObject("data");
+            return item.getString("marginMode");
+        });
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<MaxOpenSize> getMaxOpenSize(String symbol, BigDecimal price, Integer leverage) {
+        RestApiRequest<MaxOpenSize> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("symbol", symbol)
+                .putToUrl("price", price)
+                .putToUrl("leverage", leverage);
+        request.request = createRequestByGetWithSignature("/api/v2/getMaxOpenSize", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            JsonWrapper item = jsonWrapper.getJsonObject("data");
+            final MaxOpenSize maxOpenSize = new MaxOpenSize();
+            maxOpenSize.setSymbol(symbol);
+            maxOpenSize.setMaxBuyOpenSize(item.getInteger("maxBuyOpenSize"));
+            maxOpenSize.setMaxSellOpenSize(item.getInteger("maxSellOpenSize"));
+            return maxOpenSize;
+        });
+        return request;
     }
 
     public RestApiRequest<String> getPublicEndpoint() {

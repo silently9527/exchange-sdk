@@ -53,7 +53,7 @@ public class UrlParamsBuilder {
         }
     }
 
-    private static final MediaType JSON_TYPE = MediaType.parse("application/json");
+    public static final MediaType JSON_TYPE = MediaType.parse("application/json");
     private final ParamsMap paramsMap = new ParamsMap();
     private final ParamsMap postBodyMap = new ParamsMap();
     private String method = "GET";

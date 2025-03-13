@@ -8,6 +8,7 @@ import org.herman.future.model.trade.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Properties;
 
 public interface FutureRestApiClient {
 
@@ -43,9 +44,7 @@ public interface FutureRestApiClient {
 
 //    List<Object> postBatchOrders(String batchOrders);
 
-    String postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
-                     TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly,
-                     String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage);
+    String postOrder(String symbol, OrderSide side, OrderType orderType, BigDecimal quantity, BigDecimal price, Properties ext);
 
     String cancelOrder(String symbol, String orderId, String origClientOrderId);
 
@@ -75,6 +74,13 @@ public interface FutureRestApiClient {
 
     PositionRisk getPositionRisk(String symbol);
 
+    PositionRisk addIsolatedMargin(String symbol, BigDecimal margin);
+
+    String switchMarginMode(String symbol, String marginMode);
+
+    String getMarginMode(String symbol);
+
+    MaxOpenSize getMaxOpenSize(String symbol, BigDecimal price, Integer leverage);
 //    List<MyTrade> getAccountTrades(String symbol, Long startTime, Long endTime, Long fromId, Integer limit);
 
     BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize);

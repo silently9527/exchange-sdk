@@ -6,10 +6,7 @@ import org.herman.future.FutureSubscriptionListener;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.impl.okex.ApiSignature;
-import org.herman.future.model.enums.CandlestickInterval;
-import org.herman.future.model.enums.OrderSide;
-import org.herman.future.model.enums.OrderStatus;
-import org.herman.future.model.enums.PositionSide;
+import org.herman.future.model.enums.*;
 import org.herman.future.model.event.*;
 import org.herman.future.model.market.OrderBookEntry;
 import org.herman.future.model.user.BalanceUpdateEvent;
@@ -226,7 +223,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
 
             orderUpdate.setOrderId(data.getLong("orderId"));
             orderUpdate.setSymbol(data.getString("symbol"));
-//            orderUpdate.setType(OrderType.valueOf(data.getString("orderType").toUpperCase()));
+//            orderUpdate.setType(data.getString("type").equals("limit") ? OrderType.LIMIT : OrderType.MARKET);
             orderUpdate.setSide(OrderSide.valueOf(data.getString("side").toUpperCase()));
             orderUpdate.setPrice(data.getBigDecimal("price"));
             orderUpdate.setOrigQty(data.getBigDecimal("size"));
@@ -245,6 +242,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
             } else {
                 orderUpdate.setStatus(OrderStatus.INVALID);
             }
+            orderUpdate.setSource(data);
             return orderUpdate;
         };
         return request;

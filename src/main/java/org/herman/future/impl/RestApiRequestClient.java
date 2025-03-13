@@ -7,6 +7,7 @@ import org.herman.future.model.trade.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Properties;
 
 public interface RestApiRequestClient {
     //todo:缓存
@@ -26,7 +27,7 @@ public interface RestApiRequestClient {
 
     RestApiRequest<List<AccountBalance>> getBalance();
 
-    RestApiRequest<String> postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType, TimeInForce timeInForce, BigDecimal quantity, BigDecimal price, Boolean reduceOnly, String newClientOrderId, BigDecimal stopPrice, WorkingType workingType, Integer leverage);
+    RestApiRequest<String> postOrder(String symbol, OrderSide side, OrderType orderType, BigDecimal quantity, BigDecimal price, Properties ext);
 
     RestApiRequest<String> cancelOrder(String symbol, String orderId, String origClientOrderId);
 
@@ -53,4 +54,12 @@ public interface RestApiRequestClient {
     RestApiRequest<List<AggregateTrade>> getAggregateTrades(String symbol, String fromId, Long startTime, Long endTime, Integer limit);
 
     BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize);
+
+    RestApiRequest<PositionRisk> addIsolatedMargin(String symbol, BigDecimal margin);
+
+    RestApiRequest<String> switchMarginMode(String symbol, String marginMode);
+
+    RestApiRequest<String> getMarginMode(String symbol);
+
+    RestApiRequest<MaxOpenSize> getMaxOpenSize(String symbol, BigDecimal price, Integer leverage);
 }

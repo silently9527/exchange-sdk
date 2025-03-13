@@ -24,6 +24,7 @@ public class Future {
     private Integer maxNumOrders;       // 最多订单数限制
     private BigDecimal minNotional;     // 最小名义价值
     private BigDecimal multiplier;
+    private Integer maxLeverage;
 
     private Object source;
 
@@ -33,6 +34,14 @@ public class Future {
 
     public void setSource(Object source) {
         this.source = source;
+    }
+
+    public Integer getMaxLeverage() {
+        return maxLeverage;
+    }
+
+    public void setMaxLeverage(Integer maxLeverage) {
+        this.maxLeverage = maxLeverage;
     }
 
     public BigDecimal getMultiplier() {
@@ -168,6 +177,7 @@ public class Future {
                 .append("tickSize", tickSize)
                 .append("minNotional", minNotional)
                 .append("minQty", minQty)
+                .append("maxLeverage", maxLeverage)
                 .append("maxQty", maxQty)
                 .toString();
     }

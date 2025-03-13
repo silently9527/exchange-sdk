@@ -2,6 +2,7 @@ package org.herman.future.impl;
 
 import okhttp3.Request;
 import org.herman.exception.ApiException;
+import org.herman.future.model.trade.PositionRisk;
 import org.herman.utils.UrlParamsBuilder;
 
 public abstract class AbstractRestApiRequestClient implements RestApiRequestClient {

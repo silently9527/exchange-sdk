@@ -24,6 +24,7 @@ public class Constants {
         public static final String BINANCE_REST_API_BASE_URL = "https://fapi.binance.com";
         public static final String OKEX_REST_API_BASE_URL = "https://www.okx.com";
         public static final String KUCOIN_REST_API_BASE_URL = "https://api-futures.kucoin.com";
+        public static final String HUOBI_REST_API_BASE_URL = "https://api.hbdm.com";
 
         /**
          * Streaming API base URL.
@@ -37,6 +38,7 @@ public class Constants {
          * Default receiving window.
          */
         public static final long DEFAULT_RECEIVING_WINDOW = 60_000L;
+
     }
 
 }

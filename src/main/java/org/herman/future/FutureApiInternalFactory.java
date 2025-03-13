@@ -5,6 +5,7 @@ import org.herman.future.impl.*;
 import org.herman.future.impl.binance.BinanceFutureSubscriptionOptions;
 import org.herman.future.impl.binance.BinanceRestApiRequestClient;
 import org.herman.future.impl.binance.BinanceWebsocketRequestClient;
+import org.herman.future.impl.huobi.HuobiRestApiRequestClient;
 import org.herman.future.impl.kucoin.KucoinFutureSubscriptionOptions;
 import org.herman.future.impl.kucoin.KucoinRestApiRequestClient;
 import org.herman.future.impl.kucoin.KucoinWebsocketRequestClient;
@@ -21,6 +22,11 @@ public final class FutureApiInternalFactory {
     }
 
     private FutureApiInternalFactory() {
+    }
+
+    public FutureRestApiClient createHuobiFutureRestApiClient(String url, String apiKey, String secretKey) {
+        RestApiRequestClient requestImpl = new HuobiRestApiRequestClient(url, apiKey, secretKey);
+        return new FutureRestApiClientImpl(requestImpl);
     }
 
     public FutureRestApiClient createKucoinFutureRestApiClient(String url, String apiKey, String secretKey, String passphrase) {
