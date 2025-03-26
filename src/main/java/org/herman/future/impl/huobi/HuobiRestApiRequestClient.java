@@ -245,12 +245,12 @@ public class HuobiRestApiRequestClient extends AbstractRestApiRequestClient {
             element.setSymbol(data.getString("contract_code"));
 
             final JsonWrapperArray bid = data.getJsonArray("bid");
-            element.setBidPrice((BigDecimal) bid.getObjectAt(0));
-            element.setBidQty(new BigDecimal(bid.getIntegerAt(1)));
+            element.setBidPrice(new BigDecimal(bid.getObjectAt(0).toString()));
+            element.setBidQty(new BigDecimal(bid.getObjectAt(1).toString()));
 
             final JsonWrapperArray ask = data.getJsonArray("ask");
-            element.setAskPrice((BigDecimal) ask.getObjectAt(0));
-            element.setAskQty(new BigDecimal(ask.getIntegerAt(1)));
+            element.setAskPrice(new BigDecimal(ask.getObjectAt(0).toString()));
+            element.setAskQty(new BigDecimal(ask.getObjectAt(1).toString()));
 
             result.add(element);
             return result;

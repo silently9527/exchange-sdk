@@ -25,6 +25,7 @@ public class Future {
     private BigDecimal minNotional;     // 最小名义价值
     private BigDecimal multiplier;
     private Integer maxLeverage;
+    private Boolean supportCross;
 
     private Object source;
 
@@ -34,6 +35,14 @@ public class Future {
 
     public void setSource(Object source) {
         this.source = source;
+    }
+
+    public Boolean getSupportCross() {
+        return supportCross;
+    }
+
+    public void setSupportCross(Boolean supportCross) {
+        this.supportCross = supportCross;
     }
 
     public Integer getMaxLeverage() {

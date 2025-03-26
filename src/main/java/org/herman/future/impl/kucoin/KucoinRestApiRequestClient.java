@@ -135,6 +135,7 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
         entry.setTickSize(item.getBigDecimal("tickSize"));
         entry.setMinQty(item.getBigDecimal("lotSize"));
         entry.setMaxLeverage(item.getInteger("maxLeverage"));
+        entry.setSupportCross(item.getBoolean("supportCross"));
         entry.setSource(item);
         return entry;
     }
@@ -488,7 +489,7 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
             dataArray.forEach((item) -> {
                 PositionRisk positionRisk = new PositionRisk();
                 positionRisk.setEntryPrice(item.getBigDecimal("avgEntryPrice"));
-                positionRisk.setLeverage(item.getBigDecimal("realLeverage"));
+//                positionRisk.setLeverage(item.getBigDecimal("realLeverage"));
                 positionRisk.setLiquidationPrice(StringUtils.isEmpty(item.getString("liquidationPrice")) ? null : item.getBigDecimal("liquidationPrice"));
                 positionRisk.setMarkPrice(item.getBigDecimal("markPrice"));
                 positionRisk.setPositionAmt(item.getBigDecimal("currentQty"));
