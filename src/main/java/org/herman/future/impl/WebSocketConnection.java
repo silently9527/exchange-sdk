@@ -63,7 +63,8 @@ public class WebSocketConnection extends WebSocketListener {
     void reConnect(int delayInSecond) {
         log.warn("[Sub][" + this.connectionId + "] Reconnecting after " + delayInSecond + " seconds later");
         if (webSocket != null) {
-            webSocket.cancel();
+//            webSocket.cancel();
+            webSocket.close(1000,"closing connection");
             webSocket = null;
         }
         this.delayInSecond = delayInSecond;
@@ -158,7 +159,8 @@ public class WebSocketConnection extends WebSocketListener {
 
     public void close() {
         log.info("[Sub][" + this.connectionId + "] Closing normally");
-        webSocket.cancel();
+//        webSocket.cancel();
+        webSocket.close(1000,"closing connection");
         webSocket = null;
         watchDog.onClosedNormally(this);
     }
@@ -195,7 +197,8 @@ public class WebSocketConnection extends WebSocketListener {
 
     private void closeOnError() {
         if (webSocket != null) {
-            this.webSocket.cancel();
+//            this.webSocket.cancel();
+            webSocket.close(1000,"closing connection");
             state = ConnectionState.CLOSED_ON_ERROR;
             log.error("[Sub][" + this.connectionId + "] Connection is closing due to error");
         }
