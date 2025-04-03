@@ -7,6 +7,8 @@ import org.herman.utils.JsonWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 public abstract class RestApiInvoker {
 
     private static final Logger log = LoggerFactory.getLogger(RestApiInvoker.class);
@@ -44,14 +46,14 @@ public abstract class RestApiInvoker {
     }
 
     public static <T> T callSync(RestApiRequest<T> request) {
+        Response response = null;
         try {
             String str;
             log.debug("Request URL " + request.request.url());
-            Response response = client.newCall(request.request).execute();
+            response = client.newCall(request.request).execute();
             // System.out.println(response.body().string());
-            if (response != null && response.body() != null) {
+            if (response.body() != null) {
                 str = response.body().string();
-                response.close();
             } else {
                 throw new ApiException(ApiException.ENV_ERROR,
                         "[Invoking] Cannot get the response from server");
@@ -65,6 +67,10 @@ public abstract class RestApiInvoker {
         } catch (Exception e) {
             throw new ApiException(ApiException.ENV_ERROR,
                     "[Invoking] Unexpected error: " + e.getMessage());
+        } finally {
+            if (Objects.nonNull(response)) {
+                response.close();
+            }
         }
     }
 

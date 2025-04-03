@@ -46,7 +46,8 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
             MarkPriceEvent result = new MarkPriceEvent();
             result.setEventType("MarkPrice");
             result.setEventTime(data.getLong("timestamp"));
-            result.setSymbol(symbol);
+            final String serverSymbol = data.getStringOrDefault("symbol", "");
+            result.setSymbol(StringUtils.isBlank(serverSymbol) ? symbol : serverSymbol);
             result.setMarkPrice(data.getBigDecimal("markPrice"));
             return result;
         };
