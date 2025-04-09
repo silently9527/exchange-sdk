@@ -307,7 +307,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         WebsocketRequest<List<PositionUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
         request.name = "***User Position***";
         request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
-
+        request.healthHandler = (connection) -> connection.updateLastReceivedTime(System.currentTimeMillis());
         request.jsonParser = (jsonWrapper) -> {
             JsonWrapper data = jsonWrapper.getJsonObject("data");
 

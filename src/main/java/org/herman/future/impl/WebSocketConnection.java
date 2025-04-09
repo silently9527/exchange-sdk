@@ -83,6 +83,10 @@ public class WebSocketConnection extends WebSocketListener {
         return this.lastReceivedTime;
     }
 
+    public void updateLastReceivedTime(long time) {
+        this.lastReceivedTime = time;
+    }
+
     public void send(String str) {
         boolean result = false;
         log.debug("[Send]{}", str);
