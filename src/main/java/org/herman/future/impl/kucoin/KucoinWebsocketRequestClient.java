@@ -35,6 +35,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
         WebsocketRequest<MarkPriceEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Mark Price for " + symbol + "***";
         request.connectionHandler = (connection) -> connection.send(Channels.markPriceChannel(symbol));
+        request.healthHandler = (connection) -> connection.send(Channels.ping());
 
         request.jsonParser = (jsonWrapper) -> {
             String subject = jsonWrapper.getString("subject");

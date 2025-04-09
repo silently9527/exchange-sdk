@@ -16,6 +16,7 @@ public class WebsocketRequest<T> {
     public String name;
     public Handler<WebSocketConnection> connectionHandler;
     public Handler<WebSocketConnection> authHandler = null;
+    public Handler<WebSocketConnection> healthHandler = null;
     final FutureSubscriptionListener<T> updateCallback;
     public RestApiJsonParser<T> jsonParser;
     final FutureSubscriptionErrorHandler errorHandler;

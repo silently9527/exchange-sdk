@@ -24,6 +24,7 @@ class WebSocketWatchDog {
             TIME_HELPER.forEach(connection -> {
                 if (connection.getState() == WebSocketConnection.ConnectionState.CONNECTED) {
                     // Check response
+                    connection.ping();
                     if (options.isAutoReconnect()) {
                         long ts = System.currentTimeMillis() - connection.getLastReceivedTime();
                         if (ts > options.getReceiveLimitMs()) {

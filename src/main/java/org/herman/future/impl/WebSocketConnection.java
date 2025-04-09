@@ -64,7 +64,7 @@ public class WebSocketConnection extends WebSocketListener {
         log.warn("[Sub][" + this.connectionId + "] Reconnecting after " + delayInSecond + " seconds later");
         if (webSocket != null) {
 //            webSocket.cancel();
-            webSocket.close(1000,"closing connection");
+            webSocket.close(1000, "closing connection");
             webSocket = null;
         }
         this.delayInSecond = delayInSecond;
@@ -107,7 +107,9 @@ public class WebSocketConnection extends WebSocketListener {
 
             if ((jsonWrapper.containKey("event") && "subscribe".equals(jsonWrapper.getString("event")))
                     || jsonWrapper.containKey("result")
-                    || (jsonWrapper.containKey("id") && !jsonWrapper.containKey("subject"))) {
+                    || (jsonWrapper.containKey("id") && !jsonWrapper.containKey("subject"))
+                    || (jsonWrapper.containKey("type") && jsonWrapper.getString("type").equals("pong"))
+            ) {
                 // onReceiveAndClose(jsonWrapper);
             } else if (jsonWrapper.containKey("event") && "login".equals(jsonWrapper.getString("event")) && request.connectionHandler != null) {
                 request.connectionHandler.handle(this);
@@ -160,7 +162,7 @@ public class WebSocketConnection extends WebSocketListener {
     public void close() {
         log.info("[Sub][" + this.connectionId + "] Closing normally");
 //        webSocket.cancel();
-        webSocket.close(1000,"closing connection");
+        webSocket.close(1000, "closing connection");
         webSocket = null;
         watchDog.onClosedNormally(this);
     }
@@ -198,10 +200,16 @@ public class WebSocketConnection extends WebSocketListener {
     private void closeOnError() {
         if (webSocket != null) {
 //            this.webSocket.cancel();
-            webSocket.close(1000,"closing connection");
+            webSocket.close(1000, "closing connection");
             state = ConnectionState.CLOSED_ON_ERROR;
             log.error("[Sub][" + this.connectionId + "] Connection is closing due to error");
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public void ping() {
+        if (request.healthHandler != null) {
+            request.healthHandler.handle(this);
+        }
+    }
 }

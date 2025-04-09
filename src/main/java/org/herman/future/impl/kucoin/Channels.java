@@ -8,6 +8,14 @@ import java.util.UUID;
 
 public class Channels {
 
+    public static String ping() {
+        String uuid = UUID.randomUUID().toString();
+        JSONObject jb = new JSONObject();
+        jb.put("id", uuid);
+        jb.put("type", "ping");
+        return jb.toJSONString();
+    }
+
     public static String subscribe(String topic, boolean privateChannel, boolean response) {
         String uuid = UUID.randomUUID().toString();
         JSONObject jb = new JSONObject();
