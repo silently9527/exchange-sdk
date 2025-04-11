@@ -606,7 +606,7 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
             positionRisk.setMarkPrice(item.getBigDecimal("markPrice"));
             positionRisk.setPositionAmt(item.getBigDecimal("currentQty"));
             positionRisk.setSymbol(item.getString("symbol"));
-            positionRisk.setIsolatedMargin(StringUtils.isEmpty(item.getString("posInit")) ? null : item.getBigDecimal("posInit"));
+            positionRisk.setIsolatedMargin(StringUtils.isEmpty(item.getString("posMargin")) ? BigDecimal.ZERO : item.getBigDecimal("posMargin"));
             positionRisk.setPositionSide(PositionSide.BOTH);
             positionRisk.setMarginType(MarginType.isolated);
             positionRisk.setUnrealizedProfit(item.getBigDecimal("unrealisedPnl"));
@@ -663,6 +663,32 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
             maxOpenSize.setMaxSellOpenSize(item.getInteger("maxSellOpenSize"));
             return maxOpenSize;
         });
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType) {
+        RestApiRequest<Boolean> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToPost("amount", amount)
+                .putToPost("recAccountType", recAccountType)
+                .putToPost("currency", currency);
+        request.request = createRequestByPostWithSignature("/api/v3/transfer-out", builder);
+
+        request.jsonParser = (jsonWrapper -> true);
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String payAccountType) {
+        RestApiRequest<Boolean> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToPost("amount", amount)
+                .putToPost("payAccountType", payAccountType)
+                .putToPost("currency", currency);
+        request.request = createRequestByPostWithSignature("/api/v1/transfer-in", builder);
+
+        request.jsonParser = (jsonWrapper -> true);
         return request;
     }
 

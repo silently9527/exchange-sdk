@@ -696,6 +696,16 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         return null;
     }
 
+    @Override
+    public RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String recAccountType) {
+        return null;
+    }
+
 
     @Override
     protected String getClientSdkVersion() {

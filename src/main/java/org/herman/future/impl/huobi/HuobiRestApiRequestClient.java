@@ -288,4 +288,14 @@ public class HuobiRestApiRequestClient extends AbstractRestApiRequestClient {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String recAccountType) {
+        return null;
+    }
+
 }

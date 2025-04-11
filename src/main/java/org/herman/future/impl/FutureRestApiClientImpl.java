@@ -149,5 +149,15 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
         return requestImpl.formatTradeSize(multiplier, tradeSize);
     }
 
+    @Override
+    public Boolean transferOut(BigDecimal amount, String currency, String recAccountType) {
+        return RestApiInvoker.callSync(requestImpl.transferOut(amount, currency, recAccountType));
+    }
+
+    @Override
+    public Boolean transferIn(BigDecimal amount, String currency, String payAccountType) {
+        return RestApiInvoker.callSync(requestImpl.transferIn(amount, currency, payAccountType));
+    }
+
 
 }

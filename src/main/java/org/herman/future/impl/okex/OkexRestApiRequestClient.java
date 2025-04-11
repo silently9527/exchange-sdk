@@ -640,4 +640,14 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     public RestApiRequest<MaxOpenSize> getMaxOpenSize(String symbol, BigDecimal price, Integer leverage) {
         return null;
     }
+
+    @Override
+    public RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String recAccountType) {
+        return null;
+    }
 }

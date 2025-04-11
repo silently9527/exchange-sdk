@@ -85,4 +85,7 @@ public interface FutureRestApiClient {
 
     BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize);
 
+    Boolean transferOut(BigDecimal amount, String currency, String recAccountType);
+
+    Boolean transferIn(BigDecimal amount, String currency, String payAccountType);
 }

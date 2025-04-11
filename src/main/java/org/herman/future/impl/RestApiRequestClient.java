@@ -62,4 +62,8 @@ public interface RestApiRequestClient {
     RestApiRequest<String> getMarginMode(String symbol);
 
     RestApiRequest<MaxOpenSize> getMaxOpenSize(String symbol, BigDecimal price, Integer leverage);
+
+    RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType);
+
+    RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String payAccountType);
 }
