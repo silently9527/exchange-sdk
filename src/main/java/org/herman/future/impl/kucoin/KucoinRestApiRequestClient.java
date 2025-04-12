@@ -494,7 +494,7 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
                 positionRisk.setMarkPrice(item.getBigDecimal("markPrice"));
                 positionRisk.setPositionAmt(item.getBigDecimal("currentQty"));
                 positionRisk.setSymbol(item.getString("symbol"));
-                positionRisk.setIsolatedMargin(StringUtils.isEmpty(item.getString("posInit")) ? null : item.getBigDecimal("posInit"));
+                positionRisk.setIsolatedMargin(StringUtils.isEmpty(item.getString("posMargin")) ? BigDecimal.ZERO : item.getBigDecimal("posMargin"));
                 positionRisk.setPositionSide(PositionSide.BOTH);
                 positionRisk.setMarginType(MarginType.isolated);
                 positionRisk.setUnrealizedProfit(item.getBigDecimal("unrealisedPnl"));
