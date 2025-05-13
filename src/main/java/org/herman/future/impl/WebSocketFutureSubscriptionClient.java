@@ -59,62 +59,68 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
         connections.clear();
     }
 
-
     @Override
-    public void subscribeAggregateTradeEvent(String symbol,
-                                             FutureSubscriptionListener<AggregateTradeEvent> callback,
-                                             FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeAggregateTradeEvent(symbol, callback, errorHandler));
+    public void unsubscribe(WebSocketConnection connection) {
+        watchDog.onClosedNormally(connection);
+        connection.close();
+        connections.remove(connection.getConnectionId());
     }
 
     @Override
-    public void subscribeMarkPriceEvent(String symbol, FutureSubscriptionListener<MarkPriceEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeMarkPriceEvent(symbol, callback, errorHandler));
+    public WebSocketConnection subscribeAggregateTradeEvent(String symbol,
+                                                            FutureSubscriptionListener<AggregateTradeEvent> callback,
+                                                            FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeAggregateTradeEvent(symbol, callback, errorHandler));
     }
 
     @Override
-    public void subscribeCandlestickEvent(String symbol, CandlestickInterval interval, FutureSubscriptionListener<CandlestickEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeCandlestickEvent(symbol, interval, callback, errorHandler));
+    public WebSocketConnection subscribeMarkPriceEvent(String symbol, FutureSubscriptionListener<MarkPriceEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeMarkPriceEvent(symbol, callback, errorHandler));
     }
 
     @Override
-    public void subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeSymbolTickerEvent(symbol, callback, errorHandler));
+    public WebSocketConnection subscribeCandlestickEvent(String symbol, CandlestickInterval interval, FutureSubscriptionListener<CandlestickEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeCandlestickEvent(symbol, interval, callback, errorHandler));
     }
 
     @Override
-    public void subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeAllTickerEvent(callback, errorHandler));
+    public WebSocketConnection subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeSymbolTickerEvent(symbol, callback, errorHandler));
     }
 
     @Override
-    public void subscribeSymbolBookTickerEvent(String symbol, FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeSymbolBookTickerEvent(symbol, callback, errorHandler));
+    public WebSocketConnection subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeAllTickerEvent(callback, errorHandler));
     }
 
     @Override
-    public void subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeAllBookTickerEvent(callback, errorHandler));
+    public WebSocketConnection subscribeSymbolBookTickerEvent(String symbol, FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeSymbolBookTickerEvent(symbol, callback, errorHandler));
     }
 
     @Override
-    public void subscribeBookDepthEvent(String symbol, Integer limit, FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeBookDepthEvent(symbol, limit, callback, errorHandler));
+    public WebSocketConnection subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeAllBookTickerEvent(callback, errorHandler));
     }
 
     @Override
-    public void subscribePositionEvent(String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribePositionEvent(symbol, callback, errorHandler));
+    public WebSocketConnection subscribeBookDepthEvent(String symbol, Integer limit, FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeBookDepthEvent(symbol, limit, callback, errorHandler));
     }
 
     @Override
-    public void subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeAccountEvent(currency, callback, errorHandler));
+    public WebSocketConnection subscribePositionEvent(String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribePositionEvent(symbol, callback, errorHandler));
     }
 
     @Override
-    public void subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        createConnection(requestImpl.subscribeOrderUpdateEvent(symbol, callback, errorHandler));
+    public WebSocketConnection subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeAccountEvent(currency, callback, errorHandler));
+    }
+
+    @Override
+    public WebSocketConnection subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
+        return createConnection(requestImpl.subscribeOrderUpdateEvent(symbol, callback, errorHandler));
     }
 
 }

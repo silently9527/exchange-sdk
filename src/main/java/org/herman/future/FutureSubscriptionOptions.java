@@ -12,7 +12,7 @@ public abstract class FutureSubscriptionOptions {
     private String uri;
     private boolean isAutoReconnect = true;
     private int receiveLimitMs = 600_000;
-    private int connectionDelayOnFailure = 1;
+    private int connectionDelayOnFailure = 15;
 
     public FutureSubscriptionOptions(String uri) {
         this.uri = uri;
