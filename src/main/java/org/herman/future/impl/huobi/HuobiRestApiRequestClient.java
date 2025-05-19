@@ -298,4 +298,9 @@ public class HuobiRestApiRequestClient extends AbstractRestApiRequestClient {
         return null;
     }
 
+    @Override
+    public RestApiRequest<List<LeverageBracket>> getLeverageBrackets(String symbol) {
+        return null;
+    }
+
 }

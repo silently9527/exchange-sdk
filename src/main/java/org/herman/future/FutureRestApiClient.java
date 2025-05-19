@@ -70,6 +70,8 @@ public interface FutureRestApiClient {
 
     AccountInformation getAccountInformation();
 
+    List<LeverageBracket> getLeverageBrackets(String symbol);
+
     Leverage changeInitialLeverage(String symbol, Integer leverage);
 
     PositionRisk getPositionRisk(String symbol);

@@ -66,4 +66,6 @@ public interface RestApiRequestClient {
     RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType);
 
     RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String payAccountType);
+
+    RestApiRequest<List<LeverageBracket>> getLeverageBrackets(String symbol);
 }

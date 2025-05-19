@@ -3,6 +3,7 @@ package org.herman.future.impl.binance;
 import com.alibaba.fastjson.JSONArray;
 import okhttp3.Request;
 import org.herman.exception.ApiException;
+import org.herman.future.RestApiInvoker;
 import org.herman.future.impl.AbstractRestApiRequestClient;
 import org.herman.future.impl.RestApiRequest;
 import org.herman.future.model.ResponseResult;
@@ -14,10 +15,7 @@ import org.herman.utils.JsonWrapperArray;
 import org.herman.utils.UrlParamsBuilder;
 
 import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
 
@@ -117,8 +115,12 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
                 entry.setMinNotional(val.getBigDecimal("notional"));
             }
         });
+        final List<LeverageBracket> brackets = RestApiInvoker.callSync(getLeverageBrackets(entry.getSymbol()));
+        brackets.stream().filter(leverageBracket -> leverageBracket.getBracket() == 1).findFirst()
+                .ifPresent(leverageBracket -> entry.setMaxLeverage(leverageBracket.getInitialLeverage()));
         return entry;
     }
+
 
     @Override
     public RestApiRequest<Future> getFuture(String symbol) {
@@ -441,6 +443,31 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         return request;
     }
 
+
+    @Override
+    public RestApiRequest<List<LeverageBracket>> getLeverageBrackets(String symbol) {
+        RestApiRequest<List<LeverageBracket>> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("symbol", symbol);
+        request.request = createRequestByGetWithSignature("/fapi/v1/leverageBracket", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<LeverageBracket> result = new ArrayList<>();
+            final JsonWrapperArray brackets = jsonWrapper.getJsonArray("data").getJsonObjectAt(0).getJsonArray("brackets");
+            brackets.forEach(json -> {
+                LeverageBracket bracket = new LeverageBracket();
+                bracket.setBracket(json.getInteger("bracket"));
+                bracket.setInitialLeverage(json.getInteger("initialLeverage"));
+                bracket.setNotionalCap(json.getBigDecimal("notionalCap"));
+                bracket.setNotionalFloor(json.getBigDecimal("notionalFloor"));
+                bracket.setMaintMarginRatio(json.getBigDecimal("maintMarginRatio"));
+                result.add(bracket);
+            });
+            return result;
+        });
+        return request;
+    }
+
     @Override
     public RestApiRequest<Leverage> changeInitialLeverage(String symbol, Integer leverage) {
         RestApiRequest<Leverage> request = new RestApiRequest<>();
@@ -705,7 +732,6 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
     public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String recAccountType) {
         return null;
     }
-
 
     @Override
     protected String getClientSdkVersion() {

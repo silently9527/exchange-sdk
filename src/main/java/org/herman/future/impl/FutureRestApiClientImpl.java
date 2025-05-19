@@ -115,6 +115,11 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
+    public List<LeverageBracket> getLeverageBrackets(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getLeverageBrackets(symbol));
+    }
+
+    @Override
     public Leverage changeInitialLeverage(String symbol, Integer leverage) {
         return RestApiInvoker.callSync(requestImpl.changeInitialLeverage(symbol, leverage));
     }

@@ -692,6 +692,11 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
         return request;
     }
 
+    @Override
+    public RestApiRequest<List<LeverageBracket>> getLeverageBrackets(String symbol) {
+        return null;
+    }
+
     public RestApiRequest<String> getPublicEndpoint() {
         return getEndpoint("/api/v1/bullet-public");
     }

@@ -650,4 +650,9 @@ public class OkexRestApiRequestClient extends AbstractRestApiRequestClient {
     public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String recAccountType) {
         return null;
     }
+
+    @Override
+    public RestApiRequest<List<LeverageBracket>> getLeverageBrackets(String symbol) {
+        return null;
+    }
 }
