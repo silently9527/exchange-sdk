@@ -73,10 +73,11 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
             List<Future> futures = new LinkedList<>();
             JsonWrapperArray symbolArray = jsonWrapper.getJsonArray("symbols");
             symbolArray.forEach((item) -> {
-                Future entry = parseFuture(item);
-
-                entry.setSource(item);
-                futures.add(entry);
+                if (item.getString("status").equals("TRADING")) {
+                    Future entry = parseFuture(item);
+                    entry.setSource(item);
+                    futures.add(entry);
+                }
             });
             return futures;
         });
