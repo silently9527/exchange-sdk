@@ -289,17 +289,17 @@ public class HuobiRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
-    public RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType) {
-        return null;
-    }
-
-    @Override
-    public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String recAccountType) {
-        return null;
-    }
-
-    @Override
     public RestApiRequest<List<LeverageBracket>> getLeverageBrackets(String symbol) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<List<OpenInterestStat>> getOpenInterestHistory(String symbol, String period, Integer limit, Long startTime, Long endTime) {
+        return null;
+    }
+
+    @Override
+    public RestApiRequest<Boolean> changePositionMode(PositionMode positionMode) {
         return null;
     }
 

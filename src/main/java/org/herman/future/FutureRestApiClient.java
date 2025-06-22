@@ -74,6 +74,8 @@ public interface FutureRestApiClient {
 
     Leverage changeInitialLeverage(String symbol, Integer leverage);
 
+    boolean changePositionMode(PositionMode positionMode);
+
     PositionRisk getPositionRisk(String symbol);
 
     PositionRisk addIsolatedMargin(String symbol, BigDecimal margin);
@@ -87,7 +89,6 @@ public interface FutureRestApiClient {
 
     BigDecimal formatTradeSize(BigDecimal multiplier, BigDecimal tradeSize);
 
-    Boolean transferOut(BigDecimal amount, String currency, String recAccountType);
+    List<OpenInterestStat> getOpenInterestHistory(String symbol, String period, Integer limit, Long startTime, Long endTime);
 
-    Boolean transferIn(BigDecimal amount, String currency, String payAccountType);
 }

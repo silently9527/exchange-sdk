@@ -125,6 +125,11 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
+    public boolean changePositionMode(PositionMode positionMode) {
+        return RestApiInvoker.callSync(requestImpl.changePositionMode(positionMode));
+    }
+
+    @Override
     public PositionRisk getPositionRisk(String symbol) {
         return RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol)).get(0);
     }
@@ -155,13 +160,8 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
-    public Boolean transferOut(BigDecimal amount, String currency, String recAccountType) {
-        return RestApiInvoker.callSync(requestImpl.transferOut(amount, currency, recAccountType));
-    }
-
-    @Override
-    public Boolean transferIn(BigDecimal amount, String currency, String payAccountType) {
-        return RestApiInvoker.callSync(requestImpl.transferIn(amount, currency, payAccountType));
+    public List<OpenInterestStat> getOpenInterestHistory(String symbol, String period, Integer limit, Long startTime, Long endTime) {
+        return RestApiInvoker.callSync(requestImpl.getOpenInterestHistory(symbol, period, limit, startTime, endTime));
     }
 
 

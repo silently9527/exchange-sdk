@@ -41,6 +41,16 @@ public class Order {
 
     private String workingType;
 
+    private Object source;
+
+    public Object getSource() {
+        return source;
+    }
+
+    public void setSource(Object source) {
+        this.source = source;
+    }
+
     public Long getTime() {
         return time;
     }

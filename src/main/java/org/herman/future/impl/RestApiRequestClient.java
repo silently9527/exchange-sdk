@@ -63,9 +63,9 @@ public interface RestApiRequestClient {
 
     RestApiRequest<MaxOpenSize> getMaxOpenSize(String symbol, BigDecimal price, Integer leverage);
 
-    RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType);
-
-    RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String payAccountType);
-
     RestApiRequest<List<LeverageBracket>> getLeverageBrackets(String symbol);
+
+    RestApiRequest<List<OpenInterestStat>> getOpenInterestHistory(String symbol, String period, Integer limit, Long startTime, Long endTime);
+
+    RestApiRequest<Boolean> changePositionMode(PositionMode positionMode);
 }

@@ -425,6 +425,7 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
         result.setType(OrderType.valueOf(jsonWrapper.getString("type").toUpperCase()));
         result.setUpdateTime(jsonWrapper.getLong("updateTime"));
         result.setWorkingType(jsonWrapper.getString("workingType"));
+        result.setSource(jsonWrapper);
         return result;
     }
 
@@ -466,6 +467,51 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
             });
             return result;
         });
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<List<OpenInterestStat>> getOpenInterestHistory(String symbol, String period, Integer limit, Long startTime, Long endTime) {
+        RestApiRequest<List<OpenInterestStat>> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("symbol", symbol)
+                .putToUrl("period", period);
+        if (Objects.nonNull(limit)) {
+            builder.putToUrl("limit", limit);
+        }
+        if (Objects.nonNull(startTime)) {
+            builder.putToUrl("startTime", startTime);
+        }
+        if (Objects.nonNull(endTime)) {
+            builder.putToUrl("endTime", endTime);
+        }
+        request.request = createRequestByGetWithSignature("/futures/data/openInterestHist", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<OpenInterestStat> result = new ArrayList<>();
+            final JsonWrapperArray data = jsonWrapper.getJsonArray("data");
+            data.forEach(json -> {
+                OpenInterestStat stat = new OpenInterestStat();
+                stat.setSymbol(json.getString("symbol"));
+                stat.setSumOpenInterest(json.getBigDecimal("sumOpenInterest"));
+                stat.setSumOpenInterestValue(json.getBigDecimal("sumOpenInterestValue"));
+                stat.setTimestamp(json.getLong("timestamp"));
+                result.add(stat);
+            });
+            return result;
+        });
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<Boolean> changePositionMode(PositionMode positionMode) {
+        RestApiRequest<Boolean> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToUrl("dualSidePosition", positionMode.equals(PositionMode.HEDGE) ? "true" : "false")
+                .putToUrl("timestamp", System.currentTimeMillis());
+        request.request = createRequestByPostWithSignature("/fapi/v1/positionSide/dual", builder);
+
+        request.jsonParser = (jsonWrapper -> jsonWrapper.getInteger("code") == 200);
         return request;
     }
 
@@ -721,16 +767,6 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
 
     @Override
     public RestApiRequest<MaxOpenSize> getMaxOpenSize(String symbol, BigDecimal price, Integer leverage) {
-        return null;
-    }
-
-    @Override
-    public RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType) {
-        return null;
-    }
-
-    @Override
-    public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String recAccountType) {
         return null;
     }
 
