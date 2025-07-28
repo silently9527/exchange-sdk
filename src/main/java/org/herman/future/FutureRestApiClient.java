@@ -76,7 +76,9 @@ public interface FutureRestApiClient {
 
     boolean changePositionMode(PositionMode positionMode);
 
-    PositionRisk getPositionRisk(String symbol);
+    PositionRisk getPositionRisk(String symbol, PositionSide positionSide);
+
+    List<PositionRisk> getPositionRisks(String symbol);
 
     PositionRisk addIsolatedMargin(String symbol, BigDecimal margin);
 

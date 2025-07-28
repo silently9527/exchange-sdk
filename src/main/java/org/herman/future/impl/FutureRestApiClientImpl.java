@@ -130,8 +130,15 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
-    public PositionRisk getPositionRisk(String symbol) {
-        return RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol)).get(0);
+    public PositionRisk getPositionRisk(String symbol, PositionSide positionSide) {
+        final List<PositionRisk> positionRisks = RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol));
+        return positionRisks.stream().filter(positionRisk -> positionRisk.getPositionSide().equals(positionSide))
+                .findFirst().orElse(null);
+    }
+
+    @Override
+    public List<PositionRisk> getPositionRisks(String symbol) {
+        return RestApiInvoker.callSync(requestImpl.getPositionRisk(symbol));
     }
 
     @Override
