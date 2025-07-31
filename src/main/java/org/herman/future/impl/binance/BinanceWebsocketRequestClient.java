@@ -18,6 +18,8 @@ import org.herman.utils.JsonWrapper;
 import org.herman.utils.JsonWrapperArray;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -42,8 +44,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<AggregateTradeEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<AggregateTradeEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Aggregate Trade for " + symbol + "***";
+        request.channels = Channels.aggTradeParams(symbol.toLowerCase());
         request.connectionHandler = (connection) -> connection.send(Channels.aggregateTradeChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -71,8 +74,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<MarkPriceEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<MarkPriceEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Mark Price for " + symbol + "***";
+        request.channels = Channels.markPriceParams(symbol.toLowerCase());
         request.connectionHandler = (connection) -> connection.send(Channels.markPriceChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -94,8 +98,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<CandlestickEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<CandlestickEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Candlestick for " + symbol + "***";
+        request.channels = Channels.candlestickParams(symbol.toLowerCase(), interval);
         request.connectionHandler = (connection) -> connection.send(Channels.candlestickChannel(symbol.toLowerCase(), interval));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -127,8 +132,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(limit, "limit")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<OrderBookEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<OrderBookEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Partial Book Depth for " + symbol + "***";
+        request.channels = Channels.bookDepthParams(symbol.toLowerCase(), limit);
         request.connectionHandler = (connection) -> connection.send(Channels.bookDepthChannel(symbol.toLowerCase(), limit));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -173,8 +179,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<SymbolTickerEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<SymbolTickerEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Individual Symbol Ticker for " + symbol + "***";
+        request.channels = Channels.tickerParams(symbol.toLowerCase());
         request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -196,8 +203,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                                                                              FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<List<SymbolTickerEvent>> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<List<SymbolTickerEvent>> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***All Market Tickers";
+        request.channels = Collections.singletonList("!ticker@arr");
         request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel());
 
         request.jsonParser = (jsonWrapper) -> {
@@ -224,8 +232,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<SymbolBookTickerEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<SymbolBookTickerEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Individual Symbol Book Ticker for " + symbol + "***";
+        request.channels = Channels.bookTickerParams(symbol.toLowerCase());
         request.connectionHandler = (connection) -> connection.send(Channels.bookTickerChannel(symbol.toLowerCase()));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -246,8 +255,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     public WebsocketRequest<SymbolBookTickerEvent> subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<SymbolBookTickerEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<SymbolBookTickerEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***All Market Book Tickers***";
+        request.channels = Collections.singletonList("!bookTicker");
         request.connectionHandler = (connection) -> connection.send(Channels.bookTickerChannel());
 
         request.jsonParser = (jsonWrapper) -> {
@@ -269,8 +279,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<List<BalanceUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<List<BalanceUpdateEvent>> request = new BinanceWebsocketRequest<>(callback, errorHandler);
         request.name = "***User Account***";
+        request.channels = Collections.singletonList(this.privateToken);
         request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -304,10 +315,10 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<List<PositionUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<List<PositionUpdateEvent>> request = new BinanceWebsocketRequest<>(callback, errorHandler);
         request.name = "***User Position***";
+        request.channels = Collections.singletonList(this.privateToken);
         request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
-        request.healthHandler = (connection) -> connection.updateLastReceivedTime(System.currentTimeMillis());
         request.jsonParser = (jsonWrapper) -> {
             JsonWrapper data = jsonWrapper.getJsonObject("data");
 
@@ -341,8 +352,9 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<OrderUpdateEvent> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<OrderUpdateEvent> request = new BinanceWebsocketRequest<>(callback, errorHandler);
         request.name = "***User Order***";
+        request.channels = Collections.singletonList(this.privateToken);
         request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
 
         request.jsonParser = (jsonWrapper) -> {

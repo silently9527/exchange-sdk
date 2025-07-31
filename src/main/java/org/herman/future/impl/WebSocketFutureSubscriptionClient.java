@@ -9,118 +9,127 @@ import org.herman.future.model.event.*;
 import org.herman.future.model.user.BalanceUpdateEvent;
 import org.herman.future.model.user.OrderUpdateEvent;
 import org.herman.future.model.user.PositionUpdateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClient {
-    private final Logger logger = LoggerFactory.getLogger(WebSocketFutureSubscriptionClient.class);
-
-    private final FutureSubscriptionOptions options;
-    private WebSocketWatchDog watchDog;
-    private final Map<Integer, WebSocketConnection> connections = new ConcurrentHashMap<>();
-
+    private final WebSocketConnectionPool webSocketConnectionPool;
     private final WebsocketRequestClient requestImpl;
 
     public WebSocketFutureSubscriptionClient(FutureSubscriptionOptions options, WebsocketRequestClient requestImpl) {
-        this.watchDog = null;
-        this.options = Objects.requireNonNull(options);
-
         this.requestImpl = requestImpl;
-    }
-
-    private <T> WebSocketConnection createConnection(WebsocketRequest<T> request, boolean autoClose) {
-        if (watchDog == null) {
-            watchDog = new WebSocketWatchDog(options);
-        }
-        WebSocketConnection connection = new WebSocketConnection(request, options, watchDog, autoClose);
-        if (!autoClose) {
-            connections.put(connection.getConnectionId(), connection);
-        }
-        connection.connect();
-
-        return connection;
-    }
-
-    private <T> WebSocketConnection createConnection(WebsocketRequest<T> request) {
-        return createConnection(request, false);
+        webSocketConnectionPool = new WebSocketConnectionPool(options);
     }
 
     @Override
     public void unsubscribeAll() {
-        for (WebSocketConnection connection : connections.values()) {
-            watchDog.onClosedNormally(connection);
-            connection.close();
-        }
-        connections.clear();
+        webSocketConnectionPool.closeAll();
     }
 
     @Override
     public void unsubscribe(WebSocketConnection connection) {
-        watchDog.onClosedNormally(connection);
-        connection.close();
-        connections.remove(connection.getConnectionId());
+        webSocketConnectionPool.close(connection);
     }
 
     @Override
     public WebSocketConnection subscribeAggregateTradeEvent(String symbol,
                                                             FutureSubscriptionListener<AggregateTradeEvent> callback,
                                                             FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeAggregateTradeEvent(symbol, callback, errorHandler));
+        final WebsocketRequest<AggregateTradeEvent> request = requestImpl.subscribeAggregateTradeEvent(symbol, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeMarkPriceEvent(String symbol, FutureSubscriptionListener<MarkPriceEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeMarkPriceEvent(symbol, callback, errorHandler));
+        final WebsocketRequest<MarkPriceEvent> request = requestImpl.subscribeMarkPriceEvent(symbol, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeCandlestickEvent(String symbol, CandlestickInterval interval, FutureSubscriptionListener<CandlestickEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeCandlestickEvent(symbol, interval, callback, errorHandler));
+        final WebsocketRequest<CandlestickEvent> request = requestImpl.subscribeCandlestickEvent(symbol, interval, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeSymbolTickerEvent(String symbol, FutureSubscriptionListener<SymbolTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeSymbolTickerEvent(symbol, callback, errorHandler));
+        final WebsocketRequest<SymbolTickerEvent> request = requestImpl.subscribeSymbolTickerEvent(symbol, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeAllTickerEvent(FutureSubscriptionListener<List<SymbolTickerEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeAllTickerEvent(callback, errorHandler));
+        final WebsocketRequest<List<SymbolTickerEvent>> request = requestImpl.subscribeAllTickerEvent(callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeSymbolBookTickerEvent(String symbol, FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeSymbolBookTickerEvent(symbol, callback, errorHandler));
+        final WebsocketRequest<SymbolBookTickerEvent> request = requestImpl.subscribeSymbolBookTickerEvent(symbol, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeAllBookTickerEvent(FutureSubscriptionListener<SymbolBookTickerEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeAllBookTickerEvent(callback, errorHandler));
+        final WebsocketRequest<SymbolBookTickerEvent> request = requestImpl.subscribeAllBookTickerEvent(callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeBookDepthEvent(String symbol, Integer limit, FutureSubscriptionListener<OrderBookEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeBookDepthEvent(symbol, limit, callback, errorHandler));
+        final WebsocketRequest<OrderBookEvent> request = requestImpl.subscribeBookDepthEvent(symbol, limit, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribePositionEvent(String symbol, FutureSubscriptionListener<List<PositionUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribePositionEvent(symbol, callback, errorHandler));
+        final WebsocketRequest<List<PositionUpdateEvent>> request = requestImpl.subscribePositionEvent(symbol, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeAccountEvent(currency, callback, errorHandler));
+        final WebsocketRequest<List<BalanceUpdateEvent>> request = requestImpl.subscribeAccountEvent(currency, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
     @Override
     public WebSocketConnection subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
-        return createConnection(requestImpl.subscribeOrderUpdateEvent(symbol, callback, errorHandler));
+        final WebsocketRequest<OrderUpdateEvent> request = requestImpl.subscribeOrderUpdateEvent(symbol, callback, errorHandler);
+        final WebSocketConnection connection = webSocketConnectionPool.get();
+        connection.addRequest(request);
+        request.connectionHandler.handle(connection);
+        return connection;
     }
 
 }

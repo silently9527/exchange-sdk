@@ -82,6 +82,7 @@ public class PositionUpdateEvent {
     public String toString() {
         return new ToStringBuilder(this, Constants.TO_STRING_BUILDER_STYLE).append("symbol", symbol)
                 .append("amount", amount).append("entryPrice", entryPrice).append("side", side)
+                .append("eventType", eventType)
                 .append("unrealizedPnl", unrealizedPnl).toString();
     }
 }

@@ -13,6 +13,7 @@ public abstract class FutureSubscriptionOptions {
     private boolean isAutoReconnect = true;
     private int receiveLimitMs = 600_000;
     private int connectionDelayOnFailure = 15;
+    private int connectionCount = 10;
 
     public FutureSubscriptionOptions(String uri) {
         this.uri = uri;
@@ -88,4 +89,11 @@ public abstract class FutureSubscriptionOptions {
         return uri;
     }
 
+    public int getConnectionCount() {
+        return connectionCount;
+    }
+
+    public void setConnectionCount(int connectionCount) {
+        this.connectionCount = connectionCount;
+    }
 }

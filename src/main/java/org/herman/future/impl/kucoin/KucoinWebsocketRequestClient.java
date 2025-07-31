@@ -5,8 +5,10 @@ import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
-import org.herman.future.impl.okex.ApiSignature;
-import org.herman.future.model.enums.*;
+import org.herman.future.model.enums.CandlestickInterval;
+import org.herman.future.model.enums.OrderSide;
+import org.herman.future.model.enums.OrderStatus;
+import org.herman.future.model.enums.PositionSide;
 import org.herman.future.model.event.*;
 import org.herman.future.model.market.OrderBookEntry;
 import org.herman.future.model.user.BalanceUpdateEvent;
@@ -17,7 +19,7 @@ import org.herman.utils.JsonWrapper;
 import org.herman.utils.JsonWrapperArray;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,10 +34,10 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<MarkPriceEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<MarkPriceEvent> request = new KucoinWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Mark Price for " + symbol + "***";
+        request.channels = Collections.singletonList(Channels.markPriceTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.markPriceChannel(symbol));
-        request.healthHandler = (connection) -> connection.send(Channels.ping());
 
         request.jsonParser = (jsonWrapper) -> {
             String subject = jsonWrapper.getString("subject");
@@ -61,8 +63,9 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(interval, "interval")
                 .shouldNotNull(subscriptionListener, "listener");
-        WebsocketRequest<CandlestickEvent> request = new WebsocketRequest<>(subscriptionListener, errorHandler);
+        WebsocketRequest<CandlestickEvent> request = new KucoinWebsocketRequest<>(subscriptionListener, errorHandler);
         request.name = "***Candlestick for " + symbol + "***";
+        request.channels = Collections.singletonList(Channels.candlestickTopic(symbol, interval));
         request.connectionHandler = (connection) -> connection.send(Channels.candlestickChannel(symbol, interval));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -91,8 +94,9 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(limit, "limit")
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<OrderBookEvent> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<OrderBookEvent> request = new KucoinWebsocketRequest<>(callback, errorHandler);
         request.name = "***Partial Book Depth for " + symbol + "***";
+        request.channels = Collections.singletonList(Channels.bookDepthTopic(symbol, limit));
         request.connectionHandler = (connection) -> connection.send(Channels.bookDepthChannel(symbol, limit));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -135,8 +139,9 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<SymbolTickerEvent> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<SymbolTickerEvent> request = new KucoinWebsocketRequest<>(callback, errorHandler);
         request.name = "***Individual Symbol Ticker for " + symbol + "***";
+        request.channels = Collections.singletonList(Channels.lastPriceTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.lastPriceChannel(symbol));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -162,8 +167,9 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<SymbolBookTickerEvent> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<SymbolBookTickerEvent> request = new KucoinWebsocketRequest<>(callback, errorHandler);
         request.name = "***Individual Symbol Ticker for " + symbol + "***";
+        request.channels = Collections.singletonList(Channels.bookTickerTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.bookTickerChannel(symbol));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -190,8 +196,9 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<List<PositionUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<List<PositionUpdateEvent>> request = new KucoinWebsocketRequest<>(callback, errorHandler);
         request.name = "***User Position***";
+        request.channels = Collections.singletonList(Channels.positionTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.positionChannel(symbol));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -215,8 +222,9 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
     public WebsocketRequest<OrderUpdateEvent> subscribeOrderUpdateEvent(String symbol, FutureSubscriptionListener<OrderUpdateEvent> callback, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<OrderUpdateEvent> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<OrderUpdateEvent> request = new KucoinWebsocketRequest<>(callback, errorHandler);
         request.name = "***User Order***";
+        request.channels = Collections.singletonList(Channels.orderTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.orderChannel(symbol));
 
         request.jsonParser = (jsonWrapper) -> {
@@ -254,8 +262,9 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
     public WebsocketRequest<List<BalanceUpdateEvent>> subscribeAccountEvent(String currency, FutureSubscriptionListener<List<BalanceUpdateEvent>> callback, FutureSubscriptionErrorHandler errorHandler) {
         InputChecker.checker()
                 .shouldNotNull(callback, "listener");
-        WebsocketRequest<List<BalanceUpdateEvent>> request = new WebsocketRequest<>(callback, errorHandler);
+        WebsocketRequest<List<BalanceUpdateEvent>> request = new KucoinWebsocketRequest<>(callback, errorHandler);
         request.name = "***User Account***";
+        request.channels = Collections.singletonList(Channels.accountTopic());
         request.connectionHandler = (connection) -> connection.send(Channels.accountChannel());
 
         request.jsonParser = (jsonWrapper) -> {

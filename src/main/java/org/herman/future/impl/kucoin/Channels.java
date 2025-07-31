@@ -28,43 +28,75 @@ public class Channels {
     }
 
     public static String markPriceChannel(String symbol) {
-        return subscribe("/contract/instrument:" + symbol, false, true);
+        return subscribe(markPriceTopic(symbol), false, true);
+    }
+
+    public static String markPriceTopic(String symbol) {
+        return "/contract/instrument:" + symbol;
     }
 
     public static String orderChannel(String symbol) {
+        return subscribe(orderTopic(symbol), true, true);
+    }
+
+    public static String orderTopic(String symbol) {
         if (StringUtils.isNotEmpty(symbol)) {
-            return subscribe("/contractMarket/tradeOrders:" + symbol, true, true);
+            return "/contractMarket/tradeOrders:" + symbol;
         }
-        return subscribe("/contractMarket/tradeOrders", true, true);
+        return "/contractMarket/tradeOrders";
     }
 
     public static String bookDepthChannel(String symbol, Integer limit) {
+        return subscribe(bookDepthTopic(symbol, limit), false, true);
+    }
+
+    public static String bookDepthTopic(String symbol, Integer limit) {
         if (limit <= 5) {
-            return subscribe("/contractMarket/level2Depth5:" + symbol, false, true);
+            return "/contractMarket/level2Depth5:" + symbol;
         }
-        return subscribe("/contractMarket/level2Depth50:" + symbol, false, true);
+        return "/contractMarket/level2Depth50:" + symbol;
     }
 
     public static String bookTickerChannel(String symbol) {
-        return subscribe("/contractMarket/tickerV2:" + symbol, false, true);
+        return subscribe(bookTickerTopic(symbol), false, true);
+    }
+
+    public static String bookTickerTopic(String symbol) {
+        return "/contractMarket/tickerV2:" + symbol;
     }
 
     public static String lastPriceChannel(String symbol) {
-        return subscribe("/contractMarket/execution:" + symbol, false, true);
+        return subscribe(lastPriceTopic(symbol), false, true);
+    }
+
+    public static String lastPriceTopic(String symbol) {
+        return "/contractMarket/execution:" + symbol;
     }
 
     public static String candlestickChannel(String symbol, CandlestickInterval interval) {
-        return subscribe("/contractMarket/candle:" + symbol + "_" + interval.getMinutes(), false, true);
+        return subscribe(candlestickTopic(symbol, interval), false, true);
+    }
+
+    public static String candlestickTopic(String symbol, CandlestickInterval interval) {
+        return "/contractMarket/candle:" + symbol + "_" + interval.getMinutes();
     }
 
     public static String positionChannel(String symbol) {
+        return subscribe(positionTopic(symbol), true, true);
+    }
+
+    public static String positionTopic(String symbol) {
         if (StringUtils.isNotEmpty(symbol)) {
-            return subscribe("/contract/position:" + symbol, true, true);
+            return "/contract/position:" + symbol;
         }
-        return subscribe("/contract/positionAll", true, true);
+        return "/contract/positionAll";
     }
 
     public static String accountChannel() {
-        return subscribe("/contractAccount/wallet", true, true);
+        return subscribe(accountTopic(), true, true);
+    }
+
+    public static String accountTopic() {
+        return "/contractAccount/wallet";
     }
 }

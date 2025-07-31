@@ -12,12 +12,12 @@ import org.herman.utils.JsonWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public class WebSocketConnection extends WebSocketListener {
-
     private static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
-
     private static int connectionCounter = 0;
 
     public enum ConnectionState {
@@ -25,26 +25,24 @@ public class WebSocketConnection extends WebSocketListener {
     }
 
     private WebSocket webSocket = null;
-
     private volatile long lastReceivedTime = 0;
 
     private volatile ConnectionState state = ConnectionState.IDLE;
     private int delayInSecond = 0;
 
-    private WebsocketRequest request;
+    private final List<WebsocketRequest> requests = new CopyOnWriteArrayList<>();
     private final Request okhttpRequest;
-    private final WebSocketWatchDog watchDog;
     private final int connectionId;
-    private final boolean autoClose;
 
-    WebSocketConnection(WebsocketRequest request, FutureSubscriptionOptions options, WebSocketWatchDog watchDog, boolean autoClose) {
+    public WebSocketConnection(FutureSubscriptionOptions options, WebSocketWatchDog watchDog) {
         this.connectionId = WebSocketConnection.connectionCounter++;
-        this.request = request;
-        this.autoClose = autoClose;
 
         this.okhttpRequest = new Request.Builder().url(options.getUri()).build();
-        this.watchDog = watchDog;
-        log.info("[Sub] Connection [id: " + this.connectionId + "] created for " + request.name);
+        log.info("[Sub] Connection [id: " + this.connectionId + "] created");
+    }
+
+    public synchronized void addRequest(WebsocketRequest request) {
+        requests.add(request);
     }
 
     int getConnectionId() {
@@ -108,19 +106,14 @@ public class WebSocketConnection extends WebSocketListener {
         log.debug("[On Message]:{}", text);
         try {
             JsonWrapper jsonWrapper = JsonWrapper.parseFromString(text);
-
             if ((jsonWrapper.containKey("event") && "subscribe".equals(jsonWrapper.getString("event")))
                     || jsonWrapper.containKey("result")
                     || (jsonWrapper.containKey("id") && !jsonWrapper.containKey("subject"))
                     || (jsonWrapper.containKey("type") && jsonWrapper.getString("type").equals("pong"))
             ) {
-                // onReceiveAndClose(jsonWrapper);
-            } else if (jsonWrapper.containKey("event") && "login".equals(jsonWrapper.getString("event")) && request.connectionHandler != null) {
-                request.connectionHandler.handle(this);
             } else {
-                onReceiveAndClose(jsonWrapper);
+                onReceive(jsonWrapper);
             }
-
         } catch (Exception e) {
             log.error("[On Message][{}]: catch exception:", connectionId, e);
             closeOnError();
@@ -128,35 +121,62 @@ public class WebSocketConnection extends WebSocketListener {
     }
 
     private void onError(String errorMessage, Throwable e) {
-        if (request.errorHandler != null) {
-            ApiException exception = new ApiException(ApiException.SUBSCRIPTION_ERROR, errorMessage, e);
-            request.errorHandler.onError(exception);
-        }
+        requests.stream()
+                .filter(request -> Objects.nonNull(request.errorHandler))
+                .forEach(request -> {
+                    ApiException exception = new ApiException(ApiException.SUBSCRIPTION_ERROR, errorMessage, e);
+                    request.errorHandler.onError(exception);
+                });
         log.error("[Sub][" + this.connectionId + "] " + errorMessage);
-    }
-
-    private void onReceiveAndClose(JsonWrapper jsonWrapper) {
-        onReceive(jsonWrapper);
-        if (autoClose) {
-            close();
-        }
     }
 
     @SuppressWarnings("unchecked")
     private void onReceive(JsonWrapper jsonWrapper) {
-        Object obj = null;
-        try {
-            obj = request.jsonParser.parseJson(jsonWrapper);
-        } catch (Exception e) {
-            onError("Failed to parse server's response: " + e.getMessage(), e);
+        final String channel = parseChannel(jsonWrapper);
+        if (StringUtils.isBlank(channel)) {
+            log.error("解析channel失败, msg:{}", jsonWrapper.getJson());
+            return;
         }
-        try {
-            if (Objects.nonNull(obj)) {
-                request.updateCallback.onReceive(obj);
+        final List<WebsocketRequest> matchedRequests = getMatchedRequests(channel);
+        if (Objects.isNull(matchedRequests) || matchedRequests.isEmpty()) {
+            return;
+        }
+        for (WebsocketRequest request : matchedRequests) {
+            if (request.responseValidator.validate(jsonWrapper)) {
+                Object obj = null;
+                try {
+                    obj = request.jsonParser.parseJson(jsonWrapper);
+                } catch (Exception e) {
+                    onError("Failed to parse server's response: " + e.getMessage(), e);
+                }
+                try {
+                    if (Objects.nonNull(obj)) {
+                        request.updateCallback.onReceive(obj);
+                    }
+                } catch (Exception e) {
+                    onError("Process error: " + e.getMessage() + " You should capture the exception in your error handler", e);
+                }
             }
-        } catch (Exception e) {
-            onError("Process error: " + e.getMessage() + " You should capture the exception in your error handler", e);
         }
+    }
+
+    private List<WebsocketRequest> getMatchedRequests(String channel) {
+        return requests.stream()
+                .filter(request -> request.channels.contains(channel))
+                .collect(Collectors.toList());
+    }
+
+    private String parseChannel(JsonWrapper jsonWrapper) {
+        String channel = null;
+        try {
+            channel = jsonWrapper.getString("stream");
+        } catch (Exception e) {
+        }
+        try {
+            channel = jsonWrapper.getString("topic");
+        } catch (Exception e) {
+        }
+        return channel;
     }
 
     public ConnectionState getState() {
@@ -168,7 +188,6 @@ public class WebSocketConnection extends WebSocketListener {
 //        webSocket.cancel();
         webSocket.close(1000, "closing connection");
         webSocket = null;
-        watchDog.onClosedNormally(this);
     }
 
     @Override
@@ -185,12 +204,6 @@ public class WebSocketConnection extends WebSocketListener {
         super.onOpen(webSocket, response);
         this.webSocket = webSocket;
         log.info("[Sub][" + this.connectionId + "] Connected to server");
-        watchDog.onConnectionCreated(this);
-        if (request.authHandler != null) {
-            request.authHandler.handle(this);
-        } else if (request.connectionHandler != null) {
-            request.connectionHandler.handle(this);
-        }
         state = ConnectionState.CONNECTED;
         lastReceivedTime = System.currentTimeMillis();
     }
@@ -212,8 +225,11 @@ public class WebSocketConnection extends WebSocketListener {
 
     @SuppressWarnings("unchecked")
     public void ping() {
-        if (request.healthHandler != null) {
-            request.healthHandler.handle(this);
-        }
+        requests.stream()
+                .filter(request -> Objects.nonNull(request.healthHandler))
+                .findFirst()
+                .ifPresent(request -> {
+                    request.healthHandler.handle(this);
+                });
     }
 }

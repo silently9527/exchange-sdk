@@ -1,17 +1,15 @@
 package org.herman.future;
 
-import org.herman.Constants;
-import org.herman.future.impl.*;
+import org.herman.future.impl.FutureRestApiClientImpl;
+import org.herman.future.impl.RestApiRequestClient;
+import org.herman.future.impl.WebSocketFutureSubscriptionClient;
+import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.impl.binance.BinanceFutureSubscriptionOptions;
 import org.herman.future.impl.binance.BinanceRestApiRequestClient;
 import org.herman.future.impl.binance.BinanceWebsocketRequestClient;
-import org.herman.future.impl.huobi.HuobiRestApiRequestClient;
 import org.herman.future.impl.kucoin.KucoinFutureSubscriptionOptions;
 import org.herman.future.impl.kucoin.KucoinRestApiRequestClient;
 import org.herman.future.impl.kucoin.KucoinWebsocketRequestClient;
-import org.herman.future.impl.okex.OkexFutureSubscriptionOptions;
-import org.herman.future.impl.okex.OkexRestApiRequestClient;
-import org.herman.future.impl.okex.OkexWebsocketRequestClient;
 
 public final class FutureApiInternalFactory {
 
@@ -24,10 +22,10 @@ public final class FutureApiInternalFactory {
     private FutureApiInternalFactory() {
     }
 
-    public FutureRestApiClient createHuobiFutureRestApiClient(String url, String apiKey, String secretKey) {
-        RestApiRequestClient requestImpl = new HuobiRestApiRequestClient(url, apiKey, secretKey);
-        return new FutureRestApiClientImpl(requestImpl);
-    }
+//    public FutureRestApiClient createHuobiFutureRestApiClient(String url, String apiKey, String secretKey) {
+//        RestApiRequestClient requestImpl = new HuobiRestApiRequestClient(url, apiKey, secretKey);
+//        return new FutureRestApiClientImpl(requestImpl);
+//    }
 
     public FutureRestApiClient createKucoinFutureRestApiClient(String url, String apiKey, String secretKey, String passphrase) {
         RestApiRequestClient requestImpl = new KucoinRestApiRequestClient(url, apiKey, secretKey, passphrase);
@@ -38,11 +36,11 @@ public final class FutureApiInternalFactory {
         RestApiRequestClient requestImpl = new BinanceRestApiRequestClient(url, apiKey, secretKey);
         return new FutureRestApiClientImpl(requestImpl);
     }
-
-    public FutureRestApiClient createOkexFutureRestApiClient(String url, String apiKey, String secretKey, String passphrase) {
-        RestApiRequestClient requestImpl = new OkexRestApiRequestClient(url, apiKey, secretKey, passphrase);
-        return new FutureRestApiClientImpl(requestImpl);
-    }
+//
+//    public FutureRestApiClient createOkexFutureRestApiClient(String url, String apiKey, String secretKey, String passphrase) {
+//        RestApiRequestClient requestImpl = new OkexRestApiRequestClient(url, apiKey, secretKey, passphrase);
+//        return new FutureRestApiClientImpl(requestImpl);
+//    }
 
     public FutureSubscriptionClient createBinanceFutureSubscriptionClient(String uri, String apiKey, String secretKey) {
         BinanceFutureSubscriptionOptions options = new BinanceFutureSubscriptionOptions(uri, apiKey, secretKey);
@@ -50,11 +48,11 @@ public final class FutureApiInternalFactory {
         return new WebSocketFutureSubscriptionClient(options, requestImpl);
     }
 
-    public FutureSubscriptionClient createOkexFutureSubscriptionClient(String uri, String apiKey, String secretKey, String passphrase) {
-        OkexFutureSubscriptionOptions options = new OkexFutureSubscriptionOptions(uri, apiKey, secretKey, passphrase);
-        WebsocketRequestClient requestImpl = new OkexWebsocketRequestClient(options);
-        return new WebSocketFutureSubscriptionClient(options, requestImpl);
-    }
+//    public FutureSubscriptionClient createOkexFutureSubscriptionClient(String uri, String apiKey, String secretKey, String passphrase) {
+//        OkexFutureSubscriptionOptions options = new OkexFutureSubscriptionOptions(uri, apiKey, secretKey, passphrase);
+//        WebsocketRequestClient requestImpl = new OkexWebsocketRequestClient(options);
+//        return new WebSocketFutureSubscriptionClient(options, requestImpl);
+//    }
 
     public FutureSubscriptionClient createKucoinFutureSubscriptionClient(String url, String apiKey, String secretKey, String passphrase, boolean isPrivate) {
         KucoinRestApiRequestClient requestImpl = new KucoinRestApiRequestClient(url, apiKey, secretKey, passphrase);
