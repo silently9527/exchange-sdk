@@ -13,7 +13,7 @@ public abstract class FutureSubscriptionOptions {
     private boolean isAutoReconnect = true;
     private int receiveLimitMs = 600_000;
     private int connectionDelayOnFailure = 15;
-    private int connectionCount = 10;
+    private int connectionCount = 2;
 
     public FutureSubscriptionOptions(String uri) {
         this.uri = uri;
