@@ -45,6 +45,17 @@ public class WebSocketConnection extends WebSocketListener {
         requests.add(request);
     }
 
+    public synchronized void remove(List<String> channels) {
+        final Iterator<WebsocketRequest> iterator = requests.iterator();
+        while (iterator.hasNext()) {
+            final WebsocketRequest next = iterator.next();
+            channels.forEach(channel -> next.channels.remove(channel));
+            if (next.channels.isEmpty()) {
+                iterator.remove();
+            }
+        }
+    }
+
     int getConnectionId() {
         return this.connectionId;
     }
@@ -130,6 +141,12 @@ public class WebSocketConnection extends WebSocketListener {
         log.error("[Sub][" + this.connectionId + "] " + errorMessage);
     }
 
+    private void onError(WebsocketRequest request, String errorMessage, Exception e) {
+        ApiException exception = new ApiException(ApiException.SUBSCRIPTION_ERROR, errorMessage, e);
+        request.errorHandler.onError(exception);
+        log.error("[Sub][" + this.connectionId + "] " + errorMessage);
+    }
+
     @SuppressWarnings("unchecked")
     private void onReceive(JsonWrapper jsonWrapper) {
         final String channel = parseChannel(jsonWrapper);
@@ -147,14 +164,14 @@ public class WebSocketConnection extends WebSocketListener {
                 try {
                     obj = request.jsonParser.parseJson(jsonWrapper);
                 } catch (Exception e) {
-                    onError("Failed to parse server's response: " + e.getMessage(), e);
+                    onError(request, "Failed to parse server's response: " + e.getMessage(), e);
                 }
                 try {
                     if (Objects.nonNull(obj)) {
                         request.updateCallback.onReceive(obj);
                     }
                 } catch (Exception e) {
-                    onError("Process error: " + e.getMessage() + " You should capture the exception in your error handler", e);
+                    onError(request, "Process error: " + e.getMessage() + " You should capture the exception in your error handler", e);
                 }
             }
         }

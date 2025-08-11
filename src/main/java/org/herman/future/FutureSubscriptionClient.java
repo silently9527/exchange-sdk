@@ -6,6 +6,7 @@ import org.herman.future.model.event.*;
 import org.herman.future.model.user.BalanceUpdateEvent;
 import org.herman.future.model.user.OrderUpdateEvent;
 import org.herman.future.model.user.PositionUpdateEvent;
+import org.herman.utils.JsonWrapper;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface FutureSubscriptionClient {
 
     void unsubscribeAll();
 
-    void unsubscribe(WebSocketConnection connection);
+    void unsubscribe(WebSocketConnection connection, List<String> channels, FutureSubscriptionListener<JsonWrapper> callback, FutureSubscriptionErrorHandler errorHandler);
 
     WebSocketConnection subscribeAggregateTradeEvent(String symbol, FutureSubscriptionListener<AggregateTradeEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 

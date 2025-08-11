@@ -9,6 +9,7 @@ import org.herman.future.model.event.*;
 import org.herman.future.model.user.BalanceUpdateEvent;
 import org.herman.future.model.user.OrderUpdateEvent;
 import org.herman.future.model.user.PositionUpdateEvent;
+import org.herman.utils.JsonWrapper;
 
 import java.util.List;
 
@@ -27,8 +28,9 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
     }
 
     @Override
-    public void unsubscribe(WebSocketConnection connection) {
-        webSocketConnectionPool.close(connection);
+    public void unsubscribe(WebSocketConnection connection, List<String> channels, FutureSubscriptionListener<JsonWrapper> callback, FutureSubscriptionErrorHandler errorHandler) {
+        requestImpl.unsubscribe(channels, callback, errorHandler);
+        connection.remove(channels);
     }
 
     @Override

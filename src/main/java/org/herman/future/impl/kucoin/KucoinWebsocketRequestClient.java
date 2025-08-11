@@ -25,6 +25,11 @@ import java.util.List;
 
 public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
     @Override
+    public WebsocketRequest<JsonWrapper> unsubscribe(List<String> channels, FutureSubscriptionListener<JsonWrapper> callback, FutureSubscriptionErrorHandler errorHandler) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public WebsocketRequest<AggregateTradeEvent> subscribeAggregateTradeEvent(String symbol, FutureSubscriptionListener<AggregateTradeEvent> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
         throw new UnsupportedOperationException();
     }

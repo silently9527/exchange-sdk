@@ -14,6 +14,14 @@ public abstract class Channels {
     public static final String OP_SUB = "sub";
     public static final String OP_REQ = "req";
 
+    public static String unsubscribe(List<String> channels) {
+        JSONObject json = new JSONObject();
+        json.put("params", channels);
+        json.put("id", System.currentTimeMillis());
+        json.put("method", "UNSUBSCRIBE");
+        return json.toJSONString();
+    }
+
     public static String aggregateTradeChannel(String symbol) {
         JSONObject json = new JSONObject();
         json.put("params", aggTradeParams(symbol));
