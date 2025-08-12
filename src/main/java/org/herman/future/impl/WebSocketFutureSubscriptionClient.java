@@ -28,8 +28,9 @@ public class WebSocketFutureSubscriptionClient implements FutureSubscriptionClie
     }
 
     @Override
-    public void unsubscribe(WebSocketConnection connection, List<String> channels, FutureSubscriptionListener<JsonWrapper> callback, FutureSubscriptionErrorHandler errorHandler) {
-        requestImpl.unsubscribe(channels, callback, errorHandler);
+    public void unsubscribe(WebSocketConnection connection, List<String> channels) {
+        final WebsocketRequest<JsonWrapper> request = requestImpl.unsubscribe(channels);
+        request.connectionHandler.handle(connection);
         connection.remove(channels);
     }
 

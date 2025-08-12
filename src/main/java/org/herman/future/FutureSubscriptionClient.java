@@ -20,7 +20,7 @@ public interface FutureSubscriptionClient {
 
     void unsubscribeAll();
 
-    void unsubscribe(WebSocketConnection connection, List<String> channels, FutureSubscriptionListener<JsonWrapper> callback, FutureSubscriptionErrorHandler errorHandler);
+    void unsubscribe(WebSocketConnection connection, List<String> channels);
 
     WebSocketConnection subscribeAggregateTradeEvent(String symbol, FutureSubscriptionListener<AggregateTradeEvent> callback, FutureSubscriptionErrorHandler errorHandler);
 

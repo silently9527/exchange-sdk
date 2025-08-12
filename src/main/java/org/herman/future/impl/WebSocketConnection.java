@@ -30,7 +30,7 @@ public class WebSocketConnection extends WebSocketListener {
     private volatile ConnectionState state = ConnectionState.IDLE;
     private int delayInSecond = 0;
 
-    private final List<WebsocketRequest> requests = new CopyOnWriteArrayList<>();
+    private final List<WebsocketRequest> requests = new ArrayList<>();
     private final Request okhttpRequest;
     private final int connectionId;
 
@@ -114,7 +114,7 @@ public class WebSocketConnection extends WebSocketListener {
         super.onMessage(webSocket, text);
         lastReceivedTime = System.currentTimeMillis();
 
-        log.debug("[On Message]:{}", text);
+//        log.debug("[On Message]:{}", text);
         try {
             JsonWrapper jsonWrapper = JsonWrapper.parseFromString(text);
             if ((jsonWrapper.containKey("event") && "subscribe".equals(jsonWrapper.getString("event")))

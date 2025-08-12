@@ -5,6 +5,7 @@ import org.herman.Constants;
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
 import org.herman.future.RestApiInvoker;
+import org.herman.future.impl.WebSocketConnection;
 import org.herman.future.impl.WebsocketRequest;
 import org.herman.future.impl.WebsocketRequestClient;
 import org.herman.future.model.enums.*;
@@ -16,6 +17,8 @@ import org.herman.future.model.user.PositionUpdateEvent;
 import org.herman.utils.InputChecker;
 import org.herman.utils.JsonWrapper;
 import org.herman.utils.JsonWrapperArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -23,6 +26,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
+    private static final Logger log = LoggerFactory.getLogger(BinanceWebsocketRequestClient.class);
+
     private final BinanceRestApiRequestClient restApiRequestClient;
     private final String privateToken;
 
@@ -35,8 +40,8 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     }
 
     @Override
-    public WebsocketRequest<JsonWrapper> unsubscribe(List<String> channels, FutureSubscriptionListener<JsonWrapper> subscriptionListener, FutureSubscriptionErrorHandler errorHandler) {
-        WebsocketRequest<JsonWrapper> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+    public WebsocketRequest<JsonWrapper> unsubscribe(List<String> channels) {
+        WebsocketRequest<JsonWrapper> request = new BinanceWebsocketRequest<>(json -> {}, e -> log.error("unsubscribe", e));
         request.name = "***unsubscribe " + StringUtils.join(channels, ",") + "***";
         request.channels = new ArrayList<>();
         request.channels.add("unsubscribe");

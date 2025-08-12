@@ -12,7 +12,7 @@ import org.herman.utils.JsonWrapper;
 import java.util.List;
 
 public interface WebsocketRequestClient {
-    WebsocketRequest<JsonWrapper> unsubscribe(List<String> channels, FutureSubscriptionListener<JsonWrapper> callback, FutureSubscriptionErrorHandler errorHandler);
+    WebsocketRequest<JsonWrapper> unsubscribe(List<String> channels);
 
     WebsocketRequest<AggregateTradeEvent> subscribeAggregateTradeEvent(String symbol, FutureSubscriptionListener<AggregateTradeEvent> subscriptionListener,
                                                                        FutureSubscriptionErrorHandler errorHandler);

@@ -68,7 +68,7 @@ public abstract class Channels {
         List<String> params = new ArrayList<>();
         String[] split = symbol.split(",");
         Arrays.stream(split).forEach(
-                sy -> params.add(sy + "@kline_" + interval)
+                sy -> params.add(sy.toLowerCase() + "@kline_" + interval)
         );
         return params;
     }
@@ -132,7 +132,7 @@ public abstract class Channels {
         List<String> params = new ArrayList<>();
         String[] split = symbol.split(",");
         Arrays.stream(split).forEach(
-                sm -> params.add(sm + "@bookTicker")
+                sm -> params.add(sm.toLowerCase() + "@bookTicker")
         );
         return params;
     }
@@ -179,7 +179,7 @@ public abstract class Channels {
         List<String> params = new ArrayList<>();
         String[] split = symbol.split(",");
         Arrays.stream(split).forEach(
-                sm -> params.add(sm + "@depth" + limit)
+                sm -> params.add(sm.toLowerCase() + "@depth" + limit)
         );
         return params;
     }
