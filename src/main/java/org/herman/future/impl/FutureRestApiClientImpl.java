@@ -65,6 +65,11 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
     }
 
     @Override
+    public List<FundingInfo> getFundingInfos() {
+        return RestApiInvoker.callSync(requestImpl.getFundingInfos());
+    }
+
+    @Override
     public SymbolPrice getSymbolPriceTicker(String symbol) {
         return RestApiInvoker.callSync(requestImpl.getSymbolPriceTicker(symbol)).get(0);
     }

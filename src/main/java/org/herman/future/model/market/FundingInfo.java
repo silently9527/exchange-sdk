@@ -5,16 +5,12 @@ import org.herman.Constants;
 
 import java.math.BigDecimal;
 
-public class FundingRate {
+public class FundingInfo {
 
     private String symbol;
-
-    private BigDecimal fundingRate;
     private BigDecimal fundingRateCap;
     private BigDecimal fundingRateFloor;
     private Integer fundingIntervalHours = 8;
-
-    private Long fundingTime;
 
     public String getSymbol() {
         return symbol;
@@ -24,21 +20,6 @@ public class FundingRate {
         this.symbol = symbol;
     }
 
-    public BigDecimal getFundingRate() {
-        return fundingRate;
-    }
-
-    public void setFundingRate(BigDecimal fundingRate) {
-        this.fundingRate = fundingRate;
-    }
-
-    public Long getFundingTime() {
-        return fundingTime;
-    }
-
-    public void setFundingTime(Long fundingTime) {
-        this.fundingTime = fundingTime;
-    }
 
     public Integer getFundingIntervalHours() {
         return fundingIntervalHours;
@@ -71,8 +52,6 @@ public class FundingRate {
                 .append("fundingIntervalHours", fundingIntervalHours)
                 .append("fundingRateCap", fundingRateCap)
                 .append("fundingRateFloor", fundingRateFloor)
-                .append("fundingRate", fundingRate)
-                .append("fundingTime", fundingTime)
                 .toString();
     }
 }

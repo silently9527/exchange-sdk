@@ -21,6 +21,8 @@ public interface RestApiRequestClient {
 
     RestApiRequest<FundingRate> getFundingRate(String symbol);
 
+    RestApiRequest<List<FundingInfo>> getFundingInfos();
+
     RestApiRequest<List<Candlestick>> getCandlestick(String symbol, CandlestickInterval interval, Long startTime, Long endTime, Integer limit);
 
     RestApiRequest<AccountInformation> getAccountInformation();

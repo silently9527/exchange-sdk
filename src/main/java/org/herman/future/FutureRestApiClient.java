@@ -32,6 +32,7 @@ public interface FutureRestApiClient {
 
     FundingRate getFundingRate(String symbol);
 
+    List<FundingInfo> getFundingInfos();
 
     //    List<PriceChangeTicker> get24hrTickerPriceChange(String symbol);
     //最新价格

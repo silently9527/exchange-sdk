@@ -206,6 +206,11 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
+    public RestApiRequest<List<FundingInfo>> getFundingInfos() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public RestApiRequest<List<Candlestick>> getCandlestick(String symbol, CandlestickInterval interval, Long startTime, Long endTime, Integer limit) {
         RestApiRequest<List<Candlestick>> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()

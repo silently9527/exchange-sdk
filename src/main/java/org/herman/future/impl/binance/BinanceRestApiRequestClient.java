@@ -231,6 +231,31 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
+    public RestApiRequest<List<FundingInfo>> getFundingInfos() {
+        RestApiRequest<List<FundingInfo>> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build();
+        request.request = createRequestByGet("/fapi/v1/fundingInfo", builder);
+
+        request.jsonParser = (jsonWrapper -> {
+            List<FundingInfo> result = new LinkedList<>();
+            JsonWrapperArray dataArray = jsonWrapper.getJsonArray("data");
+            dataArray.forEach((item) -> {
+                FundingInfo element = new FundingInfo();
+                element.setSymbol(item.getString("symbol"));
+                element.setFundingRateCap(item.getBigDecimal("adjustedFundingRateCap"));
+                element.setFundingRateFloor(item.getBigDecimal("adjustedFundingRateFloor"));
+                element.setFundingIntervalHours(item.getInteger("fundingIntervalHours"));
+                result.add(element);
+            });
+
+            return result;
+
+        });
+        return request;
+    }
+
+
+    @Override
     public RestApiRequest<List<Candlestick>> getCandlestick(String symbol, CandlestickInterval interval, Long startTime, Long endTime, Integer limit) {
         RestApiRequest<List<Candlestick>> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()
