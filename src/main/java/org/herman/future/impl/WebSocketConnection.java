@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -26,31 +27,33 @@ public class WebSocketConnection extends WebSocketListener {
 
     private WebSocket webSocket = null;
     private volatile long lastReceivedTime = 0;
+    private final WebSocketWatchDog watchDog;
 
     private volatile ConnectionState state = ConnectionState.IDLE;
     private int delayInSecond = 0;
 
-    private final List<WebsocketRequest> requests = new ArrayList<>();
+    private final Map<String, WebsocketRequest> requests = new ConcurrentHashMap<>();
     private final Request okhttpRequest;
     private final int connectionId;
 
     public WebSocketConnection(FutureSubscriptionOptions options, WebSocketWatchDog watchDog) {
         this.connectionId = WebSocketConnection.connectionCounter++;
+        this.watchDog = watchDog;
 
         this.okhttpRequest = new Request.Builder().url(options.getUri()).build();
         log.info("[Sub] Connection [id: " + this.connectionId + "] created");
     }
 
     public synchronized void addRequest(WebsocketRequest request) {
-        requests.add(request);
+        requests.put(request.id, request);
     }
 
     public synchronized void remove(List<String> channels) {
-        final Iterator<WebsocketRequest> iterator = requests.iterator();
+        final Iterator<Map.Entry<String, WebsocketRequest>> iterator = requests.entrySet().iterator();
         while (iterator.hasNext()) {
-            final WebsocketRequest next = iterator.next();
-            channels.forEach(channel -> next.channels.remove(channel));
-            if (next.channels.isEmpty()) {
+            final Map.Entry<String, WebsocketRequest> next = iterator.next();
+            channels.forEach(channel -> next.getValue().channels.remove(channel));
+            if (next.getValue().channels.isEmpty()) {
                 iterator.remove();
             }
         }
@@ -132,7 +135,7 @@ public class WebSocketConnection extends WebSocketListener {
     }
 
     private void onError(String errorMessage, Throwable e) {
-        requests.stream()
+        requests.values().stream()
                 .filter(request -> Objects.nonNull(request.errorHandler))
                 .forEach(request -> {
                     ApiException exception = new ApiException(ApiException.SUBSCRIPTION_ERROR, errorMessage, e);
@@ -178,7 +181,7 @@ public class WebSocketConnection extends WebSocketListener {
     }
 
     private List<WebsocketRequest> getMatchedRequests(String channel) {
-        return requests.stream()
+        return requests.values().stream()
                 .filter(request -> request.channels.contains(channel))
                 .collect(Collectors.toList());
     }
@@ -205,6 +208,7 @@ public class WebSocketConnection extends WebSocketListener {
 //        webSocket.cancel();
         webSocket.close(1000, "closing connection");
         webSocket = null;
+        watchDog.onClosedNormally(this);
     }
 
     @Override
@@ -221,14 +225,18 @@ public class WebSocketConnection extends WebSocketListener {
         super.onOpen(webSocket, response);
         this.webSocket = webSocket;
         log.info("[Sub][" + this.connectionId + "] Connected to server");
+        watchDog.onConnectionCreated(this);
         state = ConnectionState.CONNECTED;
         lastReceivedTime = System.currentTimeMillis();
+        requests.values().forEach(request -> request.connectionHandler.handle(this));
     }
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-        onError("Unexpected error: " + t.getMessage(), t);
-        closeOnError();
+        log.error("Unexpected error, reconnect...", t);
+        reConnect(5);
+//        closeOnError();
+//        onError("Unexpected error: " + t.getMessage(), t);
     }
 
     private void closeOnError() {
@@ -242,7 +250,7 @@ public class WebSocketConnection extends WebSocketListener {
 
     @SuppressWarnings("unchecked")
     public void ping() {
-        requests.stream()
+        requests.values().stream()
                 .filter(request -> Objects.nonNull(request.healthHandler))
                 .findFirst()
                 .ifPresent(request -> {

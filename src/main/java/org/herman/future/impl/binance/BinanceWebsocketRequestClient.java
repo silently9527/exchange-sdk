@@ -1,5 +1,6 @@
 package org.herman.future.impl.binance;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.herman.Constants;
 import org.herman.future.FutureSubscriptionErrorHandler;
@@ -42,6 +43,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
     @Override
     public WebsocketRequest<JsonWrapper> unsubscribe(List<String> channels) {
         WebsocketRequest<JsonWrapper> request = new BinanceWebsocketRequest<>(json -> {}, e -> log.error("unsubscribe", e));
+        request.id= DigestUtils.md5Hex("unsubscribe");
         request.name = "***unsubscribe " + StringUtils.join(channels, ",") + "***";
         request.channels = new ArrayList<>();
         request.channels.add("unsubscribe");
@@ -58,6 +60,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<AggregateTradeEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.aggregateTradeChannel(symbol.toLowerCase()));
         request.name = "***Aggregate Trade for " + symbol + "***";
         request.channels = Channels.aggTradeParams(symbol.toLowerCase());
         request.connectionHandler = (connection) -> connection.send(Channels.aggregateTradeChannel(symbol.toLowerCase()));
@@ -88,6 +91,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<MarkPriceEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.markPriceChannel(symbol.toLowerCase()));
         request.name = "***Mark Price for " + symbol + "***";
         request.channels = Channels.markPriceParams(symbol.toLowerCase());
         request.connectionHandler = (connection) -> connection.send(Channels.markPriceChannel(symbol.toLowerCase()));
@@ -112,6 +116,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<CandlestickEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.candlestickChannel(symbol.toLowerCase(), interval));
         request.name = "***Candlestick for " + symbol + "***";
         request.channels = Channels.candlestickParams(symbol.toLowerCase(), interval);
         request.connectionHandler = (connection) -> connection.send(Channels.candlestickChannel(symbol.toLowerCase(), interval));
@@ -146,6 +151,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(limit, "limit")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<OrderBookEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.bookDepthChannel(symbol.toLowerCase(), limit));
         request.name = "***Partial Book Depth for " + symbol + "***";
         request.channels = Channels.bookDepthParams(symbol.toLowerCase(), limit);
         request.connectionHandler = (connection) -> connection.send(Channels.bookDepthChannel(symbol.toLowerCase(), limit));
@@ -193,6 +199,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<SymbolTickerEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.tickerChannel(symbol.toLowerCase()));
         request.name = "***Individual Symbol Ticker for " + symbol + "***";
         request.channels = Channels.tickerParams(symbol.toLowerCase());
         request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel(symbol.toLowerCase()));
@@ -217,6 +224,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<List<SymbolTickerEvent>> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.tickerChannel());
         request.name = "***All Market Tickers";
         request.channels = Collections.singletonList("!ticker@arr");
         request.connectionHandler = (connection) -> connection.send(Channels.tickerChannel());
@@ -246,6 +254,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<SymbolBookTickerEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.bookTickerChannel(symbol.toLowerCase()));
         request.name = "***Individual Symbol Book Ticker for " + symbol + "***";
         request.channels = Channels.bookTickerParams(symbol.toLowerCase());
         request.connectionHandler = (connection) -> connection.send(Channels.bookTickerChannel(symbol.toLowerCase()));
@@ -269,6 +278,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<SymbolBookTickerEvent> request = new BinanceWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.bookTickerChannel());
         request.name = "***All Market Book Tickers***";
         request.channels = Collections.singletonList("!bookTicker");
         request.connectionHandler = (connection) -> connection.send(Channels.bookTickerChannel());
@@ -293,6 +303,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<List<BalanceUpdateEvent>> request = new BinanceWebsocketRequest<>(callback, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.userDataChannel(this.privateToken));
         request.name = "***User Account***";
         request.channels = Collections.singletonList(this.privateToken);
         request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
@@ -329,6 +340,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<List<PositionUpdateEvent>> request = new BinanceWebsocketRequest<>(callback, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.userDataChannel(this.privateToken));
         request.name = "***User Position***";
         request.channels = Collections.singletonList(this.privateToken);
         request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));
@@ -366,6 +378,7 @@ public class BinanceWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(this.privateToken, "listenKey")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<OrderUpdateEvent> request = new BinanceWebsocketRequest<>(callback, errorHandler);
+        request.id= DigestUtils.md5Hex(Channels.userDataChannel(this.privateToken));
         request.name = "***User Order***";
         request.channels = Collections.singletonList(this.privateToken);
         request.connectionHandler = (connection) -> connection.send(Channels.userDataChannel(this.privateToken));

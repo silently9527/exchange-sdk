@@ -15,10 +15,11 @@ public class WebsocketRequest<T> {
     }
 
     String signatureVersion = "2";
+    public String id;
     public String name;
     public List<String> channels;
     public Handler<WebSocketConnection> connectionHandler;
-//    public Handler<WebSocketConnection> authHandler = null;
+    //    public Handler<WebSocketConnection> authHandler = null;
     public Handler<WebSocketConnection> healthHandler;
     public WebsocketResponseValidator responseValidator;
     final FutureSubscriptionListener<T> updateCallback;
