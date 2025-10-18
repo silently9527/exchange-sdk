@@ -541,6 +541,16 @@ public class BinanceRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
+    public RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String payAccountType) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public RestApiRequest<Leverage> changeInitialLeverage(String symbol, Integer leverage) {
         RestApiRequest<Leverage> request = new RestApiRequest<>();
         UrlParamsBuilder builder = UrlParamsBuilder.build()

@@ -672,6 +672,32 @@ public class KucoinRestApiRequestClient extends AbstractRestApiRequestClient {
     }
 
     @Override
+    public RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType) {
+        RestApiRequest<Boolean> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToPost("amount", amount)
+                .putToPost("recAccountType", recAccountType)
+                .putToPost("currency", currency);
+        request.request = createRequestByPostWithSignature("/api/v3/transfer-out", builder);
+
+        request.jsonParser = (jsonWrapper -> true);
+        return request;
+    }
+
+    @Override
+    public RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String payAccountType) {
+        RestApiRequest<Boolean> request = new RestApiRequest<>();
+        UrlParamsBuilder builder = UrlParamsBuilder.build()
+                .putToPost("amount", amount)
+                .putToPost("payAccountType", payAccountType)
+                .putToPost("currency", currency);
+        request.request = createRequestByPostWithSignature("/api/v1/transfer-in", builder);
+
+        request.jsonParser = (jsonWrapper -> true);
+        return request;
+    }
+
+    @Override
     public RestApiRequest<List<LeverageBracket>> getLeverageBrackets(String symbol) {
         return null;
     }

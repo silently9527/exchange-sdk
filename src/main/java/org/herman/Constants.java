@@ -33,6 +33,7 @@ public class Constants {
         public static final String OKEX_PUBLIC_WS_API_BASE_URL = "wss://ws.okx.com:8443/ws/v5/public";
         public static final String OKEX_PRIVATE_WS_API_BASE_URL = "wss://ws.okx.com:8443/ws/v5/private";
         public static final String OKEX_BUSINESS_WS_API_BASE_URL = "wss://ws.okx.com:8443/ws/v5/business";
+        public static final String COINW_WS_API_BASE_URL = "wss://ws.futurescw.com/perpum";
 
         /**
          * Default receiving window.

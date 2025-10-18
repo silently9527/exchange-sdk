@@ -70,4 +70,8 @@ public interface RestApiRequestClient {
     RestApiRequest<List<OpenInterestStat>> getOpenInterestHistory(String symbol, String period, Integer limit, Long startTime, Long endTime);
 
     RestApiRequest<Boolean> changePositionMode(PositionMode positionMode);
+
+    RestApiRequest<Boolean> transferOut(BigDecimal amount, String currency, String recAccountType);
+
+    RestApiRequest<Boolean> transferIn(BigDecimal amount, String currency, String payAccountType);
 }

@@ -1,5 +1,6 @@
 package org.herman.future.impl;
 
+import com.alibaba.fastjson.JSON;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -9,6 +10,7 @@ import org.herman.exception.ApiException;
 import org.herman.future.FutureSubscriptionOptions;
 import org.herman.future.RestApiInvoker;
 import org.herman.utils.JsonWrapper;
+import org.herman.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,8 +77,8 @@ public class WebSocketConnection extends WebSocketListener {
     void reConnect(int delayInSecond) {
         log.warn("[Sub][" + this.connectionId + "] Reconnecting after " + delayInSecond + " seconds later");
         if (webSocket != null) {
-//            webSocket.cancel();
-            webSocket.close(1000, "closing connection");
+            webSocket.cancel();
+//            webSocket.close(1000, "closing connection");
             webSocket = null;
         }
         this.delayInSecond = delayInSecond;
@@ -205,8 +207,8 @@ public class WebSocketConnection extends WebSocketListener {
 
     public void close() {
         log.info("[Sub][" + this.connectionId + "] Closing normally");
-//        webSocket.cancel();
-        webSocket.close(1000, "closing connection");
+        webSocket.cancel();
+//        webSocket.close(1000, "closing connection");
         webSocket = null;
         watchDog.onClosedNormally(this);
     }
@@ -228,7 +230,11 @@ public class WebSocketConnection extends WebSocketListener {
         watchDog.onConnectionCreated(this);
         state = ConnectionState.CONNECTED;
         lastReceivedTime = System.currentTimeMillis();
-        requests.values().forEach(request -> request.connectionHandler.handle(this));
+        requests.values().forEach(request -> {
+            log.info("订阅channel: {}", JSON.toJSONString(request.channels));
+            request.connectionHandler.handle(this);
+            Utils.sleep(200);
+        });
     }
 
     @Override

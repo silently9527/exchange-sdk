@@ -1,5 +1,6 @@
 package org.herman.future.impl.kucoin;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.herman.future.FutureSubscriptionErrorHandler;
 import org.herman.future.FutureSubscriptionListener;
@@ -40,6 +41,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<MarkPriceEvent> request = new KucoinWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id = DigestUtils.md5Hex(Channels.markPriceChannel(symbol.toLowerCase()));
         request.name = "***Mark Price for " + symbol + "***";
         request.channels = Collections.singletonList(Channels.markPriceTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.markPriceChannel(symbol));
@@ -69,6 +71,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(interval, "interval")
                 .shouldNotNull(subscriptionListener, "listener");
         WebsocketRequest<CandlestickEvent> request = new KucoinWebsocketRequest<>(subscriptionListener, errorHandler);
+        request.id = DigestUtils.md5Hex(Channels.candlestickChannel(symbol.toLowerCase(), interval));
         request.name = "***Candlestick for " + symbol + "***";
         request.channels = Collections.singletonList(Channels.candlestickTopic(symbol, interval));
         request.connectionHandler = (connection) -> connection.send(Channels.candlestickChannel(symbol, interval));
@@ -100,6 +103,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(limit, "limit")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<OrderBookEvent> request = new KucoinWebsocketRequest<>(callback, errorHandler);
+        request.id = DigestUtils.md5Hex(Channels.bookDepthChannel(symbol.toLowerCase(), limit));
         request.name = "***Partial Book Depth for " + symbol + "***";
         request.channels = Collections.singletonList(Channels.bookDepthTopic(symbol, limit));
         request.connectionHandler = (connection) -> connection.send(Channels.bookDepthChannel(symbol, limit));
@@ -145,6 +149,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<SymbolTickerEvent> request = new KucoinWebsocketRequest<>(callback, errorHandler);
+        request.id = DigestUtils.md5Hex(Channels.lastPriceChannel(symbol.toLowerCase()));
         request.name = "***Individual Symbol Ticker for " + symbol + "***";
         request.channels = Collections.singletonList(Channels.lastPriceTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.lastPriceChannel(symbol));
@@ -173,6 +178,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<SymbolBookTickerEvent> request = new KucoinWebsocketRequest<>(callback, errorHandler);
+        request.id = DigestUtils.md5Hex(Channels.bookTickerChannel(symbol.toLowerCase()));
         request.name = "***Individual Symbol Ticker for " + symbol + "***";
         request.channels = Collections.singletonList(Channels.bookTickerTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.bookTickerChannel(symbol));
@@ -202,6 +208,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
                 .shouldNotNull(symbol, "symbol")
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<List<PositionUpdateEvent>> request = new KucoinWebsocketRequest<>(callback, errorHandler);
+        request.id = DigestUtils.md5Hex(Channels.positionChannel(symbol.toLowerCase()));
         request.name = "***User Position***";
         request.channels = Collections.singletonList(Channels.positionTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.positionChannel(symbol));
@@ -228,6 +235,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<OrderUpdateEvent> request = new KucoinWebsocketRequest<>(callback, errorHandler);
+        request.id = DigestUtils.md5Hex(Channels.orderChannel(symbol.toLowerCase()));
         request.name = "***User Order***";
         request.channels = Collections.singletonList(Channels.orderTopic(symbol));
         request.connectionHandler = (connection) -> connection.send(Channels.orderChannel(symbol));
@@ -268,6 +276,7 @@ public class KucoinWebsocketRequestClient implements WebsocketRequestClient {
         InputChecker.checker()
                 .shouldNotNull(callback, "listener");
         WebsocketRequest<List<BalanceUpdateEvent>> request = new KucoinWebsocketRequest<>(callback, errorHandler);
+        request.id = DigestUtils.md5Hex(Channels.accountChannel());
         request.name = "***User Account***";
         request.channels = Collections.singletonList(Channels.accountTopic());
         request.connectionHandler = (connection) -> connection.send(Channels.accountChannel());

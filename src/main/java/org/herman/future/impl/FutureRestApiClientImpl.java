@@ -176,5 +176,15 @@ public class FutureRestApiClientImpl implements FutureRestApiClient {
         return RestApiInvoker.callSync(requestImpl.getOpenInterestHistory(symbol, period, limit, startTime, endTime));
     }
 
+    @Override
+    public Boolean transferOut(BigDecimal amount, String currency, String recAccountType) {
+        return RestApiInvoker.callSync(requestImpl.transferOut(amount, currency, recAccountType));
+    }
+
+    @Override
+    public Boolean transferIn(BigDecimal amount, String currency, String payAccountType) {
+        return RestApiInvoker.callSync(requestImpl.transferIn(amount, currency, payAccountType));
+    }
+
 
 }

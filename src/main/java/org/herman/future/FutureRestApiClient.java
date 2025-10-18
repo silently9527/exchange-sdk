@@ -94,4 +94,7 @@ public interface FutureRestApiClient {
 
     List<OpenInterestStat> getOpenInterestHistory(String symbol, String period, Integer limit, Long startTime, Long endTime);
 
+    Boolean transferOut(BigDecimal amount, String currency, String recAccountType);
+
+    Boolean transferIn(BigDecimal amount, String currency, String payAccountType);
 }
